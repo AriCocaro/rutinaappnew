@@ -5,36 +5,70 @@ import { useState } from "react";
 import DiaRutinaItem from "./DiaRutinaItem";
 
 import type {
-  Dia,
+  Rutina,
   Ejercicio,
 } from "@/types/rutinas";
 
 /*
 |--------------------------------------------------------------------------
-| TIPOS
-|--------------------------------------------------------------------------
-| Definimos la estructura de los datos.
+| CONSTRUCTOR DE RUTINAS
 |--------------------------------------------------------------------------
 */
-
-
 
 export default function ConstructorRutinas() {
 
   /*
   |--------------------------------------------------------------------------
-  | ESTADO PRINCIPAL
+  | RUTINA VACÍA
   |--------------------------------------------------------------------------
-  | Acá guardamos todos los días y ejercicios.
+  | La rutina se construye desde cero.
   |--------------------------------------------------------------------------
   */
 
-  const [dias, setDias] = useState<Dia[]>([
-    {
-      id: 1,
-      ejercicios: [],
-    },
-  ]);
+  const rutinaInicial: Rutina = {
+
+    id: Date.now(),
+
+    alumnoId: 0,
+
+    fechaInicio: "",
+
+    semanas: 4,
+
+    semanasExtra: 0,
+
+    activa: true,
+
+    dias: [],
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | ESTADO PRINCIPAL
+  |--------------------------------------------------------------------------
+  */
+
+  const [rutina, setRutina] = useState<Rutina>(
+    rutinaInicial
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACTUALIZAR RUTINA
+  |--------------------------------------------------------------------------
+  */
+
+  function actualizarRutina(
+    campo: keyof Rutina,
+    valor: string | number | boolean
+  ) {
+
+    setRutina({
+      ...rutina,
+
+      [campo]: valor,
+    });
+  }
 
   /*
   |--------------------------------------------------------------------------
@@ -44,14 +78,19 @@ export default function ConstructorRutinas() {
 
   function agregarDia() {
 
-    setDias([
-      ...dias,
+    const nuevosDias = [
+      ...rutina.dias,
 
       {
-        id: dias.length + 1,
+        id: rutina.dias.length + 1,
         ejercicios: [],
       },
-    ]);
+    ];
+
+    setRutina({
+      ...rutina,
+      dias: nuevosDias,
+    });
   }
 
   /*
@@ -62,24 +101,25 @@ export default function ConstructorRutinas() {
 
   function eliminarDia(idDia: number) {
 
-    const nuevosDias = dias.filter(
+    const nuevosDias = rutina.dias.filter(
       (dia) => dia.id !== idDia
     );
 
-    setDias(nuevosDias);
+    setRutina({
+      ...rutina,
+      dias: nuevosDias,
+    });
   }
 
   /*
   |--------------------------------------------------------------------------
   | AGREGAR EJERCICIO
   |--------------------------------------------------------------------------
-  | Agrega un ejercicio dentro del día seleccionado.
-  |--------------------------------------------------------------------------
   */
 
   function agregarEjercicio(idDia: number) {
 
-    const nuevosDias = dias.map((dia) => {
+    const nuevosDias = rutina.dias.map((dia) => {
 
       if (dia.id === idDia) {
 
@@ -108,7 +148,10 @@ export default function ConstructorRutinas() {
       return dia;
     });
 
-    setDias(nuevosDias);
+    setRutina({
+      ...rutina,
+      dias: nuevosDias,
+    });
   }
 
   /*
@@ -122,7 +165,7 @@ export default function ConstructorRutinas() {
     idEjercicio: number
   ) {
 
-    const nuevosDias = dias.map((dia) => {
+    const nuevosDias = rutina.dias.map((dia) => {
 
       if (dia.id === idDia) {
 
@@ -139,14 +182,15 @@ export default function ConstructorRutinas() {
       return dia;
     });
 
-    setDias(nuevosDias);
+    setRutina({
+      ...rutina,
+      dias: nuevosDias,
+    });
   }
 
   /*
   |--------------------------------------------------------------------------
   | ACTUALIZAR EJERCICIO
-  |--------------------------------------------------------------------------
-  | Permite modificar cualquier campo del ejercicio.
   |--------------------------------------------------------------------------
   */
 
@@ -157,7 +201,7 @@ export default function ConstructorRutinas() {
     valor: string | boolean
   ) {
 
-    const nuevosDias = dias.map((dia) => {
+    const nuevosDias = rutina.dias.map((dia) => {
 
       if (dia.id === idDia) {
 
@@ -171,7 +215,6 @@ export default function ConstructorRutinas() {
               return {
                 ...ejercicio,
 
-                // Actualización dinámica
                 [campo]: valor,
               };
             }
@@ -184,7 +227,10 @@ export default function ConstructorRutinas() {
       return dia;
     });
 
-    setDias(nuevosDias);
+    setRutina({
+      ...rutina,
+      dias: nuevosDias,
+    });
   }
 
   return (
@@ -200,46 +246,49 @@ export default function ConstructorRutinas() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+          {/* Alumno */}
+
           <input
             type="text"
+
             placeholder="Buscar alumno..."
+
             className="border rounded-lg px-4 py-3"
           />
+
+          {/* Fecha */}
 
           <input
             type="date"
+
+            value={rutina.fechaInicio}
+
+            onChange={(e) =>
+              actualizarRutina(
+                "fechaInicio",
+                e.target.value
+              )
+            }
+
             className="border rounded-lg px-4 py-3"
           />
 
+          {/* Semanas */}
+
           <input
             type="number"
+
             placeholder="Cantidad de semanas"
-            className="border rounded-lg px-4 py-3"
-          />
 
-        </div>
+            value={rutina.semanas}
 
-      </div>
+            onChange={(e) =>
+              actualizarRutina(
+                "semanas",
+                Number(e.target.value)
+              )
+            }
 
-      {/* PROGRESIÓN GLOBAL */}
-
-      <div className="bg-white p-6 rounded-xl border">
-
-        <h2 className="text-xl font-bold mb-4">
-          Progresión global
-        </h2>
-
-        <div className="grid grid-cols-2 gap-4 max-w-sm">
-
-          <input
-            type="number"
-            placeholder="Series"
-            className="border rounded-lg px-4 py-3"
-          />
-
-          <input
-            type="number"
-            placeholder="Repeticiones"
             className="border rounded-lg px-4 py-3"
           />
 
@@ -251,46 +300,44 @@ export default function ConstructorRutinas() {
 
       <div className="bg-white p-6 rounded-xl border">
 
-            <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6">
 
-            <h2 className="text-xl font-bold">
-                Días de entrenamiento
-            </h2>
+          <h2 className="text-xl font-bold">
+            Días de entrenamiento
+          </h2>
 
-            <button
-                onClick={agregarDia}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-            >
-                + Agregar día
-            </button>
+          <button
+            onClick={agregarDia}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          >
+            + Agregar día
+          </button>
 
-            </div>
+        </div>
 
-            <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
 
-            {/* Recorremos todos los días */}   
-            {dias.map((dia) => (
+          {rutina.dias.map((dia) => (
 
-                <DiaRutinaItem
-                    key={dia.id}
+            <DiaRutinaItem
+              key={dia.id}
 
-                    dia={dia}
+              dia={dia}
 
-                    agregarEjercicio={agregarEjercicio}
+              agregarEjercicio={agregarEjercicio}
 
-                    eliminarDia={eliminarDia}
+              eliminarDia={eliminarDia}
 
-                    actualizarEjercicio={actualizarEjercicio}
+              actualizarEjercicio={actualizarEjercicio}
 
-                    eliminarEjercicio={eliminarEjercicio}
-                />
+              eliminarEjercicio={eliminarEjercicio}
+            />
 
-                ))}
-            </div>
+          ))}
+
+        </div>
 
       </div>
-
-      {/* BOTÓN FINAL */}
 
       <button className="bg-green-500 text-white py-4 rounded-xl font-bold">
         Guardar rutina

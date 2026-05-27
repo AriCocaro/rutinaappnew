@@ -46,13 +46,10 @@ export type Rutina = {
 
   id: number;
 
-  // Alumno asignado
+  // Alumno asociado
   alumnoId: number;
 
-  // Nombre visible
-  nombre: string;
-
-  // Fecha inicio
+  // Fecha inicio rutina
   fechaInicio: string;
 
   // Semanas planificadas
