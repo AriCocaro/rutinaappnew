@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+
+    "nombre": "Pectoral"
+  },
+
+  {
+    "id": 2,
+
+    "nombre": "Dorsal"
+  },
+
+  {
+    "id": 3,
+
+    "nombre": "Cuádriceps"
+  },
+
+  {
+    "id": 4,
+
+    "nombre": "Glúteos"
+  },
+
+  {
+    "id": 5,
+
+    "nombre": "Bíceps"
+  },
+
+  {
+    "id": 6,
+
+    "nombre": "Tríceps"
+  },
+
+  {
+    "id": 7,
+
+    "nombre": "Deltoides anterior"
+  }
+]

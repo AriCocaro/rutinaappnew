@@ -1,0 +1,121 @@
+[
+  {
+    "id": 1,
+
+    "nombre": "Sentadilla",
+
+    "descripcion": "Ejercicio dominante de rodilla.",
+
+    "posturaId": 1,
+
+    "movimientoId": 1,
+
+    "gruposMuscularesIds": [3, 4],
+
+    "materialesIds": [1, 2, 5],
+
+    "imagenUrl": "",
+
+    "videoUrl": "",
+
+    "activo": true,
+
+    "creadoPor": "sistema"
+  },
+
+  {
+    "id": 2,
+
+    "nombre": "Press banca",
+
+    "descripcion": "Empuje horizontal.",
+
+    "posturaId": 3,
+
+    "movimientoId": 1,
+
+    "gruposMuscularesIds": [1, 6, 7],
+
+    "materialesIds": [1, 2, 5],
+
+    "imagenUrl": "",
+
+    "videoUrl": "",
+
+    "activo": true,
+
+    "creadoPor": "sistema"
+  },
+
+  {
+    "id": 3,
+
+    "nombre": "Remo",
+
+    "descripcion": "Tracción horizontal.",
+
+    "posturaId": 1,
+
+    "movimientoId": 2,
+
+    "gruposMuscularesIds": [2, 5],
+
+    "materialesIds": [1, 2, 3],
+
+    "imagenUrl": "",
+
+    "videoUrl": "",
+
+    "activo": true,
+
+    "creadoPor": "sistema"
+  },
+
+  {
+    "id": 4,
+
+    "nombre": "Prensa",
+
+    "descripcion": "Trabajo de piernas en máquina.",
+
+    "posturaId": 3,
+
+    "movimientoId": 1,
+
+    "gruposMuscularesIds": [3, 4],
+
+    "materialesIds": [4],
+
+    "imagenUrl": "",
+
+    "videoUrl": "",
+
+    "activo": true,
+
+    "creadoPor": "sistema"
+  },
+
+  {
+    "id": 5,
+
+    "nombre": "Dominadas",
+
+    "descripcion": "Tracción vertical.",
+
+    "posturaId": 1,
+
+    "movimientoId": 2,
+
+    "gruposMuscularesIds": [2, 5],
+
+    "materialesIds": [6],
+
+    "imagenUrl": "",
+
+    "videoUrl": "",
+
+    "activo": true,
+
+    "creadoPor": "sistema"
+  }
+]

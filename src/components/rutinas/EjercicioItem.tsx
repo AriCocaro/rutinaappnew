@@ -1,190 +1,288 @@
-import type { Ejercicio } from "@/types/rutinas";
+"use client";
+
+import ejercicios from "@/data/ejercicios.json";
+
+import materiales from "@/data/materiales.json";
+
+/*
+|--------------------------------------------------------------------------
+| TYPES
+|--------------------------------------------------------------------------
+*/
 
 type Props = {
-  ejercicio: Ejercicio;
 
-  diaId: number;
+  ejercicioId: number;
 
-  actualizarEjercicio: (
-    idDia: number,
-    idEjercicio: number,
-    campo: keyof Ejercicio,
-    valor: string | boolean
+  materialId: number;
+
+  overrideActivo: boolean;
+
+  seriesOverride: number | null;
+
+  repsOverride: number | null;
+
+  notas: string;
+
+  /*
+  |--------------------------------------------------------------------------
+  | PROGRESIÓN GLOBAL
+  |--------------------------------------------------------------------------
+  */
+
+  seriesGlobales: number;
+
+  repsGlobales: number;
+
+  /*
+  |--------------------------------------------------------------------------
+  | CALLBACKS
+  |--------------------------------------------------------------------------
+  */
+
+  onToggleOverride: () => void;
+
+  onSeriesChange: (
+    value: number
   ) => void;
 
-  eliminarEjercicio: (
-    idDia: number,
-    idEjercicio: number
+  onRepsChange: (
+    value: number
   ) => void;
+
+  onNotasChange: (
+    value: string
+  ) => void;
+
+  onEliminar: () => void;
 };
 
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+*/
+
 export default function EjercicioItem({
-  ejercicio,
-  diaId,
-  actualizarEjercicio,
-  eliminarEjercicio,
+
+  ejercicioId,
+
+  materialId,
+
+  overrideActivo,
+
+  seriesOverride,
+
+  repsOverride,
+
+  notas,
+
+  seriesGlobales,
+
+  repsGlobales,
+
+  onToggleOverride,
+
+  onSeriesChange,
+
+  onRepsChange,
+
+  onNotasChange,
+
+  onEliminar,
+
 }: Props) {
 
+  /*
+  |--------------------------------------------------------------------------
+  | EJERCICIO
+  |--------------------------------------------------------------------------
+  */
+
+  const ejercicio = ejercicios.find(
+    (item) => item.id === ejercicioId
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | MATERIAL
+  |--------------------------------------------------------------------------
+  */
+
+  const material = materiales.find(
+    (item) => item.id === materialId
+  );
+
+  if (!ejercicio) return null;
+
   return (
-    <div className="border rounded-lg p-4 flex flex-col gap-4">
 
-      {/* Nombre + material */}
+    <div className="border rounded-xl p-4 bg-gray-50 flex flex-col gap-4">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* HEADER */}
 
-        <input
-          type="text"
-          placeholder="Ejercicio"
+      <div className="flex items-center justify-between">
 
-          value={ejercicio.nombre}
+        <div>
 
-          onChange={(e) =>
-            actualizarEjercicio(
-              diaId,
-              ejercicio.id,
-              "nombre",
-              e.target.value
-            )
-          }
+          <h3 className="font-semibold text-lg">
 
-          className="border rounded-lg px-4 py-3"
-        />
+            {ejercicio.nombre}
 
-        <select
+            {" con "}
 
-          value={ejercicio.material}
+            {material?.nombre}
 
-          onChange={(e) =>
-            actualizarEjercicio(
-              diaId,
-              ejercicio.id,
-              "material",
-              e.target.value
-            )
-          }
+          </h3>
 
-          className="border rounded-lg px-4 py-3"
-        >
+          <p className="text-sm text-gray-500">
 
-          <option value="">
-            Seleccionar material
-          </option>
+            {ejercicio.descripcion}
 
-          <option value="Barra">
-            Barra
-          </option>
-
-          <option value="Mancuerna">
-            Mancuerna
-          </option>
-
-        </select>
-
-      </div>
-
-      {/* Notas */}
-
-      <textarea
-        placeholder="Notas del ejercicio"
-
-        value={ejercicio.notas}
-
-        onChange={(e) =>
-          actualizarEjercicio(
-            diaId,
-            ejercicio.id,
-            "notas",
-            e.target.value
-          )
-        }
-
-        className="border rounded-lg px-4 py-3"
-      />
-
-      {/* Override */}
-
-      <div className="flex items-center gap-2">
-
-        <input
-          type="checkbox"
-
-          checked={ejercicio.override}
-
-          onChange={(e) =>
-            actualizarEjercicio(
-              diaId,
-              ejercicio.id,
-              "override",
-              e.target.checked
-            )
-          }
-        />
-
-        <span>
-          Usar progresión personalizada
-        </span>
-
-      </div>
-
-      {/* Campos override */}
-
-      {ejercicio.override && (
-
-        <div className="grid grid-cols-2 gap-4">
-
-          <input
-            type="number"
-            placeholder="Series"
-
-            value={ejercicio.seriesOverride}
-
-            onChange={(e) =>
-              actualizarEjercicio(
-                diaId,
-                ejercicio.id,
-                "seriesOverride",
-                e.target.value
-              )
-            }
-
-            className="border rounded-lg px-4 py-3"
-          />
-
-          <input
-            type="number"
-            placeholder="Repeticiones"
-
-            value={ejercicio.repsOverride}
-
-            onChange={(e) =>
-              actualizarEjercicio(
-                diaId,
-                ejercicio.id,
-                "repsOverride",
-                e.target.value
-              )
-            }
-
-            className="border rounded-lg px-4 py-3"
-          />
+          </p>
 
         </div>
 
-      )}
+        <button
+          onClick={onEliminar}
+          className="text-red-500 text-sm"
+        >
+          Eliminar
+        </button>
 
-      {/* Eliminar ejercicio */}
+      </div>
 
-      <button
-        onClick={() =>
-          eliminarEjercicio(
-            diaId,
-            ejercicio.id
-          )
-        }
-        className="text-red-500"
-      >
-        Eliminar ejercicio
-      </button>
+      {/* OVERRIDE */}
+
+      <div className="border-t pt-4 flex flex-col gap-4">
+
+        {/* CONFIGURACIÓN ACTUAL */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* SERIES */}
+
+          <div className="border rounded-lg px-4 py-3 bg-white">
+
+            <p className="text-xs text-gray-500">
+              Series
+            </p>
+
+            <p className="font-semibold">
+
+              {overrideActivo
+                ? seriesOverride
+                : seriesGlobales}
+
+            </p>
+
+          </div>
+
+          {/* REPS */}
+
+          <div className="border rounded-lg px-4 py-3 bg-white">
+
+            <p className="text-xs text-gray-500">
+              Repeticiones
+            </p>
+
+            <p className="font-semibold">
+
+              {overrideActivo
+                ? repsOverride
+                : repsGlobales}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* ACTIVAR OVERRIDE */}
+
+        <label className="flex items-center gap-2">
+
+          <input
+            type="checkbox"
+
+            checked={overrideActivo}
+
+            onChange={onToggleOverride}
+          />
+
+          <span className="font-medium">
+            Activar override
+          </span>
+
+        </label>
+
+        {/* OVERRIDE EDITABLE */}
+
+        {overrideActivo && (
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* SERIES */}
+
+            <input
+              type="number"
+
+              placeholder="Series"
+
+              value={
+                seriesOverride ?? ""
+              }
+
+              onChange={(e) =>
+                onSeriesChange(
+                  Number(e.target.value)
+                )
+              }
+
+              className="border rounded-lg px-4 py-3 bg-white"
+            />
+
+            {/* REPS */}
+
+            <input
+              type="number"
+
+              placeholder="Repeticiones"
+
+              value={
+                repsOverride ?? ""
+              }
+
+              onChange={(e) =>
+                onRepsChange(
+                  Number(e.target.value)
+                )
+              }
+
+              className="border rounded-lg px-4 py-3 bg-white"
+            />
+
+          </div>
+
+        )}
+
+        {/* NOTAS */}
+
+        <textarea
+          placeholder="Notas del ejercicio"
+
+          value={notas}
+
+          onChange={(e) =>
+            onNotasChange(
+              e.target.value
+            )
+          }
+
+          className="border rounded-lg px-4 py-3 bg-white min-h-24"
+        />
+
+      </div>
 
     </div>
   );

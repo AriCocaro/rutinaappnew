@@ -2,16 +2,65 @@
 
 import { useState } from "react";
 
-import DiaRutinaItem from "./DiaRutinaItem";
+import ejercicios from "@/data/ejercicios.json";
 
-import type {
-  Rutina,
-  Ejercicio,
-} from "@/types/rutinas";
+import materiales from "@/data/materiales.json";
+
+import alumnosData from "@/data/alumnos.json";
+
+import EjercicioItem from "./EjercicioItem";
+
+import SearchSelect from "@/components/ui/SearchSelect";
 
 /*
 |--------------------------------------------------------------------------
-| CONSTRUCTOR DE RUTINAS
+| TYPES JSON
+|--------------------------------------------------------------------------
+*/
+
+type Alumno = {
+
+  id: number;
+
+  nombre: string;
+};
+
+const alumnos =
+  alumnosData as Alumno[];
+
+/*
+|--------------------------------------------------------------------------
+| TYPES
+|--------------------------------------------------------------------------
+*/
+
+type EjercicioRutina = {
+
+  id: number;
+
+  ejercicioId: number;
+
+  materialId: number;
+
+  overrideActivo: boolean;
+
+  seriesOverride: number | null;
+
+  repsOverride: number | null;
+
+  notas: string;
+};
+
+type DiaRutina = {
+
+  id: number;
+
+  ejercicios: EjercicioRutina[];
+};
+
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
 |--------------------------------------------------------------------------
 */
 
@@ -19,56 +68,98 @@ export default function ConstructorRutinas() {
 
   /*
   |--------------------------------------------------------------------------
-  | RUTINA VACÍA
-  |--------------------------------------------------------------------------
-  | La rutina se construye desde cero.
+  | DATOS RUTINA
   |--------------------------------------------------------------------------
   */
 
-  const rutinaInicial: Rutina = {
+  const [
+    alumnoSeleccionado,
+    setAlumnoSeleccionado,
+  ] = useState<number>(1);
 
-    id: Date.now(),
+  const [
+    fechaInicio,
+    setFechaInicio,
+  ] = useState<string>("");
 
-    alumnoId: 0,
-
-    fechaInicio: "",
-
-    semanas: 4,
-
-    semanasExtra: 0,
-
-    activa: true,
-
-    dias: [],
-  };
+  const [
+    cantidadSemanas,
+    setCantidadSemanas,
+  ] = useState<number>(4);
 
   /*
   |--------------------------------------------------------------------------
-  | ESTADO PRINCIPAL
+  | PROGRESIÓN GLOBAL
   |--------------------------------------------------------------------------
   */
 
-  const [rutina, setRutina] = useState<Rutina>(
-    rutinaInicial
-  );
+  const [
+    seriesGlobales,
+    setSeriesGlobales,
+  ] = useState<number>(3);
+
+  const [
+    repsGlobales,
+    setRepsGlobales,
+  ] = useState<number>(10);
 
   /*
   |--------------------------------------------------------------------------
-  | ACTUALIZAR RUTINA
+  | DÍAS
   |--------------------------------------------------------------------------
   */
 
-  function actualizarRutina(
-    campo: keyof Rutina,
-    valor: string | number | boolean
-  ) {
+  const [dias, setDias] =
+    useState<DiaRutina[]>([
+      {
+        id: Date.now(),
 
-    setRutina({
-      ...rutina,
+        ejercicios: [],
+      },
+    ]);
 
-      [campo]: valor,
-    });
-  }
+  /*
+  |--------------------------------------------------------------------------
+  | SELECTORES
+  |--------------------------------------------------------------------------
+  */
+
+  const [
+    ejercicioSeleccionado,
+    setEjercicioSeleccionado,
+  ] = useState<number>(1);
+
+  const [
+    materialSeleccionado,
+    setMaterialSeleccionado,
+  ] = useState<number>(1);
+
+  /*
+  |--------------------------------------------------------------------------
+  | EJERCICIO ACTUAL
+  |--------------------------------------------------------------------------
+  */
+
+  const ejercicioActual =
+    ejercicios.find(
+      (ejercicio) =>
+        ejercicio.id ===
+        ejercicioSeleccionado
+    );
+
+  /*
+  |--------------------------------------------------------------------------
+  | MATERIALES DISPONIBLES
+  |--------------------------------------------------------------------------
+  */
+
+  const materialesDisponibles =
+    materiales.filter((material) =>
+
+      ejercicioActual?.materialesIds.includes(
+        material.id
+      )
+    );
 
   /*
   |--------------------------------------------------------------------------
@@ -78,19 +169,17 @@ export default function ConstructorRutinas() {
 
   function agregarDia() {
 
-    const nuevosDias = [
-      ...rutina.dias,
+    const nuevoDia: DiaRutina = {
 
-      {
-        id: rutina.dias.length + 1,
-        ejercicios: [],
-      },
-    ];
+      id: Date.now(),
 
-    setRutina({
-      ...rutina,
-      dias: nuevosDias,
-    });
+      ejercicios: [],
+    };
+
+    setDias([
+      ...dias,
+      nuevoDia,
+    ]);
   }
 
   /*
@@ -99,16 +188,17 @@ export default function ConstructorRutinas() {
   |--------------------------------------------------------------------------
   */
 
-  function eliminarDia(idDia: number) {
+  function eliminarDia(
+    diaId: number
+  ) {
 
-    const nuevosDias = rutina.dias.filter(
-      (dia) => dia.id !== idDia
-    );
+    const nuevosDias =
+      dias.filter(
+        (dia) =>
+          dia.id !== diaId
+      );
 
-    setRutina({
-      ...rutina,
-      dias: nuevosDias,
-    });
+    setDias(nuevosDias);
   }
 
   /*
@@ -117,29 +207,38 @@ export default function ConstructorRutinas() {
   |--------------------------------------------------------------------------
   */
 
-  function agregarEjercicio(idDia: number) {
+  function agregarEjercicio(
+    diaId: number
+  ) {
 
-    const nuevosDias = rutina.dias.map((dia) => {
+    const nuevosDias = dias.map((dia) => {
 
-      if (dia.id === idDia) {
+      if (dia.id === diaId) {
 
         return {
+
           ...dia,
 
           ejercicios: [
+
             ...dia.ejercicios,
 
             {
               id: Date.now(),
 
-              nombre: "",
-              material: "",
+              ejercicioId:
+                ejercicioSeleccionado,
+
+              materialId:
+                materialSeleccionado,
+
+              overrideActivo: false,
+
+              seriesOverride: null,
+
+              repsOverride: null,
+
               notas: "",
-
-              override: false,
-
-              seriesOverride: "",
-              repsOverride: "",
             },
           ],
         };
@@ -148,10 +247,7 @@ export default function ConstructorRutinas() {
       return dia;
     });
 
-    setRutina({
-      ...rutina,
-      dias: nuevosDias,
-    });
+    setDias(nuevosDias);
   }
 
   /*
@@ -161,31 +257,81 @@ export default function ConstructorRutinas() {
   */
 
   function eliminarEjercicio(
-    idDia: number,
-    idEjercicio: number
+    diaId: number,
+    ejercicioId: number
   ) {
 
-    const nuevosDias = rutina.dias.map((dia) => {
+    const nuevosDias = dias.map((dia) => {
 
-      if (dia.id === idDia) {
+      if (dia.id === diaId) {
 
         return {
+
           ...dia,
 
-          ejercicios: dia.ejercicios.filter(
-            (ejercicio) =>
-              ejercicio.id !== idEjercicio
-          ),
+          ejercicios:
+            dia.ejercicios.filter(
+              (ejercicio) =>
+
+                ejercicio.id !==
+                ejercicioId
+            ),
         };
       }
 
       return dia;
     });
 
-    setRutina({
-      ...rutina,
-      dias: nuevosDias,
+    setDias(nuevosDias);
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | TOGGLE OVERRIDE
+  |--------------------------------------------------------------------------
+  */
+
+  function toggleOverride(
+    diaId: number,
+    ejercicioId: number
+  ) {
+
+    const nuevosDias = dias.map((dia) => {
+
+      if (dia.id === diaId) {
+
+        return {
+
+          ...dia,
+
+          ejercicios:
+            dia.ejercicios.map(
+              (ejercicio) => {
+
+                if (
+                  ejercicio.id ===
+                  ejercicioId
+                ) {
+
+                  return {
+
+                    ...ejercicio,
+
+                    overrideActivo:
+                      !ejercicio.overrideActivo,
+                  };
+                }
+
+                return ejercicio;
+              }
+            ),
+        };
+      }
+
+      return dia;
     });
+
+    setDias(nuevosDias);
   }
 
   /*
@@ -195,77 +341,199 @@ export default function ConstructorRutinas() {
   */
 
   function actualizarEjercicio(
-    idDia: number,
-    idEjercicio: number,
-    campo: keyof Ejercicio,
-    valor: string | boolean
+    diaId: number,
+    ejercicioId: number,
+    campo: string,
+    valor: string | number
   ) {
 
-    const nuevosDias = rutina.dias.map((dia) => {
+    const nuevosDias = dias.map((dia) => {
 
-      if (dia.id === idDia) {
+      if (dia.id === diaId) {
 
         return {
+
           ...dia,
 
-          ejercicios: dia.ejercicios.map((ejercicio) => {
+          ejercicios:
+            dia.ejercicios.map(
+              (ejercicio) => {
 
-            if (ejercicio.id === idEjercicio) {
+                if (
+                  ejercicio.id ===
+                  ejercicioId
+                ) {
 
-              return {
-                ...ejercicio,
+                  return {
 
-                [campo]: valor,
-              };
-            }
+                    ...ejercicio,
 
-            return ejercicio;
-          }),
+                    [campo]: valor,
+                  };
+                }
+
+                return ejercicio;
+              }
+            ),
         };
       }
 
       return dia;
     });
 
-    setRutina({
-      ...rutina,
-      dias: nuevosDias,
-    });
+    setDias(nuevosDias);
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | GUARDAR RUTINA
+  |--------------------------------------------------------------------------
+  */
+
+  function guardarRutina() {
+
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDACIONES
+    |--------------------------------------------------------------------------
+    */
+
+    if (!fechaInicio) {
+
+      alert(
+        "Seleccionar fecha inicio"
+      );
+
+      return;
+    }
+
+    if (dias.length === 0) {
+
+      alert(
+        "Agregar al menos un día"
+      );
+
+      return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ESTRUCTURA FINAL
+    |--------------------------------------------------------------------------
+    */
+
+    const rutina = {
+
+      alumnoId:
+        alumnoSeleccionado,
+
+      fechaInicio,
+
+      cantidadSemanas,
+
+      /*
+      |--------------------------------------------------------------------------
+      | PROGRESIÓN
+      |--------------------------------------------------------------------------
+      */
+
+      progresion: {
+
+        series:
+          seriesGlobales,
+
+        reps:
+          repsGlobales,
+      },
+
+      /*
+      |--------------------------------------------------------------------------
+      | DÍAS
+      |--------------------------------------------------------------------------
+      */
+
+      dias,
+    };
+
+    console.log(rutina);
+
+    alert(
+      "Rutina generada. Revisar consola."
+    );
   }
 
   return (
+
     <div className="flex flex-col gap-6">
 
-      {/* INFORMACIÓN GENERAL */}
+      {/* HEADER */}
 
-      <div className="bg-white p-6 rounded-xl border">
+      <div className="flex items-center justify-between">
 
-        <h2 className="text-2xl font-bold mb-4">
-          Nueva rutina
+        <div>
+
+          <h1 className="text-3xl font-bold">
+            Constructor de rutinas
+          </h1>
+
+          <p className="text-gray-500">
+            Crear rutina para alumno
+          </p>
+
+        </div>
+
+        <button
+          onClick={guardarRutina}
+          className="bg-green-600 text-white px-5 py-3 rounded-xl"
+        >
+          Guardar rutina
+        </button>
+
+      </div>
+
+      {/* DATOS */}
+
+      <div className="border rounded-2xl p-5 bg-white flex flex-col gap-4">
+
+        <h2 className="text-xl font-bold">
+          Datos generales
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          {/* Alumno */}
+          {/* ALUMNO */}
 
-          <input
-            type="text"
+          <SearchSelect
+
+            options={alumnos.map(
+              (alumno) => ({
+                id: alumno.id,
+
+                nombre:
+                  alumno.nombre,
+              })
+            )}
+
+            selectedId={
+              alumnoSeleccionado
+            }
+
+            onSelect={
+              setAlumnoSeleccionado
+            }
 
             placeholder="Buscar alumno..."
-
-            className="border rounded-lg px-4 py-3"
           />
 
-          {/* Fecha */}
+          {/* FECHA */}
 
           <input
             type="date"
 
-            value={rutina.fechaInicio}
+            value={fechaInicio}
 
             onChange={(e) =>
-              actualizarRutina(
-                "fechaInicio",
+              setFechaInicio(
                 e.target.value
               )
             }
@@ -273,18 +541,65 @@ export default function ConstructorRutinas() {
             className="border rounded-lg px-4 py-3"
           />
 
-          {/* Semanas */}
+          {/* SEMANAS */}
 
           <input
             type="number"
 
-            placeholder="Cantidad de semanas"
-
-            value={rutina.semanas}
+            value={cantidadSemanas}
 
             onChange={(e) =>
-              actualizarRutina(
-                "semanas",
+              setCantidadSemanas(
+                Number(e.target.value)
+              )
+            }
+
+            className="border rounded-lg px-4 py-3"
+          />
+
+        </div>
+
+      </div>
+
+      {/* PROGRESIÓN */}
+
+      <div className="border rounded-2xl p-5 bg-white flex flex-col gap-4">
+
+        <div>
+
+          <h2 className="text-xl font-bold">
+            Progresión global
+          </h2>
+
+          <p className="text-gray-500 text-sm">
+            Configuración base de rutina
+          </p>
+
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <input
+            type="number"
+
+            value={seriesGlobales}
+
+            onChange={(e) =>
+              setSeriesGlobales(
+                Number(e.target.value)
+              )
+            }
+
+            className="border rounded-lg px-4 py-3"
+          />
+
+          <input
+            type="number"
+
+            value={repsGlobales}
+
+            onChange={(e) =>
+              setRepsGlobales(
                 Number(e.target.value)
               )
             }
@@ -298,49 +613,197 @@ export default function ConstructorRutinas() {
 
       {/* DÍAS */}
 
-      <div className="bg-white p-6 rounded-xl border">
+      {dias.map((dia, index) => (
 
-        <div className="flex items-center justify-between mb-6">
+        <div
+          key={dia.id}
+          className="border rounded-2xl p-5 flex flex-col gap-5 bg-white"
+        >
 
-          <h2 className="text-xl font-bold">
-            Días de entrenamiento
-          </h2>
+          {/* HEADER DÍA */}
 
-          <button
-            onClick={agregarDia}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          >
-            + Agregar día
-          </button>
+          <div className="flex items-center justify-between">
 
-        </div>
+            <h2 className="text-xl font-bold">
 
-        <div className="flex flex-col gap-4">
+              Día {index + 1}
 
-          {rutina.dias.map((dia) => (
+            </h2>
 
-            <DiaRutinaItem
-              key={dia.id}
+            <button
+              onClick={() =>
+                eliminarDia(dia.id)
+              }
 
-              dia={dia}
+              className="text-red-500 text-sm"
+            >
+              Eliminar día
+            </button>
 
-              agregarEjercicio={agregarEjercicio}
+          </div>
 
-              eliminarDia={eliminarDia}
+          {/* SELECTORES */}
 
-              actualizarEjercicio={actualizarEjercicio}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              eliminarEjercicio={eliminarEjercicio}
+            <SearchSelect
+
+              options={ejercicios.map(
+                (ejercicio) => ({
+                  id: ejercicio.id,
+
+                  nombre:
+                    ejercicio.nombre,
+                })
+              )}
+
+              selectedId={
+                ejercicioSeleccionado
+              }
+
+              onSelect={
+                setEjercicioSeleccionado
+              }
+
+              placeholder="Buscar ejercicio..."
             />
 
-          ))}
+            <SearchSelect
+
+              options={materialesDisponibles.map(
+                (material) => ({
+                  id: material.id,
+
+                  nombre:
+                    material.nombre,
+                })
+              )}
+
+              selectedId={
+                materialSeleccionado
+              }
+
+              onSelect={
+                setMaterialSeleccionado
+              }
+
+              placeholder="Buscar material..."
+            />
+
+          </div>
+
+          {/* AGREGAR */}
+
+          <button
+            onClick={() =>
+              agregarEjercicio(dia.id)
+            }
+
+            className="bg-gray-100 hover:bg-gray-200 transition px-4 py-3 rounded-lg"
+          >
+            + Agregar ejercicio
+          </button>
+
+          {/* LISTADO */}
+
+          <div className="flex flex-col gap-3">
+
+            {dia.ejercicios.map(
+              (ejercicio) => (
+
+                <EjercicioItem
+                  key={ejercicio.id}
+
+                  ejercicioId={
+                    ejercicio.ejercicioId
+                  }
+
+                  materialId={
+                    ejercicio.materialId
+                  }
+
+                  overrideActivo={
+                    ejercicio.overrideActivo
+                  }
+
+                  seriesOverride={
+                    ejercicio.seriesOverride
+                  }
+
+                  repsOverride={
+                    ejercicio.repsOverride
+                  }
+
+                  notas={
+                    ejercicio.notas
+                  }
+
+                  seriesGlobales={
+                    seriesGlobales
+                  }
+
+                  repsGlobales={
+                    repsGlobales
+                  }
+
+                  onToggleOverride={() =>
+                    toggleOverride(
+                      dia.id,
+                      ejercicio.id
+                    )
+                  }
+
+                  onSeriesChange={(value) =>
+                    actualizarEjercicio(
+                      dia.id,
+                      ejercicio.id,
+                      "seriesOverride",
+                      value
+                    )
+                  }
+
+                  onRepsChange={(value) =>
+                    actualizarEjercicio(
+                      dia.id,
+                      ejercicio.id,
+                      "repsOverride",
+                      value
+                    )
+                  }
+
+                  onNotasChange={(value) =>
+                    actualizarEjercicio(
+                      dia.id,
+                      ejercicio.id,
+                      "notas",
+                      value
+                    )
+                  }
+
+                  onEliminar={() =>
+                    eliminarEjercicio(
+                      dia.id,
+                      ejercicio.id
+                    )
+                  }
+                />
+
+              )
+            )}
+
+          </div>
 
         </div>
 
-      </div>
+      ))}
 
-      <button className="bg-green-500 text-white py-4 rounded-xl font-bold">
-        Guardar rutina
+      {/* NUEVO DÍA */}
+
+      <button
+        onClick={agregarDia}
+        className="bg-blue-500 text-white px-5 py-4 rounded-xl"
+      >
+        + Agregar día
       </button>
 
     </div>

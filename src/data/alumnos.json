@@ -1,0 +1,34 @@
+[
+  {
+    "id": "alumno_001",
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "email": "juan@email.com",
+    "telefono": "",
+    "fechaNacimiento": "1998-05-10",
+    "sexo": "masculino",
+    "fotoPerfil": "",
+
+    "altura": 178,
+    "pesoActual": 80,
+
+    "nivel": "intermedio",
+
+    "diasDisponibles": [1, 3, 5],
+    "duracionSesionMin": 60,
+
+    "trainerId": "trainer_001",
+
+    "configuracion": {
+      "usaTimer": true,
+      "descansoDefaultSeg": 90,
+      "modoFlexible": true,
+      "unidadPeso": "kg"
+    },
+
+    "estado": "activo",
+
+    "fechaIngreso": "2026-05-27",
+    "ultimaActividad": "2026-05-27"
+  }
+]

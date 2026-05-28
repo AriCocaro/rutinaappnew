@@ -1,0 +1,73 @@
+[
+  {
+    "id": 1,
+
+    "nombre": "Barra",
+
+    "pesoBase": 20,
+
+    "incrementoBase": 2.5
+  },
+
+  {
+    "id": 2,
+
+    "nombre": "Mancuerna",
+
+    "pesoBase": 2.5,
+
+    "incrementoBase": 2.5
+  },
+
+  {
+    "id": 3,
+
+    "nombre": "Polea",
+
+    "pesoBase": 5,
+
+    "incrementoBase": 5
+  },
+
+  {
+    "id": 4,
+
+    "nombre": "Máquina",
+
+    "pesoBase": 0,
+
+    "incrementoBase": 5
+  },
+
+  {
+    "id": 5,
+
+    "nombre": "Smith",
+
+    "pesoBase": 20,
+
+    "incrementoBase": 2.5
+  },
+
+  {
+    "id": 6,
+
+    "nombre": "Peso corporal"
+  },
+  {
+    "id": 7,
+
+    "nombre": "Jack",
+
+    "incrementoBase": 2.5
+  },
+  {
+    "id": 8,
+
+    "nombre": "Mancuernas Exagonales",
+
+    "pesoBase": 2.5,
+
+    "incrementoBase": 2.5
+  }
+]
