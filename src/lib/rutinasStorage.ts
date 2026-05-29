@@ -1,18 +1,43 @@
-import { Rutina } from "@/types/rutinas";
-
-const STORAGE_KEY = "rutinas_app";
+import {
+  Rutina,
+} from "@/types/rutinas";
 
 /*
 |--------------------------------------------------------------------------
-| OBTENER RUTINAS
+| STORAGE KEY
 |--------------------------------------------------------------------------
 */
 
-export function obtenerRutinas(): Rutina[] {
+const STORAGE_KEY =
+  "rutinas";
 
-  if (typeof window === "undefined") {
+/*
+|--------------------------------------------------------------------------
+| OBTENER TODAS
+|--------------------------------------------------------------------------
+*/
+
+export function obtenerRutinas():
+  Rutina[] {
+
+  /*
+  |--------------------------------------------------------------------------
+  | SSR
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    typeof window ===
+    "undefined"
+  ) {
     return [];
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | STORAGE
+  |--------------------------------------------------------------------------
+  */
 
   const data =
     localStorage.getItem(
@@ -23,53 +48,12 @@ export function obtenerRutinas(): Rutina[] {
     return [];
   }
 
-  try {
-
-    return JSON.parse(data);
-
-  } catch {
-
-    return [];
-  }
+  return JSON.parse(data);
 }
 
 /*
 |--------------------------------------------------------------------------
-| GUARDAR TODAS
-|--------------------------------------------------------------------------
-*/
-
-export function guardarRutinas(
-  rutinas: Rutina[]
-) {
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(rutinas)
-  );
-}
-
-/*
-|--------------------------------------------------------------------------
-| AGREGAR RUTINA
-|--------------------------------------------------------------------------
-*/
-
-export function agregarRutina(
-  rutina: Rutina
-) {
-
-  const rutinas =
-    obtenerRutinas();
-
-  rutinas.push(rutina);
-
-  guardarRutinas(rutinas);
-}
-
-/*
-|--------------------------------------------------------------------------
-| OBTENER RUTINA POR ID
+| OBTENER POR ID
 |--------------------------------------------------------------------------
 */
 
@@ -88,7 +72,37 @@ export function obtenerRutinaPorId(
 
 /*
 |--------------------------------------------------------------------------
-| ACTUALIZAR RUTINA
+| AGREGAR
+|--------------------------------------------------------------------------
+*/
+
+export function agregarRutina(
+  rutina: Rutina
+) {
+
+  const rutinas =
+    obtenerRutinas();
+
+  const nuevasRutinas = [
+
+    ...rutinas,
+
+    rutina,
+  ];
+
+  localStorage.setItem(
+
+    STORAGE_KEY,
+
+    JSON.stringify(
+      nuevasRutinas
+    )
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| ACTUALIZAR
 |--------------------------------------------------------------------------
 */
 
@@ -114,7 +128,38 @@ export function actualizarRutina(
     });
 
   localStorage.setItem(
-    "rutinas",
+
+    STORAGE_KEY,
+
+    JSON.stringify(
+      nuevasRutinas
+    )
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| ELIMINAR
+|--------------------------------------------------------------------------
+*/
+
+export function eliminarRutina(
+  id: number
+) {
+
+  const rutinas =
+    obtenerRutinas();
+
+  const nuevasRutinas =
+    rutinas.filter(
+      (rutina) =>
+        rutina.id !== id
+    );
+
+  localStorage.setItem(
+
+    STORAGE_KEY,
+
     JSON.stringify(
       nuevasRutinas
     )

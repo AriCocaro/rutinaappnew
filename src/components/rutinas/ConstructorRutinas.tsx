@@ -2,29 +2,25 @@
 
 import { useState } from "react";
 
-import ejercicios from "@/data/ejercicios.json";
-import materiales from "@/data/materiales.json";
 import alumnosData from "@/data/alumnos.json";
-
-import SearchSelect from "@/components/ui/SearchSelect";
-
-import EjercicioItem from "./EjercicioItem";
-
-import useRutina from "@/hooks/useRutina";
 
 import {
   agregarRutina,
+  actualizarRutina,
 } from "@/lib/rutinasStorage";
 
 import {
+  ConfiguracionAvanzada,
   DiaRutina,
   EjercicioRutina,
-  ConfiguracionAvanzada,
-} from "@/types/rutinas";
-
-import {
   Rutina,
 } from "@/types/rutinas";
+
+import { useRutina } from "@/hooks/useRutina";
+
+import ConfiguradorEjercicio from "./configuradorEjercicio";
+
+import EjercicioItem from "./EjercicioItem";
 
 /*
 |--------------------------------------------------------------------------
@@ -46,16 +42,25 @@ const alumnos =
 
 /*
 |--------------------------------------------------------------------------
-| COMPONENTE
+| PROPS
 |--------------------------------------------------------------------------
 */
+
 type Props = {
 
   rutinaInicial?: Rutina;
 };
 
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+*/
+
 export default function ConstructorRutinas({
+
   rutinaInicial,
+
 }: Props) {
 
   /*
@@ -92,7 +97,9 @@ export default function ConstructorRutinas({
 
     generarRutina,
 
-  } = useRutina();
+  } = useRutina(
+    rutinaInicial
+  );
 
   /*
   |--------------------------------------------------------------------------
@@ -103,60 +110,53 @@ export default function ConstructorRutinas({
   const [
     alumnoSeleccionado,
     setAlumnoSeleccionado,
-  ] = useState("alumno_001");
+  ] = useState(
+
+    rutinaInicial?.alumnoId ??
+    "alumno_001"
+  );
 
   const [
     fechaInicio,
     setFechaInicio,
-  ] = useState("");
+  ] = useState(
+
+    rutinaInicial?.fechaInicio ??
+    ""
+  );
 
   const [
     cantidadSemanas,
     setCantidadSemanas,
-  ] = useState(4);
+  ] = useState(
+
+    rutinaInicial?.cantidadSemanas ??
+    4
+  );
 
   /*
   |--------------------------------------------------------------------------
-  | PROGRESIÓN GLOBAL
+  | PROGRESIÓN
   |--------------------------------------------------------------------------
   */
 
   const [
     seriesGlobales,
     setSeriesGlobales,
-  ] = useState(3);
+  ] = useState(
+
+    rutinaInicial?.progresion
+      .series ?? 3
+  );
 
   const [
     repsGlobales,
     setRepsGlobales,
-  ] = useState(10);
+  ] = useState(
 
-  /*
-  |--------------------------------------------------------------------------
-  | EJERCICIO ACTUAL
-  |--------------------------------------------------------------------------
-  */
-
-  const ejercicioActual =
-    ejercicios.find(
-      (ejercicio) =>
-        ejercicio.id ===
-        draft.ejercicioId
-    );
-
-  /*
-  |--------------------------------------------------------------------------
-  | MATERIALES DISPONIBLES
-  |--------------------------------------------------------------------------
-  */
-
-  const materialesDisponibles =
-    materiales.filter((material) =>
-
-      ejercicioActual?.materialesIds.includes(
-        material.id
-      )
-    );
+    rutinaInicial?.progresion
+      .reps ?? 10
+  );
 
   /*
   |--------------------------------------------------------------------------
@@ -185,11 +185,37 @@ export default function ConstructorRutinas({
       return;
     }
 
-    agregarRutina(rutina);
+    /*
+    |--------------------------------------------------------------------------
+    | EDITAR
+    |--------------------------------------------------------------------------
+    */
 
-    console.log(rutina);
+    if (rutinaInicial) {
+
+      actualizarRutina(
+        rutina
+      );
+
+      alert(
+        "Rutina actualizada"
+      );
+
+      return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NUEVA
+    |--------------------------------------------------------------------------
+    */
+
+    agregarRutina(
+      rutina
+    );
+
     alert(
-      "Rutina creada correctamente"
+      "Rutina creada"
     );
   }
 
@@ -210,11 +236,19 @@ export default function ConstructorRutinas({
         <div>
 
           <h1 className="text-3xl font-bold">
-            Constructor de rutinas
+
+            {rutinaInicial
+              ? "Editar rutina"
+              : "Constructor de rutinas"}
+
           </h1>
 
           <p className="text-gray-500">
-            Crear rutina para alumno
+
+            {rutinaInicial
+              ? "Modificar rutina existente"
+              : "Crear rutina para alumno"}
+
           </p>
 
         </div>
@@ -223,7 +257,11 @@ export default function ConstructorRutinas({
           onClick={guardarRutina}
           className="bg-green-600 text-white px-5 py-3 rounded-xl"
         >
-          Guardar rutina
+
+          {rutinaInicial
+            ? "Guardar cambios"
+            : "Guardar rutina"}
+
         </button>
 
       </div>
@@ -240,29 +278,36 @@ export default function ConstructorRutinas({
 
           {/* ALUMNO */}
 
-          <SearchSelect
-
-            options={alumnos.map(
-              (alumno) => ({
-                id: alumno.id,
-
-                nombre:
-                  `${alumno.nombre} ${alumno.apellido}`,
-              })
-            )}
-
-            selectedId={
+          <select
+            value={
               alumnoSeleccionado
             }
 
-            onSelect={(id) =>
+            onChange={(e) =>
               setAlumnoSeleccionado(
-                String(id)
+                e.target.value
               )
             }
 
-            placeholder="Buscar alumno..."
-          />
+            className="border rounded-xl px-4 py-3"
+          >
+
+            {alumnos.map(
+              (alumno) => (
+
+                <option
+                  key={alumno.id}
+                  value={alumno.id}
+                >
+
+                  {alumno.nombre}{" "}
+                  {alumno.apellido}
+
+                </option>
+              )
+            )}
+
+          </select>
 
           {/* FECHA */}
 
@@ -289,7 +334,9 @@ export default function ConstructorRutinas({
 
             onChange={(e) =>
               setCantidadSemanas(
-                Number(e.target.value)
+                Number(
+                  e.target.value
+                )
               )
             }
 
@@ -318,8 +365,6 @@ export default function ConstructorRutinas({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          {/* SERIES */}
-
           <input
             type="number"
 
@@ -327,7 +372,9 @@ export default function ConstructorRutinas({
 
             onChange={(e) =>
               setSeriesGlobales(
-                Number(e.target.value)
+                Number(
+                  e.target.value
+                )
               )
             }
 
@@ -336,8 +383,6 @@ export default function ConstructorRutinas({
             className="border rounded-xl px-4 py-3"
           />
 
-          {/* REPS */}
-
           <input
             type="number"
 
@@ -345,7 +390,9 @@ export default function ConstructorRutinas({
 
             onChange={(e) =>
               setRepsGlobales(
-                Number(e.target.value)
+                Number(
+                  e.target.value
+                )
               )
             }
 
@@ -358,351 +405,33 @@ export default function ConstructorRutinas({
 
       </div>
 
-      {/* CONFIGURAR EJERCICIO */}
+      {/* CONFIGURADOR */}
 
-      <div className="border rounded-2xl p-5 bg-white flex flex-col gap-5">
+      <ConfiguradorEjercicio
 
-        <div>
+        draft={draft}
 
-          <h2 className="text-xl font-bold">
-            Configurar ejercicio
-          </h2>
+        actualizarDraft={
+          actualizarDraft
+        }
 
-          <p className="text-gray-500 text-sm">
-            El ejercicio se configura antes de agregarlo
-          </p>
+        actualizarDraftConfig={
+          actualizarDraftConfig
+        }
 
-        </div>
-
-        {/* SELECTORES */}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          {/* EJERCICIO */}
-
-          <SearchSelect
-
-            options={ejercicios.map(
-              (ejercicio) => ({
-                id: ejercicio.id,
-
-                nombre:
-                  ejercicio.nombre,
-              })
-            )}
-
-            selectedId={
-              draft.ejercicioId
-            }
-
-            onSelect={(id) =>
-              actualizarDraft(
-                "ejercicioId",
-                Number(id)
-              )
-            }
-
-            placeholder="Buscar ejercicio..."
-          />
-
-          {/* MATERIAL */}
-
-          <SearchSelect
-
-            options={materialesDisponibles.map(
-              (material) => ({
-                id: material.id,
-
-                nombre:
-                  material.nombre,
-              })
-            )}
-
-            selectedId={
-              draft.materialId
-            }
-
-            onSelect={(id) =>
-              actualizarDraft(
-                "materialId",
-                Number(id)
-              )
-            }
-
-            placeholder="Buscar material..."
-          />
-
-        </div>
-
-        {/* OVERRIDE */}
-
-        <div className="flex items-center gap-3">
-
-          <input
-            type="checkbox"
-
-            checked={
-              draft.configuracion.overrideActivo
-            }
-
-            onChange={(e) =>
-              actualizarDraftConfig(
-                "overrideActivo",
-                e.target.checked
-              )
-            }
-          />
-
-          <span className="text-sm">
-            Override activo
-          </span>
-
-        </div>
-
-        {/* SERIES / REPS */}
-
-        {draft.configuracion.overrideActivo && (
-
-          <div className="grid grid-cols-2 gap-4">
-
-            <input
-              type="number"
-
-              placeholder="Series"
-
-              value={
-                draft.configuracion.seriesOverride ??
-                ""
-              }
-
-              onChange={(e) =>
-                actualizarDraftConfig(
-                  "seriesOverride",
-                  Number(e.target.value)
-                )
-              }
-
-              className="border rounded-xl px-4 py-3"
-            />
-
-            <input
-              type="number"
-
-              placeholder="Repeticiones"
-
-              value={
-                draft.configuracion.repsOverride ??
-                ""
-              }
-
-              onChange={(e) =>
-                actualizarDraftConfig(
-                  "repsOverride",
-                  Number(e.target.value)
-                )
-              }
-
-              className="border rounded-xl px-4 py-3"
-            />
-
-          </div>
-
-        )}
-
-        {/* CONFIGURACIÓN */}
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-          {/* RIR */}
-
-          <input
-            type="number"
-
-            placeholder="RIR"
-
-            value={
-              draft.configuracion.rir ??
-              ""
-            }
-
-            onChange={(e) =>
-              actualizarDraftConfig(
-                "rir",
-                Number(e.target.value)
-              )
-            }
-
-            className="border rounded-xl px-4 py-3"
-          />
-
-          {/* TEMPO */}
-
-          <input
-            type="text"
-
-            placeholder="Tempo"
-
-            value={
-              draft.configuracion.tempo ??
-              ""
-            }
-
-            onChange={(e) =>
-              actualizarDraftConfig(
-                "tempo",
-                e.target.value
-              )
-            }
-
-            className="border rounded-xl px-4 py-3"
-          />
-
-          {/* DESCANSO */}
-
-          <input
-            type="number"
-
-            placeholder="Descanso"
-
-            value={
-              draft.configuracion.descansoSegundos ??
-              ""
-            }
-
-            onChange={(e) =>
-              actualizarDraftConfig(
-                "descansoSegundos",
-                Number(e.target.value)
-              )
-            }
-
-            className="border rounded-xl px-4 py-3"
-          />
-
-          {/* TIMER */}
-
-          <label className="flex items-center gap-2 text-sm">
-
-            <input
-              type="checkbox"
-
-              checked={
-                draft.configuracion.usarTimer
-              }
-
-              onChange={(e) =>
-                actualizarDraftConfig(
-                  "usarTimer",
-                  e.target.checked
-                )
-              }
-            />
-
-            Timer
-
-          </label>
-
-        </div>
-
-        {/* EXTRAS */}
-
-        <div className="flex flex-wrap gap-5">
-
-          {/* WARMUP */}
-
-          <label className="flex items-center gap-2 text-sm">
-
-            <input
-              type="checkbox"
-
-              checked={
-                draft.configuracion.warmup
-              }
-
-              onChange={(e) =>
-                actualizarDraftConfig(
-                  "warmup",
-                  e.target.checked
-                )
-              }
-            />
-
-            Warmup
-
-          </label>
-
-          {/* DROPSET */}
-
-          <label className="flex items-center gap-2 text-sm">
-
-            <input
-              type="checkbox"
-
-              checked={
-                draft.configuracion.dropset
-              }
-
-              onChange={(e) =>
-                actualizarDraftConfig(
-                  "dropset",
-                  e.target.checked
-                )
-              }
-            />
-
-            Dropset
-
-          </label>
-
-          {/* CLUSTER */}
-
-          <label className="flex items-center gap-2 text-sm">
-
-            <input
-              type="checkbox"
-
-              checked={
-                draft.configuracion.cluster
-              }
-
-              onChange={(e) =>
-                actualizarDraftConfig(
-                  "cluster",
-                  e.target.checked
-                )
-              }
-            />
-
-            Cluster
-
-          </label>
-
-        </div>
-
-        {/* NOTAS */}
-
-        <textarea
-
-          placeholder="Notas..."
-
-          value={draft.notas}
-
-          onChange={(e) =>
-            actualizarDraftNotas(
-              e.target.value
-            )
-          }
-
-          className="border rounded-2xl px-4 py-3 min-h-[120px]"
-        />
-
-      </div>
+        actualizarDraftNotas={
+          actualizarDraftNotas
+        }
+      />
 
       {/* DÍAS */}
 
       {dias.map((
+
         dia: DiaRutina,
+
         index: number
+
       ) => (
 
         <div
@@ -722,7 +451,9 @@ export default function ConstructorRutinas({
 
             <button
               onClick={() =>
-                eliminarDia(dia.id)
+                eliminarDia(
+                  dia.id
+                )
               }
 
               className="text-red-500 text-sm"
@@ -750,120 +481,132 @@ export default function ConstructorRutinas({
 
           <div className="flex flex-col gap-3">
 
-            {dia.ejercicios.map(
-              (
-                ejercicio:
-                  EjercicioRutina,
+            {dia.ejercicios.map((
 
-                ejercicioIndex: number
-              ) => (
+              ejercicio:
+                EjercicioRutina,
 
-                <EjercicioItem
-                  key={ejercicio.id}
+              ejercicioIndex:
+                number
 
-                  ejercicioId={
-                    ejercicio.ejercicioId
-                  }
+            ) => (
 
-                  materialId={
-                    ejercicio.materialId
-                  }
+              <EjercicioItem
+                key={ejercicio.id}
 
-                  configuracion={
-                    ejercicio.configuracion
-                  }
+                ejercicioId={
+                  ejercicio.ejercicioId
+                }
 
-                  notas={
-                    ejercicio.notas
-                  }
+                materialId={
+                  ejercicio.materialId
+                }
 
-                  seriesGlobales={
-                    seriesGlobales
-                  }
+                configuracion={
+                  ejercicio.configuracion
+                }
 
-                  repsGlobales={
-                    repsGlobales
-                  }
+                notas={
+                  ejercicio.notas
+                }
 
-                  puedeSubir={
-                    ejercicioIndex > 0
-                  }
+                seriesGlobales={
+                  seriesGlobales
+                }
 
-                  puedeBajar={
-                    ejercicioIndex <
-                    dia.ejercicios.length - 1
-                  }
+                repsGlobales={
+                  repsGlobales
+                }
 
-                  indiceSuperserie={
-                    ejercicio.configuracion
-                      .superserieId
-                  }
+                puedeSubir={
+                  ejercicioIndex > 0
+                }
 
-                  onMoverArriba={() =>
-                    moverEjercicio(
-                      dia.id,
-                      ejercicioIndex,
-                      "arriba"
-                    )
-                  }
+                puedeBajar={
+                  ejercicioIndex <
+                  dia.ejercicios.length - 1
+                }
 
-                  onMoverAbajo={() =>
-                    moverEjercicio(
-                      dia.id,
-                      ejercicioIndex,
-                      "abajo"
-                    )
-                  }
+                indiceSuperserie={
+                  ejercicio
+                    .configuracion
+                    .superserieId
+                }
 
-                  onToggleOverride={() =>
-                    actualizarConfiguracion(
-                      dia.id,
-                      ejercicio.id,
-                      "overrideActivo",
-                      !ejercicio
-                        .configuracion
-                        .overrideActivo
-                    )
-                  }
+                onMoverArriba={() =>
+                  moverEjercicio(
+                    dia.id,
+                    ejercicioIndex,
+                    "arriba"
+                  )
+                }
 
-                  onConfiguracionChange={(
+                onMoverAbajo={() =>
+                  moverEjercicio(
+                    dia.id,
+                    ejercicioIndex,
+                    "abajo"
+                  )
+                }
 
-                    campo:
-                      keyof ConfiguracionAvanzada,
+                onToggleOverride={() =>
+                  actualizarConfiguracion(
+                    dia.id,
+                    ejercicio.id,
+                    "overrideActivo",
+                    !ejercicio
+                      .configuracion
+                      .overrideActivo
+                  )
+                }
+
+                onConfiguracionChange={(
+
+                  campo:
+                    keyof ConfiguracionAvanzada,
+
+                  valor
+
+                ) =>
+
+                  actualizarConfiguracion(
+
+                    dia.id,
+
+                    ejercicio.id,
+
+                    campo,
 
                     valor
-                  ) =>
-                    actualizarConfiguracion(
-                      dia.id,
-                      ejercicio.id,
-                      campo,
-                      valor
-                    )
-                  }
+                  )
+                }
 
-                  onNotasChange={(value) =>
-                    actualizarNotas(
-                      dia.id,
-                      ejercicio.id,
-                      value
-                    )
-                  }
+                onNotasChange={(
+                  value
+                ) =>
 
-                  onEliminar={() =>
-                    eliminarEjercicio(
-                      dia.id,
-                      ejercicio.id
-                    )
-                  }
-                />
+                  actualizarNotas(
 
-              )
-            )}
+                    dia.id,
+
+                    ejercicio.id,
+
+                    value
+                  )
+                }
+
+                onEliminar={() =>
+                  eliminarEjercicio(
+                    dia.id,
+                    ejercicio.id
+                  )
+                }
+              />
+            ))}
 
           </div>
 
         </div>
-
       ))}
 
       {/* NUEVO DÍA */}

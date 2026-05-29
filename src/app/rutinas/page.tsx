@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 
+import Link from "next/link";
+
 import alumnos from "@/data/alumnos.json";
 
 import {
   obtenerRutinas,
+  agregarRutina,
 } from "@/lib/rutinasStorage";
 
 import {
   Rutina,
 } from "@/types/rutinas";
-
-import Link from "next/link";
 
 /*
 |--------------------------------------------------------------------------
@@ -50,16 +51,27 @@ export default function RutinasPage() {
 
   /*
   |--------------------------------------------------------------------------
+  | CARGAR
+  |--------------------------------------------------------------------------
+  */
+
+  function cargarRutinas() {
+
+    const data =
+      obtenerRutinas();
+
+    setRutinas(data);
+  }
+
+  /*
+  |--------------------------------------------------------------------------
   | EFFECT
   |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
 
-    const data =
-      obtenerRutinas();
-
-    setRutinas(data);
+    cargarRutinas();
 
   }, []);
 
@@ -83,6 +95,94 @@ export default function RutinasPage() {
 
   /*
   |--------------------------------------------------------------------------
+  | DUPLICAR
+  |--------------------------------------------------------------------------
+  */
+
+  function duplicarRutina(
+    rutina: Rutina
+  ) {
+
+    /*
+    |--------------------------------------------------------------------------
+    | NUEVO ALUMNO
+    |--------------------------------------------------------------------------
+    */
+
+    const nuevoAlumnoId =
+      prompt(
+
+        "Ingresar ID alumno.\n\nDejar vacío para mantener mismo alumno:",
+
+        rutina.alumnoId
+      );
+
+    /*
+    |--------------------------------------------------------------------------
+    | CANCELAR
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      nuevoAlumnoId === null
+    ) {
+      return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NUEVA RUTINA
+    |--------------------------------------------------------------------------
+    */
+
+    const nuevaRutina: Rutina = {
+
+      ...rutina,
+
+      id: Date.now(),
+
+      alumnoId:
+        nuevoAlumnoId.trim() === ""
+          ? rutina.alumnoId
+          : nuevoAlumnoId,
+
+      fechaInicio:
+        new Date()
+          .toISOString()
+          .split("T")[0],
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | GUARDAR
+    |--------------------------------------------------------------------------
+    */
+
+    agregarRutina(
+      nuevaRutina
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | RECARGAR
+    |--------------------------------------------------------------------------
+    */
+
+    cargarRutinas();
+
+    /*
+    |--------------------------------------------------------------------------
+    | ALERT
+    |--------------------------------------------------------------------------
+    */
+
+    alert(
+      "Rutina duplicada"
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
   | RENDER
   |--------------------------------------------------------------------------
   */
@@ -92,7 +192,6 @@ export default function RutinasPage() {
     <div className="p-6 flex flex-col gap-6">
 
       {/* HEADER */}
-
 
       <div className="flex items-center justify-between">
 
@@ -209,14 +308,44 @@ export default function RutinasPage() {
                 </div>
 
               </div>
-             {/* FOOTER */}
 
-              <Link
-                href={`/rutinas/${rutina.id}`}
-                className="bg-blue-500 text-white rounded-xl py-3 mt-2 text-center"
-              >
-                Ver rutina
-              </Link>
+              {/* ACCIONES */}
+
+              <div className="grid grid-cols-3 gap-2">
+
+                {/* VER */}
+
+                <Link
+                  href={`/rutinas/${rutina.id}`}
+                  className="bg-blue-500 text-white rounded-xl py-3 text-center text-sm"
+                >
+                  Ver
+                </Link>
+
+                {/* EDITAR */}
+
+                <Link
+                  href={`/rutinas/${rutina.id}/editar`}
+                  className="border rounded-xl py-3 text-center text-sm"
+                >
+                  Editar
+                </Link>
+
+                {/* DUPLICAR */}
+
+                <button
+                  onClick={() =>
+                    duplicarRutina(
+                      rutina
+                    )
+                  }
+
+                  className="border rounded-xl py-3 text-sm"
+                >
+                  Duplicar
+                </button>
+
+              </div>
 
             </div>
           );
