@@ -10,7 +10,7 @@ import { useMemo, useState } from "react";
 
 type Option = {
 
-  id: number;
+  id: string | number;
 
   nombre: string;
 };
@@ -19,9 +19,11 @@ type Props = {
 
   options: Option[];
 
-  selectedId: number;
+  selectedId: string | number;
 
-  onSelect: (id: number) => void;
+  onSelect: (
+    id: string | number
+  ) => void;
 
   placeholder?: string;
 };
@@ -112,7 +114,7 @@ export default function SearchSelect({
 
     <div className="relative flex flex-col gap-2">
 
-      {/* LABEL SELECCIONADO */}
+      {/* SELECCIONADO */}
 
       {seleccionado && (
 

@@ -1,100 +1,53 @@
-import EjercicioItem from "./EjercicioItem";
-
-import type {
-  Dia,
-  Ejercicio,
-} from "@/types/rutinas";
-
-/*
-|--------------------------------------------------------------------------
-| TIPOS
-|--------------------------------------------------------------------------
-*/
-
-
-type Props = {
-  dia: Dia;
-
-  agregarEjercicio: (
-    idDia: number
-  ) => void;
-
-  eliminarDia: (
-    idDia: number
-  ) => void;
-
-  actualizarEjercicio: (
-    idDia: number,
-    idEjercicio: number,
-    campo: keyof Ejercicio,
-    valor: string | boolean
-  ) => void;
-
-  eliminarEjercicio: (
-    idDia: number,
-    idEjercicio: number
-  ) => void;
-};
-
-export default function DiaRutinaItem({
-  dia,
-  agregarEjercicio,
-  eliminarDia,
-  actualizarEjercicio,
-  eliminarEjercicio,
-}: Props) {
-
-  return (
-    <div className="border rounded-xl p-4">
-
-      {/* Header día */}
-
-      <div className="flex items-center justify-between mb-4">
-
-        <h3 className="font-bold text-lg">
-          Día {dia.id}
-        </h3>
-
-        <button
-          onClick={() => eliminarDia(dia.id)}
-          className="text-red-500"
-        >
-          Eliminar
-        </button>
-
-      </div>
-
-      {/* Lista ejercicios */}
-
-      <div className="flex flex-col gap-4">
-
-        {dia.ejercicios.map((ejercicio) => (
-
-          <EjercicioItem
-            key={ejercicio.id}
-
-            ejercicio={ejercicio}
-
-            diaId={dia.id}
-
-            actualizarEjercicio={actualizarEjercicio}
-
-            eliminarEjercicio={eliminarEjercicio}
-          />
-
-        ))}
-
-      </div>
-
-      {/* Botón agregar ejercicio */}
-
-      <button
-        onClick={() => agregarEjercicio(dia.id)}
-        className="mt-4 bg-gray-200 px-4 py-2 rounded-lg"
-      >
-        + Agregar ejercicio
-      </button>
-
-    </div>
-  );
-}
+[{
+	"resource": "/workspaces/rutinaappnew/src/components/rutinas/DiaRutinaItem.tsx",
+	"owner": "typescript",
+	"code": "2305",
+	"severity": 8,
+	"message": "El módulo '\"@/types/rutinas\"' no tiene ningún miembro 'Dia' exportado.",
+	"source": "ts",
+	"startLineNumber": 4,
+	"startColumn": 3,
+	"endLineNumber": 4,
+	"endColumn": 6,
+	"modelVersionId": 1,
+	"origin": "extHost2"
+},{
+	"resource": "/workspaces/rutinaappnew/src/components/rutinas/DiaRutinaItem.tsx",
+	"owner": "typescript",
+	"code": "2305",
+	"severity": 8,
+	"message": "El módulo '\"@/types/rutinas\"' no tiene ningún miembro 'Ejercicio' exportado.",
+	"source": "ts",
+	"startLineNumber": 5,
+	"startColumn": 3,
+	"endLineNumber": 5,
+	"endColumn": 12,
+	"modelVersionId": 1,
+	"origin": "extHost2"
+},{
+	"resource": "/workspaces/rutinaappnew/src/components/rutinas/DiaRutinaItem.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "El parámetro 'ejercicio' tiene un tipo 'any' implícitamente.",
+	"source": "ts",
+	"startLineNumber": 71,
+	"startColumn": 30,
+	"endLineNumber": 71,
+	"endColumn": 39,
+	"modelVersionId": 1,
+	"origin": "extHost2"
+},{
+	"resource": "/workspaces/rutinaappnew/src/components/rutinas/DiaRutinaItem.tsx",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "El tipo '{ key: any; ejercicio: any; diaId: any; actualizarEjercicio: (idDia: number, idEjercicio: number, campo: string | number | symbol, valor: string | boolean) => void; eliminarEjercicio: (idDia: number, idEjercicio: number) => void; }' no se puede asignar al tipo 'IntrinsicAttributes & Props'.\n  La propiedad \"ejercicio\" no existe en el tipo \"IntrinsicAttributes & Props\". ¿Quería decir \"ejercicioId\"?",
+	"source": "ts",
+	"startLineNumber": 76,
+	"startColumn": 13,
+	"endLineNumber": 76,
+	"endColumn": 22,
+	"modelVersionId": 1,
+	"origin": "extHost2"
+}]

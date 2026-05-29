@@ -1,14 +1,9 @@
-"use client";
-
 import ejercicios from "@/data/ejercicios.json";
-
 import materiales from "@/data/materiales.json";
 
-/*
-|--------------------------------------------------------------------------
-| TYPES
-|--------------------------------------------------------------------------
-*/
+import {
+  ConfiguracionAvanzada,
+} from "@/types/rutinas";
 
 type Props = {
 
@@ -16,38 +11,39 @@ type Props = {
 
   materialId: number;
 
-  overrideActivo: boolean;
-
-  seriesOverride: number | null;
-
-  repsOverride: number | null;
+  configuracion:
+    ConfiguracionAvanzada;
 
   notas: string;
-
-  /*
-  |--------------------------------------------------------------------------
-  | PROGRESIÓN GLOBAL
-  |--------------------------------------------------------------------------
-  */
 
   seriesGlobales: number;
 
   repsGlobales: number;
 
-  /*
-  |--------------------------------------------------------------------------
-  | CALLBACKS
-  |--------------------------------------------------------------------------
-  */
+  puedeSubir: boolean;
+
+  puedeBajar: boolean;
+
+  indiceSuperserie:
+    number | null;
+
+  onMoverArriba: () => void;
+
+  onMoverAbajo: () => void;
 
   onToggleOverride: () => void;
 
-  onSeriesChange: (
-    value: number
-  ) => void;
+  onConfiguracionChange: (
 
-  onRepsChange: (
-    value: number
+    campo:
+      keyof ConfiguracionAvanzada,
+
+    valor:
+      | string
+      | number
+      | boolean
+      | null
+
   ) => void;
 
   onNotasChange: (
@@ -57,23 +53,13 @@ type Props = {
   onEliminar: () => void;
 };
 
-/*
-|--------------------------------------------------------------------------
-| COMPONENTE
-|--------------------------------------------------------------------------
-*/
-
 export default function EjercicioItem({
 
   ejercicioId,
 
   materialId,
 
-  overrideActivo,
-
-  seriesOverride,
-
-  repsOverride,
+  configuracion,
 
   notas,
 
@@ -81,11 +67,19 @@ export default function EjercicioItem({
 
   repsGlobales,
 
+  puedeSubir,
+
+  puedeBajar,
+
+  indiceSuperserie,
+
+  onMoverArriba,
+
+  onMoverAbajo,
+
   onToggleOverride,
 
-  onSeriesChange,
-
-  onRepsChange,
+  onConfiguracionChange,
 
   onNotasChange,
 
@@ -95,194 +89,401 @@ export default function EjercicioItem({
 
   /*
   |--------------------------------------------------------------------------
-  | EJERCICIO
+  | DATA
   |--------------------------------------------------------------------------
   */
 
-  const ejercicio = ejercicios.find(
-    (item) => item.id === ejercicioId
-  );
+  const ejercicio =
+    ejercicios.find(
+      (item) =>
+        item.id === ejercicioId
+    );
+
+  const material =
+    materiales.find(
+      (item) =>
+        item.id === materialId
+    );
 
   /*
   |--------------------------------------------------------------------------
-  | MATERIAL
+  | RENDER
   |--------------------------------------------------------------------------
   */
 
-  const material = materiales.find(
-    (item) => item.id === materialId
-  );
-
-  if (!ejercicio) return null;
-
   return (
 
-    <div className="border rounded-xl p-4 bg-gray-50 flex flex-col gap-4">
+    <div className="border rounded-2xl p-5 bg-gray-50 flex flex-col gap-5">
 
       {/* HEADER */}
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
 
         <div>
 
-          <h3 className="font-semibold text-lg">
-
-            {ejercicio.nombre}
-
-            {" con "}
-
-            {material?.nombre}
-
+          <h3 className="font-bold text-lg">
+            {ejercicio?.nombre}
           </h3>
 
           <p className="text-sm text-gray-500">
-
-            {ejercicio.descripcion}
-
+            {material?.nombre}
           </p>
 
         </div>
 
-        <button
-          onClick={onEliminar}
-          className="text-red-500 text-sm"
-        >
-          Eliminar
-        </button>
+        <div className="flex items-center gap-2">
 
-      </div>
+          {puedeSubir && (
 
-      {/* OVERRIDE */}
+            <button
+              onClick={onMoverArriba}
+              className="border px-3 py-1 rounded-lg"
+            >
+              ↑
+            </button>
 
-      <div className="border-t pt-4 flex flex-col gap-4">
+          )}
 
-        {/* CONFIGURACIÓN ACTUAL */}
+          {puedeBajar && (
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={onMoverAbajo}
+              className="border px-3 py-1 rounded-lg"
+            >
+              ↓
+            </button>
 
-          {/* SERIES */}
+          )}
 
-          <div className="border rounded-lg px-4 py-3 bg-white">
-
-            <p className="text-xs text-gray-500">
-              Series
-            </p>
-
-            <p className="font-semibold">
-
-              {overrideActivo
-                ? seriesOverride
-                : seriesGlobales}
-
-            </p>
-
-          </div>
-
-          {/* REPS */}
-
-          <div className="border rounded-lg px-4 py-3 bg-white">
-
-            <p className="text-xs text-gray-500">
-              Repeticiones
-            </p>
-
-            <p className="font-semibold">
-
-              {overrideActivo
-                ? repsOverride
-                : repsGlobales}
-
-            </p>
-
-          </div>
+          <button
+            onClick={onEliminar}
+            className="text-red-500 text-sm"
+          >
+            Eliminar
+          </button>
 
         </div>
 
-        {/* ACTIVAR OVERRIDE */}
+      </div>
 
-        <label className="flex items-center gap-2">
+      {/* SUPERSERIE */}
+
+      {indiceSuperserie && (
+
+        <div className="bg-purple-100 text-purple-700 px-3 py-2 rounded-xl text-sm w-fit">
+
+          Superserie #{indiceSuperserie}
+
+        </div>
+
+      )}
+
+      {/* OVERRIDE */}
+
+      <div className="flex items-center gap-3">
+
+        <input
+          type="checkbox"
+
+          checked={
+            configuracion.overrideActivo
+          }
+
+          onChange={onToggleOverride}
+        />
+
+        <span className="text-sm">
+          Override activo
+        </span>
+
+      </div>
+
+      {/* SERIES / REPS */}
+
+      {configuracion.overrideActivo && (
+
+        <div className="grid grid-cols-2 gap-4">
 
           <input
-            type="checkbox"
+            type="number"
 
-            checked={overrideActivo}
+            placeholder={`Series (${seriesGlobales})`}
 
-            onChange={onToggleOverride}
+            value={
+              configuracion.seriesOverride ??
+              ""
+            }
+
+            onChange={(e) =>
+              onConfiguracionChange(
+                "seriesOverride",
+                Number(e.target.value)
+              )
+            }
+
+            className="border rounded-xl px-4 py-3"
           />
 
-          <span className="font-medium">
-            Activar override
-          </span>
+          <input
+            type="number"
 
-        </label>
+            placeholder={`Reps (${repsGlobales})`}
 
-        {/* OVERRIDE EDITABLE */}
+            value={
+              configuracion.repsOverride ??
+              ""
+            }
 
-        {overrideActivo && (
+            onChange={(e) =>
+              onConfiguracionChange(
+                "repsOverride",
+                Number(e.target.value)
+              )
+            }
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            className="border rounded-xl px-4 py-3"
+          />
 
-            {/* SERIES */}
+        </div>
 
-            <input
-              type="number"
+      )}
 
-              placeholder="Series"
+      {/* CONFIGURACIONES */}
 
-              value={
-                seriesOverride ?? ""
-              }
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-              onChange={(e) =>
-                onSeriesChange(
-                  Number(e.target.value)
-                )
-              }
+        {/* RIR */}
 
-              className="border rounded-lg px-4 py-3 bg-white"
-            />
+        <input
+          type="number"
 
-            {/* REPS */}
+          placeholder="RIR"
 
-            <input
-              type="number"
-
-              placeholder="Repeticiones"
-
-              value={
-                repsOverride ?? ""
-              }
-
-              onChange={(e) =>
-                onRepsChange(
-                  Number(e.target.value)
-                )
-              }
-
-              className="border rounded-lg px-4 py-3 bg-white"
-            />
-
-          </div>
-
-        )}
-
-        {/* NOTAS */}
-
-        <textarea
-          placeholder="Notas del ejercicio"
-
-          value={notas}
+          value={
+            configuracion.rir ??
+            ""
+          }
 
           onChange={(e) =>
-            onNotasChange(
+            onConfiguracionChange(
+              "rir",
+              Number(e.target.value)
+            )
+          }
+
+          className="border rounded-xl px-4 py-3"
+        />
+
+        {/* TEMPO */}
+
+        <input
+          type="text"
+
+          placeholder="Tempo"
+
+          value={
+            configuracion.tempo ??
+            ""
+          }
+
+          onChange={(e) =>
+            onConfiguracionChange(
+              "tempo",
               e.target.value
             )
           }
 
-          className="border rounded-lg px-4 py-3 bg-white min-h-24"
+          className="border rounded-xl px-4 py-3"
         />
 
+        {/* DESCANSO */}
+
+        <input
+          type="number"
+
+          placeholder="Descanso"
+
+          value={
+            configuracion.descansoSegundos ??
+            ""
+          }
+
+          onChange={(e) =>
+            onConfiguracionChange(
+              "descansoSegundos",
+              Number(e.target.value)
+            )
+          }
+
+          className="border rounded-xl px-4 py-3"
+        />
+
+        {/* TIMER */}
+
+        <label className="flex items-center gap-2 text-sm">
+
+          <input
+            type="checkbox"
+
+            checked={
+              configuracion.usarTimer
+            }
+
+            onChange={(e) =>
+              onConfiguracionChange(
+                "usarTimer",
+                e.target.checked
+              )
+            }
+          />
+
+          Timer
+
+        </label>
+
       </div>
+
+      {/* EXTRAS */}
+
+      <div className="flex flex-wrap gap-5">
+
+        {/* WARMUP */}
+
+        <label className="flex items-center gap-2 text-sm">
+
+          <input
+            type="checkbox"
+
+            checked={
+              configuracion.warmup
+            }
+
+            onChange={(e) =>
+              onConfiguracionChange(
+                "warmup",
+                e.target.checked
+              )
+            }
+          />
+
+          Warmup
+
+        </label>
+
+        {/* DROPSET */}
+
+        <label className="flex items-center gap-2 text-sm">
+
+          <input
+            type="checkbox"
+
+            checked={
+              configuracion.dropset
+            }
+
+            onChange={(e) =>
+              onConfiguracionChange(
+                "dropset",
+                e.target.checked
+              )
+            }
+          />
+
+          Dropset
+
+        </label>
+
+        {/* CLUSTER */}
+
+        <label className="flex items-center gap-2 text-sm">
+
+          <input
+            type="checkbox"
+
+            checked={
+              configuracion.cluster
+            }
+
+            onChange={(e) =>
+              onConfiguracionChange(
+                "cluster",
+                e.target.checked
+              )
+            }
+          />
+
+          Cluster
+
+        </label>
+
+      </div>
+
+      {/* SUPERSERIES */}
+
+      <div className="flex flex-col gap-2">
+
+        <span className="text-sm font-medium">
+          Superserie
+        </span>
+
+        <div className="flex gap-2">
+
+          <button
+            onClick={() =>
+              onConfiguracionChange(
+                "superserieId",
+                1
+              )
+            }
+            className="border px-3 py-2 rounded-xl text-sm"
+          >
+            SS1
+          </button>
+
+          <button
+            onClick={() =>
+              onConfiguracionChange(
+                "superserieId",
+                2
+              )
+            }
+            className="border px-3 py-2 rounded-xl text-sm"
+          >
+            SS2
+          </button>
+
+          <button
+            onClick={() =>
+              onConfiguracionChange(
+                "superserieId",
+                null
+              )
+            }
+            className="border px-3 py-2 rounded-xl text-sm"
+          >
+            Quitar
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* NOTAS */}
+
+      <textarea
+
+        value={notas}
+
+        onChange={(e) =>
+          onNotasChange(
+            e.target.value
+          )
+        }
+
+        placeholder="Notas..."
+
+        className="border rounded-2xl px-4 py-3 min-h-[100px]"
+      />
 
     </div>
   );
