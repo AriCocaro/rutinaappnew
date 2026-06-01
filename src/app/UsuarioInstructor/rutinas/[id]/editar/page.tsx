@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
 
-import ConstructorRutinas from "@/components/rutinas/ConstructorRutinas";
+import ConstructorRutinas from "@/components/UsuarioInstructor/ConstructorRutinas";
 
 import {
   obtenerRutinaPorId,

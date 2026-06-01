@@ -1,4 +1,4 @@
-import ConstructorRutinas from "@/components/rutinas/ConstructorRutinas";
+import ConstructorRutinas from "@/components/UsuarioInstructor/ConstructorRutinas";
 
 export default function NuevaRutinaPage() {
 

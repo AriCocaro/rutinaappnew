@@ -208,7 +208,7 @@ export default function RutinasPage() {
         </div>
 
         <Link
-          href="/rutinas/nueva"
+          href="/UsuarioInstructor/rutinas/nueva/page.tsx"
           className="bg-blue-500 text-white px-5 py-3 rounded-xl"
         >
           + Nueva rutina
