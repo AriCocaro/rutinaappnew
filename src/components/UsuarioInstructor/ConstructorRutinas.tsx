@@ -140,24 +140,57 @@ export default function ConstructorRutinas({
   |--------------------------------------------------------------------------
   */
 
-  const [
-    seriesGlobales,
-    setSeriesGlobales,
+ const [
+  diasPorSemana,
+  setDiasPorSemana,
   ] = useState(
 
-    rutinaInicial?.progresion
-      .series ?? 3
+  rutinaInicial?.diasPorSemana ??
+  rutinaInicial?.dias.length ??
+  3
   );
 
   const [
-    repsGlobales,
-    setRepsGlobales,
+  seriesIniciales,
+  setSeriesIniciales,
   ] = useState(
 
-    rutinaInicial?.progresion
-      .reps ?? 10
+  rutinaInicial?.progresiones?.[0]
+    ?.series ?? 3
   );
 
+  const [
+  repsIniciales,
+  setRepsIniciales,
+  ] = useState(
+
+  rutinaInicial?.progresiones?.[0]
+    ?.reps ?? 10
+  );
+
+
+  function generarProgresiones() {
+
+    return Array.from(
+
+      {
+        length:
+          cantidadSemanas,
+      },
+
+      (_, index) => ({
+
+      semana:
+        index + 1,
+
+      series:
+        seriesIniciales + index,
+
+      reps:
+        repsIniciales,
+      })
+    );
+  }
   /*
   |--------------------------------------------------------------------------
   | GUARDAR
@@ -167,19 +200,20 @@ export default function ConstructorRutinas({
   function guardarRutina() {
 
     const rutina =
-      generarRutina({
+     generarRutina({
 
-        alumnoId:
-          alumnoSeleccionado,
+     alumnoId:
+      alumnoSeleccionado,
 
-        fechaInicio,
+     fechaInicio,
 
-        cantidadSemanas,
+      cantidadSemanas,
 
-        seriesGlobales,
+     diasPorSemana,
 
-        repsGlobales,
-      });
+     progresiones:
+      generarProgresiones(),
+    });
 
     if (!rutina) {
       return;
@@ -274,7 +308,24 @@ export default function ConstructorRutinas({
           Datos generales
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input
+            type="number"
+
+            value={diasPorSemana}
+
+            min={1}
+
+            onChange={(e) =>
+              setDiasPorSemana(
+                Number(
+                  e.target.value
+                )
+              )
+            }
+
+            className="border rounded-xl px-4 py-3"
+          />
 
           {/* ALUMNO */}
 
@@ -368,10 +419,10 @@ export default function ConstructorRutinas({
           <input
             type="number"
 
-            value={seriesGlobales}
+            value={seriesIniciales}
 
             onChange={(e) =>
-              setSeriesGlobales(
+              setSeriesIniciales(
                 Number(
                   e.target.value
                 )
@@ -386,10 +437,10 @@ export default function ConstructorRutinas({
           <input
             type="number"
 
-            value={repsGlobales}
+            value={repsIniciales}
 
             onChange={(e) =>
-              setRepsGlobales(
+              setRepsIniciales(
                 Number(
                   e.target.value
                 )
@@ -511,11 +562,11 @@ export default function ConstructorRutinas({
                 }
 
                 seriesGlobales={
-                  seriesGlobales
+                  seriesIniciales
                 }
 
                 repsGlobales={
-                  repsGlobales
+                  repsIniciales
                 }
 
                 puedeSubir={

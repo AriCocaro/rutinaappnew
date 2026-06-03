@@ -6,6 +6,7 @@ import {
   EjercicioDraft,
   EjercicioRutina,
   Rutina,
+  SemanaProgresion,
 } from "@/types/rutinas";
 
 /*
@@ -100,8 +101,7 @@ export function useRutina(
 
   function agregarDia() {
 
-    const nuevoDia:
-      DiaRutina = {
+    const nuevoDia: DiaRutina = {
 
       id: Date.now(),
 
@@ -138,8 +138,7 @@ export function useRutina(
       keyof EjercicioDraft,
 
     valor:
-      | string
-      | number
+      string | number
   ) {
 
     setDraft({
@@ -327,7 +326,6 @@ export function useRutina(
             ejercicios:
               dia.ejercicios.filter(
                 (ejercicio) =>
-
                   ejercicio.id !==
                   ejercicioId
               ),
@@ -472,9 +470,9 @@ export function useRutina(
 
     cantidadSemanas,
 
-    seriesGlobales,
+    diasPorSemana,
 
-    repsGlobales,
+    progresiones,
 
   }: {
 
@@ -484,9 +482,10 @@ export function useRutina(
 
     cantidadSemanas: number;
 
-    seriesGlobales: number;
+    diasPorSemana: number;
 
-    repsGlobales: number;
+    progresiones:
+      SemanaProgresion[];
 
   }): Rutina | null {
 
@@ -511,14 +510,9 @@ export function useRutina(
 
       cantidadSemanas,
 
-      progresion: {
+      diasPorSemana,
 
-        series:
-          seriesGlobales,
-
-        reps:
-          repsGlobales,
-      },
+      progresiones,
 
       activa: true,
 
