@@ -2,34 +2,60 @@ import { useState } from "react";
 
 import {
   ConfiguracionAvanzada,
-  DiaRutina,
   EjercicioDraft,
   EjercicioRutina,
+  EntrenamientoRutina,
   Rutina,
-  SemanaProgresion,
+  ProgresionBloque,
 } from "@/types/rutinas";
 
 /*
 |--------------------------------------------------------------------------
-| CONFIG BASE
+| CONFIGURACIÓN BASE
 |--------------------------------------------------------------------------
+|
+| Configuración mínima que tendrá cualquier ejercicio
+| agregado a una rutina.
+|
 */
 
 const configuracionBase: ConfiguracionAvanzada = {
 
+  /*
+  |--------------------------------------------------------------------------
+  | OVERRIDE
+  |--------------------------------------------------------------------------
+  */
+
   overrideActivo: false,
 
-  seriesOverride: null,
+  overrideProgresiones: [],
 
-  repsOverride: null,
+  /*
+  |--------------------------------------------------------------------------
+  | INTENSIDAD
+  |--------------------------------------------------------------------------
+  */
 
   rir: null,
 
   tempo: null,
 
+  /*
+  |--------------------------------------------------------------------------
+  | DESCANSO
+  |--------------------------------------------------------------------------
+  */
+
   descansoSegundos: null,
 
   usarTimer: false,
+
+  /*
+  |--------------------------------------------------------------------------
+  | TÉCNICAS
+  |--------------------------------------------------------------------------
+  */
 
   warmup: false,
 
@@ -44,6 +70,10 @@ const configuracionBase: ConfiguracionAvanzada = {
 |--------------------------------------------------------------------------
 | DRAFT BASE
 |--------------------------------------------------------------------------
+|
+| Es el ejercicio temporal que el instructor configura
+| antes de agregarlo a un entrenamiento.
+|
 */
 
 const draftBase: EjercicioDraft = {
@@ -71,57 +101,99 @@ export function useRutina(
 
   /*
   |--------------------------------------------------------------------------
-  | STATE
+  | ENTRENAMIENTOS
   |--------------------------------------------------------------------------
+  |
+  | Antes eran "dias".
+  | Ahora representan estructuras de entrenamiento.
+  |
   */
 
-  const [dias, setDias] =
-    useState<DiaRutina[]>(
+  const [
+    entrenamientos,
+    setEntrenamientos,
+  ] = useState<EntrenamientoRutina[]>(
 
-      rutinaInicial?.dias ?? [
+    rutinaInicial?.entrenamientos ?? [
 
-        {
-          id: Date.now(),
+      {
+        id: Date.now(),
 
-          ejercicios: [],
-        },
-      ]
-    );
+        orden: 1,
 
-  const [draft, setDraft] =
-    useState<EjercicioDraft>(
-      draftBase
-    );
+        ejercicios: [],
+      },
+    ]
+  );
 
   /*
   |--------------------------------------------------------------------------
-  | DÍAS
+  | DRAFT
   |--------------------------------------------------------------------------
   */
 
-  function agregarDia() {
+  const [
+    draft,
+    setDraft,
+  ] = useState<EjercicioDraft>(
+    draftBase
+  );
 
-    const nuevoDia: DiaRutina = {
+  /*
+  |--------------------------------------------------------------------------
+  | ENTRENAMIENTOS
+  |--------------------------------------------------------------------------
+  */
+
+  function agregarEntrenamiento() {
+
+    const nuevoEntrenamiento:
+      EntrenamientoRutina = {
 
       id: Date.now(),
+
+      orden:
+        entrenamientos.length + 1,
 
       ejercicios: [],
     };
 
-    setDias([
-      ...dias,
-      nuevoDia,
+    setEntrenamientos([
+      ...entrenamientos,
+      nuevoEntrenamiento,
     ]);
   }
 
-  function eliminarDia(
-    diaId: number
+  function eliminarEntrenamiento(
+    entrenamientoId: number
   ) {
 
-    setDias(
-      dias.filter(
-        (dia) =>
-          dia.id !== diaId
+    const nuevosEntrenamientos =
+      entrenamientos.filter(
+        (entrenamiento) =>
+          entrenamiento.id !==
+          entrenamientoId
+      );
+
+    /*
+    |--------------------------------------------------------------------------
+    | REORDENAR
+    |--------------------------------------------------------------------------
+    */
+
+    setEntrenamientos(
+
+      nuevosEntrenamientos.map(
+        (
+          entrenamiento,
+          index
+        ) => ({
+
+          ...entrenamiento,
+
+          orden:
+            index + 1,
+        })
       )
     );
   }
@@ -159,6 +231,7 @@ export function useRutina(
       | number
       | boolean
       | null
+      | ProgresionBloque[]
   ) {
 
     setDraft({
@@ -193,51 +266,58 @@ export function useRutina(
   */
 
   function agregarEjercicio(
-    diaId: number
+    entrenamientoId: number
   ) {
 
-    const nuevosDias =
-      dias.map((dia) => {
+    const nuevosEntrenamientos =
+      entrenamientos.map(
+        (entrenamiento) => {
 
-        if (dia.id === diaId) {
+          if (
+            entrenamiento.id ===
+            entrenamientoId
+          ) {
 
-          const nuevoEjercicio:
-            EjercicioRutina = {
+            const nuevoEjercicio:
+              EjercicioRutina = {
 
-            id: Date.now(),
+              id: Date.now(),
 
-            ejercicioId:
-              draft.ejercicioId,
+              ejercicioId:
+                draft.ejercicioId,
 
-            materialId:
-              draft.materialId,
+              materialId:
+                draft.materialId,
 
-            notas:
-              draft.notas,
+              notas:
+                draft.notas,
 
-            configuracion: {
+              configuracion: {
 
-              ...draft.configuracion,
-            },
-          };
+                ...draft.configuracion,
+              },
+            };
 
-          return {
+            return {
 
-            ...dia,
+              ...entrenamiento,
 
-            ejercicios: [
+              ejercicios: [
 
-              ...dia.ejercicios,
+                ...entrenamiento.ejercicios,
 
-              nuevoEjercicio,
-            ],
-          };
+                nuevoEjercicio,
+              ],
+            };
+          }
+
+          return entrenamiento;
         }
+      );
 
-        return dia;
-      });
-
-    setDias(nuevosDias);
+    setEntrenamientos(
+      nuevosEntrenamientos
+    );
 
     setDraft(draftBase);
   }
@@ -250,7 +330,7 @@ export function useRutina(
 
   function moverEjercicio(
 
-    diaId: number,
+    entrenamientoId: number,
 
     indexActual: number,
 
@@ -259,46 +339,53 @@ export function useRutina(
       | "abajo"
   ) {
 
-    const nuevosDias =
-      dias.map((dia) => {
+    const nuevosEntrenamientos =
+      entrenamientos.map(
+        (entrenamiento) => {
 
-        if (dia.id !== diaId) {
-          return dia;
+          if (
+            entrenamiento.id !==
+            entrenamientoId
+          ) {
+            return entrenamiento;
+          }
+
+          const ejercicios =
+            [...entrenamiento.ejercicios];
+
+          const nuevoIndex =
+            direccion === "arriba"
+              ? indexActual - 1
+              : indexActual + 1;
+
+          if (
+            nuevoIndex < 0 ||
+            nuevoIndex >=
+              ejercicios.length
+          ) {
+            return entrenamiento;
+          }
+
+          [
+            ejercicios[indexActual],
+            ejercicios[nuevoIndex],
+          ] = [
+            ejercicios[nuevoIndex],
+            ejercicios[indexActual],
+          ];
+
+          return {
+
+            ...entrenamiento,
+
+            ejercicios,
+          };
         }
+      );
 
-        const ejercicios =
-          [...dia.ejercicios];
-
-        const nuevoIndex =
-          direccion === "arriba"
-            ? indexActual - 1
-            : indexActual + 1;
-
-        if (
-          nuevoIndex < 0 ||
-          nuevoIndex >=
-            ejercicios.length
-        ) {
-          return dia;
-        }
-
-        [
-          ejercicios[indexActual],
-          ejercicios[nuevoIndex],
-        ] = [
-          ejercicios[nuevoIndex],
-          ejercicios[indexActual],
-        ];
-
-        return {
-
-          ...dia,
-
-          ejercicios,
-        };
-      });
-
-    setDias(nuevosDias);
+    setEntrenamientos(
+      nuevosEntrenamientos
+    );
   }
 
   /*
@@ -309,33 +396,40 @@ export function useRutina(
 
   function eliminarEjercicio(
 
-    diaId: number,
+    entrenamientoId: number,
 
     ejercicioId: number
   ) {
 
-    const nuevosDias =
-      dias.map((dia) => {
+    const nuevosEntrenamientos =
+      entrenamientos.map(
+        (entrenamiento) => {
 
-        if (dia.id === diaId) {
+          if (
+            entrenamiento.id ===
+            entrenamientoId
+          ) {
 
-          return {
+            return {
 
-            ...dia,
+              ...entrenamiento,
 
-            ejercicios:
-              dia.ejercicios.filter(
-                (ejercicio) =>
-                  ejercicio.id !==
-                  ejercicioId
-              ),
-          };
+              ejercicios:
+                entrenamiento.ejercicios.filter(
+                  (ejercicio) =>
+                    ejercicio.id !==
+                    ejercicioId
+                ),
+            };
+          }
+
+          return entrenamiento;
         }
+      );
 
-        return dia;
-      });
-
-    setDias(nuevosDias);
+    setEntrenamientos(
+      nuevosEntrenamientos
+    );
   }
 
   /*
@@ -346,7 +440,7 @@ export function useRutina(
 
   function actualizarConfiguracion(
 
-    diaId: number,
+    entrenamientoId: number,
 
     ejercicioId: number,
 
@@ -358,49 +452,58 @@ export function useRutina(
       | number
       | boolean
       | null
+      | ProgresionBloque[]
   ) {
 
-    const nuevosDias =
-      dias.map((dia) => {
+    const nuevosEntrenamientos =
+      entrenamientos.map(
+        (entrenamiento) => {
 
-        if (dia.id === diaId) {
+          if (
+            entrenamiento.id ===
+            entrenamientoId
+          ) {
 
-          return {
+            return {
 
-            ...dia,
+              ...entrenamiento,
 
-            ejercicios:
-              dia.ejercicios.map(
-                (ejercicio) => {
+              ejercicios:
+                entrenamiento.ejercicios.map(
+                  (ejercicio) => {
 
-                  if (
-                    ejercicio.id ===
-                    ejercicioId
-                  ) {
+                    if (
+                      ejercicio.id ===
+                      ejercicioId
+                    ) {
 
-                    return {
+                      return {
 
-                      ...ejercicio,
+                        ...ejercicio,
 
-                      configuracion: {
+                        configuracion: {
 
-                        ...ejercicio.configuracion,
+                          ...ejercicio.configuracion,
 
-                        [campo]: valor,
-                      },
-                    };
+                          [campo]:
+                            valor,
+                        },
+                      };
+                    }
+
+                    return ejercicio;
                   }
+                ),
+            };
+          }
 
-                  return ejercicio;
-                }
-              ),
-          };
+          return entrenamiento;
         }
+      );
 
-        return dia;
-      });
-
-    setDias(nuevosDias);
+    setEntrenamientos(
+      nuevosEntrenamientos
+    );
   }
 
   /*
@@ -411,49 +514,56 @@ export function useRutina(
 
   function actualizarNotas(
 
-    diaId: number,
+    entrenamientoId: number,
 
     ejercicioId: number,
 
     notas: string
   ) {
 
-    const nuevosDias =
-      dias.map((dia) => {
+    const nuevosEntrenamientos =
+      entrenamientos.map(
+        (entrenamiento) => {
 
-        if (dia.id === diaId) {
+          if (
+            entrenamiento.id ===
+            entrenamientoId
+          ) {
 
-          return {
+            return {
 
-            ...dia,
+              ...entrenamiento,
 
-            ejercicios:
-              dia.ejercicios.map(
-                (ejercicio) => {
+              ejercicios:
+                entrenamiento.ejercicios.map(
+                  (ejercicio) => {
 
-                  if (
-                    ejercicio.id ===
-                    ejercicioId
-                  ) {
+                    if (
+                      ejercicio.id ===
+                      ejercicioId
+                    ) {
 
-                    return {
+                      return {
 
-                      ...ejercicio,
+                        ...ejercicio,
 
-                      notas,
-                    };
+                        notas,
+                      };
+                    }
+
+                    return ejercicio;
                   }
+                ),
+            };
+          }
 
-                  return ejercicio;
-                }
-              ),
-          };
+          return entrenamiento;
         }
+      );
 
-        return dia;
-      });
-
-    setDias(nuevosDias);
+    setEntrenamientos(
+      nuevosEntrenamientos
+    );
   }
 
   /*
@@ -468,11 +578,11 @@ export function useRutina(
 
     fechaInicio,
 
-    cantidadSemanas,
+    cantidadBloques,
 
-    diasPorSemana,
+    entrenamientosPorBloque,
 
-    progresiones,
+    progresionGlobal,
 
   }: {
 
@@ -480,19 +590,19 @@ export function useRutina(
 
     fechaInicio: string;
 
-    cantidadSemanas: number;
+    cantidadBloques: number;
 
-    diasPorSemana: number;
+    entrenamientosPorBloque: number;
 
-    progresiones:
-      SemanaProgresion[];
+    progresionGlobal:
+      ProgresionBloque[];
 
   }): Rutina | null {
 
     if (!fechaInicio) {
 
       alert(
-        "Seleccionar fecha"
+        "Seleccionar fecha de inicio"
       );
 
       return null;
@@ -508,15 +618,15 @@ export function useRutina(
 
       fechaInicio,
 
-      cantidadSemanas,
+      cantidadBloques,
 
-      diasPorSemana,
+      entrenamientosPorBloque,
 
-      progresiones,
+      progresionGlobal,
 
       activa: true,
 
-      dias,
+      entrenamientos,
     };
   }
 
@@ -528,13 +638,13 @@ export function useRutina(
 
   return {
 
-    dias,
+    entrenamientos,
 
     draft,
 
-    agregarDia,
+    agregarEntrenamiento,
 
-    eliminarDia,
+    eliminarEntrenamiento,
 
     actualizarDraft,
 

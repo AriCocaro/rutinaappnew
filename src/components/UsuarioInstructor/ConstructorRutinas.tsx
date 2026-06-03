@@ -11,15 +11,15 @@ import {
 
 import {
   ConfiguracionAvanzada,
-  DiaRutina,
+  EntrenamientoRutina,
   EjercicioRutina,
   Rutina,
+  ProgresionBloque,
 } from "@/types/rutinas";
 
 import { useRutina } from "@/hooks/useRutina";
 
-import ConfiguradorEjercicio from "./configuradorEjercicio";
-
+import ConfiguradorEjercicio from "./ConstructorRutinas/ConfiguradorEjercicio";
 import EjercicioItem from "./EjercicioItem";
 
 /*
@@ -29,11 +29,8 @@ import EjercicioItem from "./EjercicioItem";
 */
 
 type Alumno = {
-
   id: string;
-
   nombre: string;
-
   apellido: string;
 };
 
@@ -47,7 +44,6 @@ const alumnos =
 */
 
 type Props = {
-
   rutinaInicial?: Rutina;
 };
 
@@ -58,26 +54,28 @@ type Props = {
 */
 
 export default function ConstructorRutinas({
-
   rutinaInicial,
-
 }: Props) {
 
   /*
   |--------------------------------------------------------------------------
   | HOOK
   |--------------------------------------------------------------------------
+  |
+  | Ya no trabajamos con "dias".
+  | Ahora trabajamos con entrenamientos reutilizables.
+  |
   */
 
   const {
 
-    dias,
+    entrenamientos,
 
     draft,
 
-    agregarDia,
+    agregarEntrenamiento,
 
-    eliminarDia,
+    eliminarEntrenamiento,
 
     actualizarDraft,
 
@@ -111,7 +109,6 @@ export default function ConstructorRutinas({
     alumnoSeleccionado,
     setAlumnoSeleccionado,
   ] = useState(
-
     rutinaInicial?.alumnoId ??
     "alumno_001"
   );
@@ -120,77 +117,124 @@ export default function ConstructorRutinas({
     fechaInicio,
     setFechaInicio,
   ] = useState(
-
     rutinaInicial?.fechaInicio ??
     ""
   );
 
-  const [
-    cantidadSemanas,
-    setCantidadSemanas,
-  ] = useState(
+  /*
+  |--------------------------------------------------------------------------
+  | BLOQUES
+  |--------------------------------------------------------------------------
+  |
+  | Antes:
+  | cantidadSemanas
+  |
+  | Ahora:
+  | cantidadBloques
+  |
+  */
 
-    rutinaInicial?.cantidadSemanas ??
+  const [
+    cantidadBloques,
+    setCantidadBloques,
+  ] = useState(
+    rutinaInicial?.cantidadBloques ??
     4
   );
 
   /*
   |--------------------------------------------------------------------------
-  | PROGRESIÓN
+  | ENTRENAMIENTOS POR BLOQUE
+  |--------------------------------------------------------------------------
+  |
+  | Ejemplo:
+  |
+  | Bloque 1:
+  | A - B - C
+  |
+  | Bloque 2:
+  | A - B - C
+  |
+  */
+
+  const [
+    entrenamientosPorBloque,
+    setEntrenamientosPorBloque,
+  ] = useState(
+
+    rutinaInicial
+      ?.entrenamientosPorBloque ??
+
+    rutinaInicial
+      ?.entrenamientos.length ??
+
+    3
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | PROGRESIÓN GLOBAL
   |--------------------------------------------------------------------------
   */
 
- const [
-  diasPorSemana,
-  setDiasPorSemana,
+  const [
+    seriesIniciales,
+    setSeriesIniciales,
   ] = useState(
 
-  rutinaInicial?.diasPorSemana ??
-  rutinaInicial?.dias.length ??
-  3
+    rutinaInicial
+      ?.progresionGlobal?.[0]
+      ?.series ?? 3
   );
 
   const [
-  seriesIniciales,
-  setSeriesIniciales,
+    repsIniciales,
+    setRepsIniciales,
   ] = useState(
 
-  rutinaInicial?.progresiones?.[0]
-    ?.series ?? 3
+    rutinaInicial
+      ?.progresionGlobal?.[0]
+      ?.reps ?? 10
   );
 
-  const [
-  repsIniciales,
-  setRepsIniciales,
-  ] = useState(
+  /*
+  |--------------------------------------------------------------------------
+  | GENERAR PROGRESIÓN GLOBAL
+  |--------------------------------------------------------------------------
+  |
+  | Ejemplo:
+  |
+  | Bloque 1 → 3x10
+  | Bloque 2 → 4x10
+  | Bloque 3 → 5x10
+  |
+  */
 
-  rutinaInicial?.progresiones?.[0]
-    ?.reps ?? 10
-  );
-
-
-  function generarProgresiones() {
+  function generarProgresionGlobal():
+    ProgresionBloque[] {
 
     return Array.from(
 
       {
         length:
-          cantidadSemanas,
+          cantidadBloques,
       },
 
       (_, index) => ({
 
-      semana:
-        index + 1,
+        bloque:
+          index + 1,
 
-      series:
-        seriesIniciales + index,
+        series:
+          seriesIniciales +
+          index,
 
-      reps:
-        repsIniciales,
+        reps:
+          repsIniciales,
       })
     );
   }
+
   /*
   |--------------------------------------------------------------------------
   | GUARDAR
@@ -200,20 +244,20 @@ export default function ConstructorRutinas({
   function guardarRutina() {
 
     const rutina =
-     generarRutina({
+      generarRutina({
 
-     alumnoId:
-      alumnoSeleccionado,
+        alumnoId:
+          alumnoSeleccionado,
 
-     fechaInicio,
+        fechaInicio,
 
-      cantidadSemanas,
+        cantidadBloques,
 
-     diasPorSemana,
+        entrenamientosPorBloque,
 
-     progresiones:
-      generarProgresiones(),
-    });
+        progresionGlobal:
+          generarProgresionGlobal(),
+      });
 
     if (!rutina) {
       return;
@@ -309,15 +353,20 @@ export default function ConstructorRutinas({
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+          {/* ENTRENAMIENTOS */}
+
           <input
             type="number"
 
-            value={diasPorSemana}
+            value={
+              entrenamientosPorBloque
+            }
 
             min={1}
 
             onChange={(e) =>
-              setDiasPorSemana(
+              setEntrenamientosPorBloque(
                 Number(
                   e.target.value
                 )
@@ -376,15 +425,15 @@ export default function ConstructorRutinas({
             className="border rounded-xl px-4 py-3"
           />
 
-          {/* SEMANAS */}
+          {/* BLOQUES */}
 
           <input
             type="number"
 
-            value={cantidadSemanas}
+            value={cantidadBloques}
 
             onChange={(e) =>
-              setCantidadSemanas(
+              setCantidadBloques(
                 Number(
                   e.target.value
                 )
@@ -398,23 +447,15 @@ export default function ConstructorRutinas({
 
       </div>
 
-      {/* PROGRESIÓN */}
+      {/* PROGRESIÓN GLOBAL */}
 
       <div className="border rounded-2xl p-5 bg-white flex flex-col gap-4">
 
-        <div>
+        <h2 className="text-xl font-bold">
+          Progresión global
+        </h2>
 
-          <h2 className="text-xl font-bold">
-            Progresión global
-          </h2>
-
-          <p className="text-gray-500 text-sm">
-            Configuración base
-          </p>
-
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
 
           <input
             type="number"
@@ -475,198 +516,154 @@ export default function ConstructorRutinas({
         }
       />
 
-      {/* DÍAS */}
+      {/* ENTRENAMIENTOS */}
 
-      {dias.map((
+      {entrenamientos.map(
 
-        dia: DiaRutina,
+        (
+          entrenamiento:
+            EntrenamientoRutina,
 
-        index: number
+          index: number
+        ) => (
 
-      ) => (
+          <div
+            key={entrenamiento.id}
+            className="border rounded-2xl p-5 bg-white flex flex-col gap-5"
+          >
 
-        <div
-          key={dia.id}
-          className="border rounded-2xl p-5 bg-white flex flex-col gap-5"
-        >
+            <div className="flex items-center justify-between">
 
-          {/* HEADER */}
+              <h2 className="text-xl font-bold">
 
-          <div className="flex items-center justify-between">
+                Entrenamiento {index + 1}
 
-            <h2 className="text-xl font-bold">
+              </h2>
 
-              Día {index + 1}
+              <button
+                onClick={() =>
+                  eliminarEntrenamiento(
+                    entrenamiento.id
+                  )
+                }
 
-            </h2>
+                className="text-red-500 text-sm"
+              >
+                Eliminar
+              </button>
+
+            </div>
 
             <button
               onClick={() =>
-                eliminarDia(
-                  dia.id
+                agregarEjercicio(
+                  entrenamiento.id
                 )
               }
 
-              className="text-red-500 text-sm"
+              className="bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-xl"
             >
-              Eliminar día
+              + Agregar ejercicio
             </button>
 
-          </div>
+            <div className="flex flex-col gap-3">
 
-          {/* AGREGAR */}
+              {entrenamiento.ejercicios.map(
 
-          <button
-            onClick={() =>
-              agregarEjercicio(
-                dia.id
-              )
-            }
+                (
+                  ejercicio:
+                    EjercicioRutina,
 
-            className="bg-gray-100 hover:bg-gray-200 transition px-4 py-3 rounded-xl"
-          >
-            + Agregar ejercicio configurado
-          </button>
+                  ejercicioIndex:
+                    number
+                ) => (
 
-          {/* LISTADO */}
+                  <EjercicioItem
+                    key={ejercicio.id}
 
-          <div className="flex flex-col gap-3">
+                    ejercicioId={
+                      ejercicio.ejercicioId
+                    }
 
-            {dia.ejercicios.map((
+                    materialId={
+                      ejercicio.materialId
+                    }
 
-              ejercicio:
-                EjercicioRutina,
+                    configuracion={
+                      ejercicio.configuracion
+                    }
 
-              ejercicioIndex:
-                number
+                    notas={
+                      ejercicio.notas
+                    }
 
-            ) => (
+                    seriesGlobales={
+                      seriesIniciales
+                    }
 
-              <EjercicioItem
-                key={ejercicio.id}
+                    repsGlobales={
+                      repsIniciales
+                    }
 
-                ejercicioId={
-                  ejercicio.ejercicioId
-                }
+                    puedeSubir={
+                      ejercicioIndex > 0
+                    }
 
-                materialId={
-                  ejercicio.materialId
-                }
+                    puedeBajar={
+                      ejercicioIndex <
+                      entrenamiento.ejercicios.length - 1
+                    }
 
-                configuracion={
-                  ejercicio.configuracion
-                }
+                    indiceSuperserie={
+                      ejercicio.configuracion.superserieId
+                    }
 
-                notas={
-                  ejercicio.notas
-                }
+                    onMoverArriba={() =>
+                      moverEjercicio(
+                        entrenamiento.id,
+                        ejercicioIndex,
+                        "arriba"
+                      )
+                    }
 
-                seriesGlobales={
-                  seriesIniciales
-                }
+                    onMoverAbajo={() =>
+                      moverEjercicio(
+                        entrenamiento.id,
+                        ejercicioIndex,
+                        "abajo"
+                      )
+                    }
 
-                repsGlobales={
-                  repsIniciales
-                }
+                    onToggleOverride={() => {}}
 
-                puedeSubir={
-                  ejercicioIndex > 0
-                }
+                    onConfiguracionChange={() => {}}
 
-                puedeBajar={
-                  ejercicioIndex <
-                  dia.ejercicios.length - 1
-                }
+                    onNotasChange={() => {}}
 
-                indiceSuperserie={
-                  ejercicio
-                    .configuracion
-                    .superserieId
-                }
+                    onEliminar={() =>
+                      eliminarEjercicio(
+                        entrenamiento.id,
+                        ejercicio.id
+                      )
+                    }
+                  />
+                )
+              )}
 
-                onMoverArriba={() =>
-                  moverEjercicio(
-                    dia.id,
-                    ejercicioIndex,
-                    "arriba"
-                  )
-                }
-
-                onMoverAbajo={() =>
-                  moverEjercicio(
-                    dia.id,
-                    ejercicioIndex,
-                    "abajo"
-                  )
-                }
-
-                onToggleOverride={() =>
-                  actualizarConfiguracion(
-                    dia.id,
-                    ejercicio.id,
-                    "overrideActivo",
-                    !ejercicio
-                      .configuracion
-                      .overrideActivo
-                  )
-                }
-
-                onConfiguracionChange={(
-
-                  campo:
-                    keyof ConfiguracionAvanzada,
-
-                  valor
-
-                ) =>
-
-                  actualizarConfiguracion(
-
-                    dia.id,
-
-                    ejercicio.id,
-
-                    campo,
-
-                    valor
-                  )
-                }
-
-                onNotasChange={(
-                  value
-                ) =>
-
-                  actualizarNotas(
-
-                    dia.id,
-
-                    ejercicio.id,
-
-                    value
-                  )
-                }
-
-                onEliminar={() =>
-                  eliminarEjercicio(
-                    dia.id,
-                    ejercicio.id
-                  )
-                }
-              />
-            ))}
+            </div>
 
           </div>
-
-        </div>
-      ))}
-
-      {/* NUEVO DÍA */}
+        )
+      )}
 
       <button
-        onClick={agregarDia}
+        onClick={
+          agregarEntrenamiento
+        }
+
         className="bg-blue-500 text-white px-5 py-4 rounded-xl"
       >
-        + Agregar día
+        + Agregar entrenamiento
       </button>
 
     </div>

@@ -1,43 +1,12 @@
 /*
 |--------------------------------------------------------------------------
-| CONFIGURACIÓN AVANZADA
+| PROGRESIÓN
 |--------------------------------------------------------------------------
 */
 
-export type ConfiguracionAvanzada = {
+export type ProgresionBloque = {
 
-  overrideActivo: boolean;
-
-  seriesOverride: number | null;
-
-  repsOverride: number | null;
-
-  rir: number | null;
-
-  tempo: string | null;
-
-  descansoSegundos: number | null;
-
-  usarTimer: boolean;
-
-  warmup: boolean;
-
-  dropset: boolean;
-
-  cluster: boolean;
-
-  superserieId: number | null;
-};
-
-/*
-|--------------------------------------------------------------------------
-| PROGRESIÓN SEMANAL
-|--------------------------------------------------------------------------
-*/
-
-export type SemanaProgresion = {
-
-  semana: number;
+  bloque: number;
 
   series: number;
 
@@ -46,7 +15,82 @@ export type SemanaProgresion = {
 
 /*
 |--------------------------------------------------------------------------
-| EJERCICIO RUTINA
+| OVERRIDE DE PROGRESIÓN
+|--------------------------------------------------------------------------
+|
+| Permite que un ejercicio tenga una progresión distinta
+| a la progresión global de la rutina.
+|
+*/
+
+export type OverrideProgresion = {
+
+  bloque: number;
+
+  series: number;
+
+  reps: number;
+};
+
+/*
+|--------------------------------------------------------------------------
+| CONFIGURACIÓN AVANZADA
+|--------------------------------------------------------------------------
+*/
+
+export type ConfiguracionAvanzada = {
+
+  /*
+  |----------------------------------------------------------------------
+  | PROGRESIÓN PERSONALIZADA
+  |----------------------------------------------------------------------
+  */
+
+  overrideActivo: boolean;
+
+  overrideProgresiones:
+    OverrideProgresion[];
+
+  /*
+  |----------------------------------------------------------------------
+  | INTENSIDAD
+  |----------------------------------------------------------------------
+  */
+
+  rir: number | null;
+
+  tempo: string | null;
+
+  /*
+  |----------------------------------------------------------------------
+  | DESCANSO
+  |----------------------------------------------------------------------
+  */
+
+  descansoSegundos:
+    number | null;
+
+  usarTimer: boolean;
+
+  /*
+  |----------------------------------------------------------------------
+  | TÉCNICAS
+  |----------------------------------------------------------------------
+  */
+
+  warmup: boolean;
+
+  dropset: boolean;
+
+  cluster: boolean;
+
+  superserieId:
+    number | null;
+};
+
+/*
+|--------------------------------------------------------------------------
+| EJERCICIO DE LA RUTINA
 |--------------------------------------------------------------------------
 */
 
@@ -66,7 +110,7 @@ export type EjercicioRutina = {
 
 /*
 |--------------------------------------------------------------------------
-| EJERCICIO DRAFT
+| DRAFT TEMPORAL DEL CONSTRUCTOR
 |--------------------------------------------------------------------------
 */
 
@@ -84,13 +128,23 @@ export type EjercicioDraft = {
 
 /*
 |--------------------------------------------------------------------------
-| DÍA
+| ENTRENAMIENTO
 |--------------------------------------------------------------------------
+|
+| Representa un entrenamiento reutilizable.
+|
+| NO representa:
+| Lunes
+| Martes
+| Miércoles
+|
 */
 
-export type DiaRutina = {
+export type EntrenamientoRutina = {
 
   id: number;
+
+  orden: number;
 
   ejercicios:
     EjercicioRutina[];
@@ -111,35 +165,39 @@ export type Rutina = {
   fechaInicio: string;
 
   /*
-  |--------------------------------------------------------------------------
-  | BLOQUE DE PROGRESIÓN
-  |--------------------------------------------------------------------------
-  |
-  | El entrenador lo verá como "Semanas"
-  | pero internamente representa las progresiones.
-  |
+  |----------------------------------------------------------------------
+  | ESTRUCTURA
+  |----------------------------------------------------------------------
   */
 
-  cantidadSemanas: number;
+  cantidadBloques: number;
+
+  entrenamientosPorBloque:
+    number;
 
   /*
-  |--------------------------------------------------------------------------
-  | CANTIDAD DE DÍAS DEL PLAN
-  |--------------------------------------------------------------------------
-  */
-
-  diasPorSemana: number;
-
-  /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | PROGRESIÓN GLOBAL
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
-  progresiones:
-    SemanaProgresion[];
+  progresionGlobal:
+    ProgresionBloque[];
+
+  /*
+  |----------------------------------------------------------------------
+  | ESTADO
+  |----------------------------------------------------------------------
+  */
 
   activa: boolean;
 
-  dias: DiaRutina[];
+  /*
+  |----------------------------------------------------------------------
+  | CONTENIDO
+  |----------------------------------------------------------------------
+  */
+
+  entrenamientos:
+    EntrenamientoRutina[];
 };

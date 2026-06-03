@@ -34,6 +34,17 @@ type Alumno = {
 |--------------------------------------------------------------------------
 | COMPONENTE
 |--------------------------------------------------------------------------
+|
+| Dashboard principal de rutinas.
+|
+| Lista todas las rutinas guardadas.
+| Permite:
+|
+| - Ver
+| - Editar
+| - Duplicar
+| - Crear nueva
+|
 */
 
 export default function RutinasPage() {
@@ -51,7 +62,7 @@ export default function RutinasPage() {
 
   /*
   |--------------------------------------------------------------------------
-  | CARGAR
+  | CARGAR RUTINAS
   |--------------------------------------------------------------------------
   */
 
@@ -77,7 +88,7 @@ export default function RutinasPage() {
 
   /*
   |--------------------------------------------------------------------------
-  | HELPERS
+  | BUSCAR ALUMNO
   |--------------------------------------------------------------------------
   */
 
@@ -95,7 +106,7 @@ export default function RutinasPage() {
 
   /*
   |--------------------------------------------------------------------------
-  | DUPLICAR
+  | DUPLICAR RUTINA
   |--------------------------------------------------------------------------
   */
 
@@ -103,37 +114,19 @@ export default function RutinasPage() {
     rutina: Rutina
   ) {
 
-    /*
-    |--------------------------------------------------------------------------
-    | NUEVO ALUMNO
-    |--------------------------------------------------------------------------
-    */
-
     const nuevoAlumnoId =
       prompt(
 
-        "Ingresar ID alumno.\n\nDejar vacío para mantener mismo alumno:",
+        "Ingresar ID alumno.\n\nDejar vacío para mantener el mismo alumno.",
 
         rutina.alumnoId
       );
-
-    /*
-    |--------------------------------------------------------------------------
-    | CANCELAR
-    |--------------------------------------------------------------------------
-    */
 
     if (
       nuevoAlumnoId === null
     ) {
       return;
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | NUEVA RUTINA
-    |--------------------------------------------------------------------------
-    */
 
     const nuevaRutina: Rutina = {
 
@@ -152,32 +145,14 @@ export default function RutinasPage() {
           .split("T")[0],
     };
 
-    /*
-    |--------------------------------------------------------------------------
-    | GUARDAR
-    |--------------------------------------------------------------------------
-    */
-
     agregarRutina(
       nuevaRutina
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | RECARGAR
-    |--------------------------------------------------------------------------
-    */
-
     cargarRutinas();
 
-    /*
-    |--------------------------------------------------------------------------
-    | ALERT
-    |--------------------------------------------------------------------------
-    */
-
     alert(
-      "Rutina duplicada"
+      "Rutina duplicada correctamente"
     );
   }
 
@@ -207,8 +182,13 @@ export default function RutinasPage() {
 
         </div>
 
+        {/* IMPORTANTE:
+            En Next NO se navega al archivo.
+            Se navega a la ruta.
+        */}
+
         <Link
-          href="/UsuarioInstructor/rutinas/nueva/page.tsx"
+          href="/UsuarioInstructor/rutinas/nueva"
           className="bg-blue-500 text-white px-5 py-3 rounded-xl"
         >
           + Nueva rutina
@@ -216,7 +196,7 @@ export default function RutinasPage() {
 
       </div>
 
-      {/* VACÍO */}
+      {/* SIN RUTINAS */}
 
       {rutinas.length === 0 && (
 
@@ -286,11 +266,11 @@ export default function RutinasPage() {
                 <div className="flex justify-between">
 
                   <span>
-                    Semanas
+                    Bloques
                   </span>
 
                   <span>
-                    {rutina.cantidadSemanas}
+                    {rutina.cantidadBloques}
                   </span>
 
                 </div>
@@ -298,11 +278,14 @@ export default function RutinasPage() {
                 <div className="flex justify-between">
 
                   <span>
-                    Días
+                    Entrenamientos
                   </span>
 
                   <span>
-                    {rutina.dias.length}
+                    {
+                      rutina.entrenamientos
+                        .length
+                    }
                   </span>
 
                 </div>
@@ -316,7 +299,7 @@ export default function RutinasPage() {
                 {/* VER */}
 
                 <Link
-                  href={`/rutinas/${rutina.id}`}
+                  href={`/UsuarioInstructor/rutinas/${rutina.id}`}
                   className="bg-blue-500 text-white rounded-xl py-3 text-center text-sm"
                 >
                   Ver
@@ -325,7 +308,7 @@ export default function RutinasPage() {
                 {/* EDITAR */}
 
                 <Link
-                  href={`/rutinas/${rutina.id}/editar`}
+                  href={`/UsuarioInstructor/rutinas/${rutina.id}/editar`}
                   className="border rounded-xl py-3 text-center text-sm"
                 >
                   Editar
@@ -339,7 +322,6 @@ export default function RutinasPage() {
                       rutina
                     )
                   }
-
                   className="border rounded-xl py-3 text-sm"
                 >
                   Duplicar

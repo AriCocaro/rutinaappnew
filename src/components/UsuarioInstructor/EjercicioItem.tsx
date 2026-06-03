@@ -3,7 +3,14 @@ import materiales from "@/data/materiales.json";
 
 import {
   ConfiguracionAvanzada,
+  OverrideProgresion,
 } from "@/types/rutinas";
+
+/*
+|--------------------------------------------------------------------------
+| PROPS
+|--------------------------------------------------------------------------
+*/
 
 type Props = {
 
@@ -15,6 +22,16 @@ type Props = {
     ConfiguracionAvanzada;
 
   notas: string;
+
+  /*
+  |--------------------------------------------------------------------------
+  | PROGRESIÓN GLOBAL
+  |--------------------------------------------------------------------------
+  |
+  | Más adelante probablemente llegue
+  | un array completo de bloques.
+  |
+  */
 
   seriesGlobales: number;
 
@@ -43,6 +60,7 @@ type Props = {
       | number
       | boolean
       | null
+      | OverrideProgresion[]
 
   ) => void;
 
@@ -52,6 +70,12 @@ type Props = {
 
   onEliminar: () => void;
 };
+
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+*/
 
 export default function EjercicioItem({
 
@@ -107,6 +131,111 @@ export default function EjercicioItem({
 
   /*
   |--------------------------------------------------------------------------
+  | OVERRIDE
+  |--------------------------------------------------------------------------
+  */
+
+  function agregarBloqueOverride() {
+
+    const siguienteBloque =
+
+      configuracion
+        .overrideProgresiones
+        .length + 1;
+
+    onConfiguracionChange(
+
+      "overrideProgresiones",
+
+      [
+
+        ...configuracion
+          .overrideProgresiones,
+
+        {
+          bloque:
+            siguienteBloque,
+
+          series:
+            seriesGlobales,
+
+          reps:
+            repsGlobales,
+        },
+      ]
+    );
+  }
+
+  function actualizarBloque(
+
+    index: number,
+
+    campo:
+      keyof OverrideProgresion,
+
+    valor: number
+
+  ) {
+
+    const nuevasProgresiones =
+
+      configuracion
+        .overrideProgresiones
+        .map(
+
+          (
+            bloque,
+            i
+          ) => {
+
+            if (
+              i !== index
+            ) {
+              return bloque;
+            }
+
+            return {
+
+              ...bloque,
+
+              [campo]:
+                valor,
+            };
+          }
+        );
+
+    onConfiguracionChange(
+
+      "overrideProgresiones",
+
+      nuevasProgresiones
+    );
+  }
+
+  function eliminarBloque(
+    index: number
+  ) {
+
+    const nuevasProgresiones =
+
+      configuracion
+        .overrideProgresiones
+        .filter(
+
+          (_, i) =>
+            i !== index
+        );
+
+    onConfiguracionChange(
+
+      "overrideProgresiones",
+
+      nuevasProgresiones
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
   | RENDER
   |--------------------------------------------------------------------------
   */
@@ -122,11 +251,15 @@ export default function EjercicioItem({
         <div>
 
           <h3 className="font-bold text-lg">
+
             {ejercicio?.nombre}
+
           </h3>
 
           <p className="text-sm text-gray-500">
+
             {material?.nombre}
+
           </p>
 
         </div>
@@ -136,7 +269,9 @@ export default function EjercicioItem({
           {puedeSubir && (
 
             <button
-              onClick={onMoverArriba}
+              onClick={
+                onMoverArriba
+              }
               className="border px-3 py-1 rounded-lg"
             >
               ↑
@@ -147,7 +282,9 @@ export default function EjercicioItem({
           {puedeBajar && (
 
             <button
-              onClick={onMoverAbajo}
+              onClick={
+                onMoverAbajo
+              }
               className="border px-3 py-1 rounded-lg"
             >
               ↓
@@ -156,7 +293,9 @@ export default function EjercicioItem({
           )}
 
           <button
-            onClick={onEliminar}
+            onClick={
+              onEliminar
+            }
             className="text-red-500 text-sm"
           >
             Eliminar
@@ -172,7 +311,8 @@ export default function EjercicioItem({
 
         <div className="bg-purple-100 text-purple-700 px-3 py-2 rounded-xl text-sm w-fit">
 
-          Superserie #{indiceSuperserie}
+          Superserie #
+          {indiceSuperserie}
 
         </div>
 
@@ -186,10 +326,13 @@ export default function EjercicioItem({
           type="checkbox"
 
           checked={
-            configuracion.overrideActivo
+            configuracion
+              .overrideActivo
           }
 
-          onChange={onToggleOverride}
+          onChange={
+            onToggleOverride
+          }
         />
 
         <span className="text-sm">
@@ -198,51 +341,143 @@ export default function EjercicioItem({
 
       </div>
 
-      {/* SERIES / REPS */}
+      {/* PROGRESIÓN PERSONALIZADA */}
 
-      {configuracion.overrideActivo && (
+      {configuracion
+        .overrideActivo && (
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="border rounded-xl p-4 flex flex-col gap-4">
 
-          <input
-            type="number"
+          <div className="flex items-center justify-between">
 
-            placeholder={`Series (${seriesGlobales})`}
+            <h4 className="font-semibold">
 
-            value={
-              configuracion.seriesOverride ??
-              ""
-            }
+              Progresión personalizada
 
-            onChange={(e) =>
-              onConfiguracionChange(
-                "seriesOverride",
-                Number(e.target.value)
+            </h4>
+
+            <button
+
+              onClick={
+                agregarBloqueOverride
+              }
+
+              className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm"
+            >
+              + Bloque
+            </button>
+
+          </div>
+
+          {configuracion
+            .overrideProgresiones
+            .map(
+
+              (
+                bloque,
+                index
+              ) => (
+
+                <div
+
+                  key={index}
+
+                  className="grid grid-cols-4 gap-3 items-center"
+                >
+
+                  {/* BLOQUE */}
+
+                  <input
+                    type="number"
+
+                    value={
+                      bloque.bloque
+                    }
+
+                    onChange={(e) =>
+                      actualizarBloque(
+
+                        index,
+
+                        "bloque",
+
+                        Number(
+                          e.target.value
+                        )
+                      )
+                    }
+
+                    className="border rounded-xl px-3 py-2"
+                  />
+
+                  {/* SERIES */}
+
+                  <input
+                    type="number"
+
+                    value={
+                      bloque.series
+                    }
+
+                    onChange={(e) =>
+                      actualizarBloque(
+
+                        index,
+
+                        "series",
+
+                        Number(
+                          e.target.value
+                        )
+                      )
+                    }
+
+                    className="border rounded-xl px-3 py-2"
+                  />
+
+                  {/* REPS */}
+
+                  <input
+                    type="number"
+
+                    value={
+                      bloque.reps
+                    }
+
+                    onChange={(e) =>
+                      actualizarBloque(
+
+                        index,
+
+                        "reps",
+
+                        Number(
+                          e.target.value
+                        )
+                      )
+                    }
+
+                    className="border rounded-xl px-3 py-2"
+                  />
+
+                  {/* ELIMINAR */}
+
+                  <button
+
+                    onClick={() =>
+                      eliminarBloque(
+                        index
+                      )
+                    }
+
+                    className="text-red-500"
+                  >
+                    Eliminar
+                  </button>
+
+                </div>
               )
-            }
-
-            className="border rounded-xl px-4 py-3"
-          />
-
-          <input
-            type="number"
-
-            placeholder={`Reps (${repsGlobales})`}
-
-            value={
-              configuracion.repsOverride ??
-              ""
-            }
-
-            onChange={(e) =>
-              onConfiguracionChange(
-                "repsOverride",
-                Number(e.target.value)
-              )
-            }
-
-            className="border rounded-xl px-4 py-3"
-          />
+            )}
 
         </div>
 
@@ -267,7 +502,9 @@ export default function EjercicioItem({
           onChange={(e) =>
             onConfiguracionChange(
               "rir",
-              Number(e.target.value)
+              Number(
+                e.target.value
+              )
             )
           }
 
@@ -304,52 +541,30 @@ export default function EjercicioItem({
           placeholder="Descanso"
 
           value={
-            configuracion.descansoSegundos ??
+            configuracion
+              .descansoSegundos ??
             ""
           }
 
           onChange={(e) =>
             onConfiguracionChange(
               "descansoSegundos",
-              Number(e.target.value)
+              Number(
+                e.target.value
+              )
             )
           }
 
           className="border rounded-xl px-4 py-3"
         />
 
-        {/* TIMER */}
-
-        <label className="flex items-center gap-2 text-sm">
-
-          <input
-            type="checkbox"
-
-            checked={
-              configuracion.usarTimer
-            }
-
-            onChange={(e) =>
-              onConfiguracionChange(
-                "usarTimer",
-                e.target.checked
-              )
-            }
-          />
-
-          Timer
-
-        </label>
-
       </div>
 
-      {/* EXTRAS */}
+      {/* TÉCNICAS */}
 
       <div className="flex flex-wrap gap-5">
 
-        {/* WARMUP */}
-
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2">
 
           <input
             type="checkbox"
@@ -370,9 +585,7 @@ export default function EjercicioItem({
 
         </label>
 
-        {/* DROPSET */}
-
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2">
 
           <input
             type="checkbox"
@@ -393,9 +606,7 @@ export default function EjercicioItem({
 
         </label>
 
-        {/* CLUSTER */}
-
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2">
 
           <input
             type="checkbox"
@@ -418,53 +629,45 @@ export default function EjercicioItem({
 
       </div>
 
-      {/* SUPERSERIES */}
+      {/* SUPERSERIE */}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
 
-        <span className="text-sm font-medium">
-          Superserie
-        </span>
+        <button
+          onClick={() =>
+            onConfiguracionChange(
+              "superserieId",
+              1
+            )
+          }
+          className="border px-3 py-2 rounded-xl"
+        >
+          SS1
+        </button>
 
-        <div className="flex gap-2">
+        <button
+          onClick={() =>
+            onConfiguracionChange(
+              "superserieId",
+              2
+            )
+          }
+          className="border px-3 py-2 rounded-xl"
+        >
+          SS2
+        </button>
 
-          <button
-            onClick={() =>
-              onConfiguracionChange(
-                "superserieId",
-                1
-              )
-            }
-            className="border px-3 py-2 rounded-xl text-sm"
-          >
-            SS1
-          </button>
-
-          <button
-            onClick={() =>
-              onConfiguracionChange(
-                "superserieId",
-                2
-              )
-            }
-            className="border px-3 py-2 rounded-xl text-sm"
-          >
-            SS2
-          </button>
-
-          <button
-            onClick={() =>
-              onConfiguracionChange(
-                "superserieId",
-                null
-              )
-            }
-            className="border px-3 py-2 rounded-xl text-sm"
-          >
-            Quitar
-          </button>
-
-        </div>
+        <button
+          onClick={() =>
+            onConfiguracionChange(
+              "superserieId",
+              null
+            )
+          }
+          className="border px-3 py-2 rounded-xl"
+        >
+          Quitar
+        </button>
 
       </div>
 
