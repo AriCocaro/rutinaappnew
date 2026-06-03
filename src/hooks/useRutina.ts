@@ -7,7 +7,10 @@ import {
   EntrenamientoRutina,
   Rutina,
   ProgresionBloque,
+  ValorConfiguracion,
 } from "@/types/rutinas";
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -223,15 +226,11 @@ export function useRutina(
 
   function actualizarDraftConfig(
 
-    campo:
-      keyof ConfiguracionAvanzada,
+  campo:
+    keyof ConfiguracionAvanzada,
 
-    valor:
-      | string
-      | number
-      | boolean
-      | null
-      | ProgresionBloque[]
+  valor: ValorConfiguracion
+
   ) {
 
     setDraft({
@@ -431,12 +430,15 @@ export function useRutina(
       nuevosEntrenamientos
     );
   }
-
   /*
-  |--------------------------------------------------------------------------
-  | CONFIGURACIÓN
-  |--------------------------------------------------------------------------
-  */
+|--------------------------------------------------------------------------
+| CONFIGURACIÓN
+|--------------------------------------------------------------------------
+|
+| Actualiza cualquier propiedad de
+| ConfiguracionAvanzada para un ejercicio.
+|
+*/
 
   function actualizarConfiguracion(
 
@@ -448,11 +450,8 @@ export function useRutina(
       keyof ConfiguracionAvanzada,
 
     valor:
-      | string
-      | number
-      | boolean
-      | null
-      | ProgresionBloque[]
+      ValorConfiguracion
+
   ) {
 
     const nuevosEntrenamientos =

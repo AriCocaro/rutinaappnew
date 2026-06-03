@@ -34,6 +34,29 @@ export type OverrideProgresion = {
 
 /*
 |--------------------------------------------------------------------------
+| VALOR CONFIGURACIÓN
+|--------------------------------------------------------------------------
+|
+| Tipo reutilizable para cualquier
+| modificación de ConfiguracionAvanzada.
+|
+*/
+
+export type ValorConfiguracion =
+
+  | string
+
+  | number
+
+  | boolean
+
+  | null
+
+  | ProgresionBloque[];
+
+
+/*
+|--------------------------------------------------------------------------
 | CONFIGURACIÓN AVANZADA
 |--------------------------------------------------------------------------
 */

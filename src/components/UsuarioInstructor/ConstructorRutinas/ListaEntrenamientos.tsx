@@ -4,6 +4,7 @@ import {
   EntrenamientoRutina,
   ConfiguracionAvanzada,
   EjercicioRutina,
+  ValorConfiguracion,
 } from "@/types/rutinas";
 
 import EntrenamientoCard from "./EntrenamientoCard";
@@ -45,19 +46,32 @@ type Props = {
     entrenamientoId: number,
     ejercicioId: number
   ) => void;
+  
+    /*
+|--------------------------------------------------------------------------
+| ACTUALIZAR CONFIGURACIÓN
+|--------------------------------------------------------------------------
+|
+| Permite modificar cualquier
+| propiedad de ConfiguracionAvanzada.
+|
+*/
 
   actualizarConfiguracion: (
 
-    entrenamientoId: number,
+      entrenamientoId: number,
 
-    ejercicioId: number,
+      ejercicioId: number,
 
-    campo:
-      keyof ConfiguracionAvanzada,
+      campo:
+        keyof ConfiguracionAvanzada,
 
-    valor: unknown
+      valor:
+        ValorConfiguracion
 
-  ) => void;
+    ) => void;
+    
+ 
 
   actualizarNotas: (
 
