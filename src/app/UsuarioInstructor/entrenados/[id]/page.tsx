@@ -8,6 +8,10 @@ import {
   obtenerRutinas,
 } from "@/lib/rutinasStorage";
 
+import {
+  useBranding,
+} from "@/hooks/useBranding";
+
 /*
 |--------------------------------------------------------------------------
 | COMPONENTE
@@ -27,6 +31,15 @@ export default function AlumnoDetallePage() {
 
   const alumnoId =
     String(params.id);
+
+  /*
+  |--------------------------------------------------------------------------
+  | BRANDING
+  |--------------------------------------------------------------------------
+  */
+
+  const branding =
+    useBranding();
 
   /*
   |--------------------------------------------------------------------------
@@ -52,8 +65,11 @@ export default function AlumnoDetallePage() {
   const rutinaActiva =
     rutinas.find(
       (rutina) =>
+
         rutina.alumnoId ===
-        alumnoId
+          alumnoId &&
+
+        rutina.activa
     );
 
   /*
@@ -66,8 +82,12 @@ export default function AlumnoDetallePage() {
 
     return (
 
-      <div>
-        Alumno no encontrado
+      <div className="p-6">
+
+        {branding.alumno}
+        {" "}
+        no encontrado
+
       </div>
 
     );
@@ -83,9 +103,9 @@ export default function AlumnoDetallePage() {
 
     <div className="flex flex-col gap-6">
 
-      {/* ===================================================== */}
+      {/* ====================================================== */}
       {/* DATOS DEL ALUMNO */}
-      {/* ===================================================== */}
+      {/* ====================================================== */}
 
       <div className="bg-white rounded-2xl p-6 border">
 
@@ -107,15 +127,17 @@ export default function AlumnoDetallePage() {
 
       </div>
 
-      {/* ===================================================== */}
+      {/* ====================================================== */}
       {/* RUTINA ACTIVA */}
-      {/* ===================================================== */}
+      {/* ====================================================== */}
 
       <div className="bg-white rounded-2xl p-6 border">
 
         <h2 className="text-xl font-bold mb-4">
 
-          Rutina activa
+          {branding.rutina}
+          {" "}
+          activa
 
         </h2>
 
@@ -137,7 +159,7 @@ export default function AlumnoDetallePage() {
 
             <p>
 
-              Bloques:
+              {branding.bloque}s:
               {" "}
               {rutinaActiva.cantidadBloques}
 
@@ -147,17 +169,23 @@ export default function AlumnoDetallePage() {
 
             <p>
 
-              Entrenamientos por bloque:
+              {branding.entrenamiento}s
+              {" "}
+              por
+              {" "}
+              {branding.bloque.toLowerCase()}:
               {" "}
               {rutinaActiva.entrenamientosPorBloque}
 
             </p>
 
-            {/* CANTIDAD DE ENTRENAMIENTOS */}
+            {/* ENTRENAMIENTOS CARGADOS */}
 
             <p>
 
-              Entrenamientos cargados:
+              {branding.entrenamiento}s
+              {" "}
+              cargados:
               {" "}
               {rutinaActiva.entrenamientos.length}
 
@@ -169,6 +197,7 @@ export default function AlumnoDetallePage() {
 
               Estado:
               {" "}
+
               {rutinaActiva.activa
                 ? "Activa"
                 : "Inactiva"}
@@ -181,7 +210,7 @@ export default function AlumnoDetallePage() {
 
           <p className="text-gray-500">
 
-            Sin rutina asignada
+            {branding.sinRutina}
 
           </p>
 
@@ -189,15 +218,17 @@ export default function AlumnoDetallePage() {
 
       </div>
 
-      {/* ===================================================== */}
+      {/* ====================================================== */}
       {/* HISTORIAL */}
-      {/* ===================================================== */}
+      {/* ====================================================== */}
 
       <div className="bg-white rounded-2xl p-6 border">
 
         <h2 className="text-xl font-bold">
 
-          Últimos entrenamientos
+          Últimos
+          {" "}
+          {branding.entrenamiento.toLowerCase()}s
 
         </h2>
 

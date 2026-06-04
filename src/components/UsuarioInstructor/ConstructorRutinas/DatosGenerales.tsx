@@ -4,6 +4,8 @@ import alumnosData from "@/data/alumnos.json";
 
 import SearchSelect from "@/components/ui/SearchSelect";
 
+import { useBranding } from "@/hooks/useBranding";
+
 /*
 |--------------------------------------------------------------------------
 | TYPES
@@ -65,8 +67,8 @@ type Props = {
 |
 | - Fecha de inicio
 | - Alumno
-| - Cantidad de semanas
-| - Cantidad de días por semana
+| - Cantidad de bloques
+| - Cantidad de entrenamientos
 |
 | No contiene lógica de progresión
 | ni lógica de ejercicios.
@@ -93,6 +95,30 @@ export default function DatosGenerales({
 
 }: Props) {
 
+  /*
+  |----------------------------------------------------------------------
+  | BRANDING
+  |----------------------------------------------------------------------
+  |
+  | Permite adaptar el vocabulario
+  | según el cliente:
+  |
+  | Alumno / Cliente / Atleta
+  | Rutina / Plan
+  | Bloque / Semana / Mesociclo
+  | Entrenamiento / Sesión
+  |
+  */
+
+  const branding =
+    useBranding();
+
+  /*
+  |----------------------------------------------------------------------
+  | RENDER
+  |----------------------------------------------------------------------
+  */
+
   return (
 
     <div className="border rounded-2xl p-5 bg-white flex flex-col gap-5">
@@ -109,7 +135,8 @@ export default function DatosGenerales({
 
         <p className="text-sm text-gray-500">
 
-          Configuración inicial de la rutina
+          Configuración inicial de la{" "}
+          {branding.rutina.toLowerCase()}
 
         </p>
 
@@ -119,7 +146,9 @@ export default function DatosGenerales({
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
-        {/* FECHA */}
+        {/* ====================================================== */}
+        {/* FECHA DE INICIO                                        */}
+        {/* ====================================================== */}
 
         <div className="flex flex-col gap-2">
 
@@ -145,13 +174,15 @@ export default function DatosGenerales({
 
         </div>
 
-        {/* ALUMNO */}
+        {/* ====================================================== */}
+        {/* ALUMNO                                                 */}
+        {/* ====================================================== */}
 
         <div className="flex flex-col gap-2">
 
           <label className="text-sm font-medium">
 
-            Entrenado
+            {branding.alumno}
 
           </label>
 
@@ -177,18 +208,23 @@ export default function DatosGenerales({
               )
             }
 
-            placeholder="Elegir entrenado..."
+            placeholder={
+              `Elegir ${branding.alumno.toLowerCase()}...`
+            }
           />
 
         </div>
 
-        {/* BLOQUES */}
+        {/* ====================================================== */}
+        {/* BLOQUES                                                */}
+        {/* ====================================================== */}
 
         <div className="flex flex-col gap-2">
 
           <label className="text-sm font-medium">
 
-            Cantidad de semanas
+            Cantidad de{" "}
+            {branding.bloque.toLowerCase()}
 
           </label>
 
@@ -213,20 +249,25 @@ export default function DatosGenerales({
               )
             }
 
-            placeholder="Cantidad de semanas"
+            placeholder={
+              `Cantidad de ${branding.bloque.toLowerCase()}`
+            }
 
             className="border rounded-xl px-4 py-3"
           />
 
         </div>
 
-        {/* ENTRENAMIENTOS */}
+        {/* ====================================================== */}
+        {/* ENTRENAMIENTOS                                         */}
+        {/* ====================================================== */}
 
         <div className="flex flex-col gap-2">
 
           <label className="text-sm font-medium">
 
-            Cantidad de días por semana
+            Cantidad de{" "}
+            {branding.entrenamiento.toLowerCase()}
 
           </label>
 
@@ -251,7 +292,9 @@ export default function DatosGenerales({
               )
             }
 
-            placeholder="Cantidad de días por semana"
+            placeholder={
+              `Cantidad de ${branding.entrenamiento.toLowerCase()}`
+            }
 
             className="border rounded-xl px-4 py-3"
           />

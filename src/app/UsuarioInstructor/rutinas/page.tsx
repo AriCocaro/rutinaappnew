@@ -15,6 +15,9 @@ import {
   Rutina,
 } from "@/types/rutinas";
 
+import { useBranding } from "@/hooks/useBranding";
+const branding = useBranding();
+
 /*
 |--------------------------------------------------------------------------
 | TYPES
@@ -118,7 +121,7 @@ export default function RutinasPage() {
     const nuevoAlumnoId =
       prompt(
 
-        "Ingresar ID alumno.\n\nDejar vacío para mantener el mismo alumno.",
+        `Ingresar ID ${branding.alumno.toLowerCase()}.\n\nDejar vacío para mantener el mismo.`,
 
         rutina.alumnoId
       );
@@ -161,7 +164,8 @@ export default function RutinasPage() {
     cargarRutinas();
 
     alert(
-      "Rutina duplicada correctamente"
+      alert(
+      `${branding.rutina} duplicado`)
     );
   }
 
@@ -182,14 +186,15 @@ export default function RutinasPage() {
       <div className="flex items-center justify-between">
 
         <div>
-
           <h1 className="text-3xl font-bold">
-            Rutinas
+            {branding.rutina}
           </h1>
 
           <p className="text-gray-500">
-            Dashboard entrenador
+            Dashboard {branding.entrenador.toLowerCase()}
           </p>
+
+
 
         </div>
 
@@ -203,7 +208,7 @@ export default function RutinasPage() {
             rounded-xl
           "
         >
-          + Nueva rutina
+          + Nueva {branding.rutina.toLowerCase()}
         </Link>
 
       </div>
@@ -224,7 +229,7 @@ export default function RutinasPage() {
           "
         >
 
-          No hay rutinas guardadas
+          No hay {branding.rutina.toLowerCase()}
 
         </div>
 
@@ -341,7 +346,8 @@ export default function RutinasPage() {
                 <div className="flex justify-between">
 
                   <span>
-                    Bloques
+                   {branding.bloque}
+
                   </span>
 
                   <span>
@@ -353,7 +359,7 @@ export default function RutinasPage() {
                 <div className="flex justify-between">
 
                   <span>
-                    Entrenamientos
+                    {branding.entrenamiento}
                   </span>
 
                   <span>

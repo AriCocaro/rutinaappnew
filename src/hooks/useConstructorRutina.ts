@@ -28,6 +28,12 @@ type Props = {
 | - Entrenamientos por bloque
 | - Progresión global
 |
+| Si existe rutinaInicial:
+|   carga los datos guardados.
+|
+| Si NO existe:
+|   inicia el formulario vacío.
+|
 */
 
 export function useConstructorRutina({
@@ -38,16 +44,23 @@ export function useConstructorRutina({
   |--------------------------------------------------------------------------
   | ALUMNO
   |--------------------------------------------------------------------------
+  |
+  | En edición:
+  |   utiliza el alumno guardado.
+  |
+  | En creación:
+  |   comienza sin seleccionar.
+  |
   */
 
   const [
     alumnoId,
     setAlumnoId,
-  ] = useState(
+  ] = useState<string>(
 
     rutinaInicial?.alumnoId ??
 
-    "alumno_001"
+    ""
   );
 
   /*
@@ -59,7 +72,7 @@ export function useConstructorRutina({
   const [
     fechaInicio,
     setFechaInicio,
-  ] = useState(
+  ] = useState<string>(
 
     rutinaInicial?.fechaInicio ??
 
@@ -71,11 +84,16 @@ export function useConstructorRutina({
   | CANTIDAD DE BLOQUES
   |--------------------------------------------------------------------------
   |
-  | Bloque = Semana.
+  | Representa la duración del plan.
   |
-  | Valor inicial:
-  | - Rutina existente => valor guardado
-  | - Rutina nueva => 4 semanas sugeridas
+  | Ejemplos:
+  |
+  | 4 bloques
+  | 6 bloques
+  | 8 bloques
+  |
+  | En creación:
+  |   inicia vacío.
   |
   */
 
@@ -86,7 +104,7 @@ export function useConstructorRutina({
 
     rutinaInicial?.cantidadBloques ??
 
-    4
+    null
   );
 
   /*
@@ -94,8 +112,21 @@ export function useConstructorRutina({
   | ENTRENAMIENTOS POR BLOQUE
   |--------------------------------------------------------------------------
   |
-  | Cantidad de entrenamientos distintos
-  | que se repetirán dentro del bloque.
+  | Cantidad de entrenamientos
+  | distintos que tendrá el bloque.
+  |
+  | Ejemplo:
+  |
+  | Bloque:
+  |   4 semanas
+  |
+  | Entrenamientos:
+  |   A
+  |   B
+  |   C
+  |
+  | Valor:
+  |   3
   |
   */
 
@@ -107,10 +138,7 @@ export function useConstructorRutina({
     rutinaInicial
       ?.entrenamientosPorBloque ??
 
-    rutinaInicial
-      ?.entrenamientos.length ??
-
-    3
+    null
   );
 
   /*
@@ -118,13 +146,17 @@ export function useConstructorRutina({
   | PROGRESIÓN GLOBAL
   |--------------------------------------------------------------------------
   |
-  | NO generamos progresiones automáticas.
+  | Define la progresión principal
+  | del plan.
   |
-  | El instructor decide:
+  | Cada bloque puede contener:
   |
-  | - Cuántos bloques usar.
-  | - Qué series usar.
-  | - Qué repeticiones usar.
+  | - series
+  | - reps
+  |
+  | Se configura desde:
+  |
+  | ProgresionGlobal.tsx
   |
   */
 
@@ -148,45 +180,45 @@ export function useConstructorRutina({
   return {
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | ALUMNO
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     alumnoId,
     setAlumnoId,
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | FECHA
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     fechaInicio,
     setFechaInicio,
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | BLOQUES
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     cantidadBloques,
     setCantidadBloques,
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | ENTRENAMIENTOS
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     entrenamientosPorBloque,
     setEntrenamientosPorBloque,
 
     /*
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     | PROGRESIÓN
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
     */
 
     progresionGlobal,

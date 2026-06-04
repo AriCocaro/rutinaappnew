@@ -4,23 +4,69 @@ import Link from "next/link";
 
 import alumnos from "@/data/alumnos.json";
 
+import {
+  useBranding,
+} from "@/hooks/useBranding";
+
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+*/
+
 export default function AlumnosPage() {
+
+  /*
+  |--------------------------------------------------------------------------
+  | BRANDING
+  |--------------------------------------------------------------------------
+  |
+  | Permite cambiar nombres según el cliente:
+  |
+  | Alumno
+  | Cliente
+  | Deportista
+  | Atleta
+  |
+  */
+
+  const branding =
+    useBranding();
+
+  /*
+  |--------------------------------------------------------------------------
+  | RENDER
+  |--------------------------------------------------------------------------
+  */
 
   return (
 
     <div className="flex flex-col gap-6">
 
+      {/* ====================================================== */}
+      {/* HEADER */}
+      {/* ====================================================== */}
+
       <div>
 
         <h1 className="text-3xl font-bold">
-          Alumnos
+
+          {branding.alumno}s
+
         </h1>
 
         <p className="text-gray-500">
-          Gestionar alumnos
+
+          Gestionar{" "}
+          {branding.alumno.toLowerCase()}s
+
         </p>
 
       </div>
+
+      {/* ====================================================== */}
+      {/* LISTADO */}
+      {/* ====================================================== */}
 
       <div className="grid gap-4">
 
@@ -38,6 +84,8 @@ export default function AlumnosPage() {
             "
           >
 
+            {/* NOMBRE */}
+
             <h2 className="font-semibold">
 
               {alumno.nombre}
@@ -46,8 +94,12 @@ export default function AlumnosPage() {
 
             </h2>
 
+            {/* ID */}
+
             <p className="text-sm text-gray-500">
+
               {alumno.id}
+
             </p>
 
           </Link>
