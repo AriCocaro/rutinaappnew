@@ -37,13 +37,9 @@ import {
 */
 
 import HeaderConstructor from "./HeaderConstructor";
-
 import DatosGenerales from "./DatosGenerales";
-
 import ProgresionGlobal from "./ProgresionGlobal";
-
 import ConfiguradorEjercicio from "./ConfiguradorEjercicio";
-
 import ListaEntrenamientos from "./ListaEntrenamientos";
 
 /*
@@ -62,10 +58,8 @@ type Props = {
 |--------------------------------------------------------------------------
 */
 
-export default function IndexConstructor({
-
+export default function ConstructorRutina({
   rutinaInicial,
-
 }: Props) {
 
   /*
@@ -75,7 +69,6 @@ export default function IndexConstructor({
   */
 
   const {
-
     alumnoId,
     setAlumnoId,
 
@@ -92,9 +85,7 @@ export default function IndexConstructor({
     setProgresionGlobal,
 
   } = useConstructorRutina({
-
     rutinaInicial,
-
   });
 
   /*
@@ -104,29 +95,22 @@ export default function IndexConstructor({
   */
 
   const {
-
     entrenamientos,
 
     draft,
 
     agregarEntrenamiento,
-
     eliminarEntrenamiento,
 
     actualizarDraft,
-
     actualizarDraftConfig,
-
     actualizarDraftNotas,
 
     agregarEjercicio,
-
     moverEjercicio,
-
     eliminarEjercicio,
 
     actualizarConfiguracion,
-
     actualizarNotas,
 
     generarRutina,
@@ -137,16 +121,45 @@ export default function IndexConstructor({
 
   /*
   |--------------------------------------------------------------------------
-  | GUARDAR
+  | GUARDAR RUTINA
   |--------------------------------------------------------------------------
   */
 
   function guardarRutina() {
 
-    if (
-      !cantidadBloques ||
-      !entrenamientosPorBloque
-    ) {
+    if (!alumnoId) {
+
+      alert(
+        "Seleccionar entrenado"
+      );
+
+      return;
+    }
+
+    if (!fechaInicio) {
+
+      alert(
+        "Seleccionar fecha de inicio"
+      );
+
+      return;
+    }
+
+    if (!cantidadBloques) {
+
+      alert(
+        "Ingresar cantidad de bloques"
+      );
+
+      return;
+    }
+
+    if (!entrenamientosPorBloque) {
+
+      alert(
+        "Ingresar cantidad de días por bloque"
+      );
+
       return;
     }
 
@@ -165,12 +178,17 @@ export default function IndexConstructor({
     });
 
     if (!rutina) {
+
+      alert(
+        "No se pudo generar la rutina"
+      );
+
       return;
     }
 
     /*
     |--------------------------------------------------------------------------
-    | EDITAR
+    | ACTUALIZAR
     |--------------------------------------------------------------------------
     */
 
@@ -181,7 +199,7 @@ export default function IndexConstructor({
       );
 
       alert(
-        "Rutina actualizada"
+        "Rutina actualizada correctamente"
       );
 
       return;
@@ -198,7 +216,7 @@ export default function IndexConstructor({
     );
 
     alert(
-      "Rutina creada"
+      "Rutina creada correctamente"
     );
   }
 
@@ -207,20 +225,34 @@ export default function IndexConstructor({
   | SERIES Y REPS GLOBALES
   |--------------------------------------------------------------------------
   |
-  | Se usan para mostrar en
-  | EjercicioItem.
+  | Se utilizan como referencia visual
+  | para los ejercicios.
   |
   */
 
   const seriesGlobales =
-
-    progresionGlobal?.[0]
-      ?.series ?? 0;
+    progresionGlobal?.[0]?.series ?? 0;
 
   const repsGlobales =
+    progresionGlobal?.[0]?.reps ?? 0;
 
-    progresionGlobal?.[0]
-      ?.reps ?? 0;
+  /*
+  |--------------------------------------------------------------------------
+  | RESUMEN DE DÍAS
+  |--------------------------------------------------------------------------
+  */
+
+  const maxDias =
+    entrenamientosPorBloque ?? 0;
+
+  const diasActuales =
+    entrenamientos.length;
+
+  const diasFaltantes =
+    Math.max(
+      0,
+      maxDias - diasActuales
+    );
 
   /*
   |--------------------------------------------------------------------------
@@ -233,30 +265,17 @@ export default function IndexConstructor({
     <div className="flex flex-col gap-6">
 
       <HeaderConstructor
-
-        rutinaInicial={
-          rutinaInicial
-        }
-
-        onGuardar={
-          guardarRutina
-        }
-
+        rutinaInicial={rutinaInicial}
+        onGuardar={guardarRutina}
       />
 
       <DatosGenerales
 
-        fechaInicio={
-          fechaInicio
-        }
+        fechaInicio={fechaInicio}
 
-        alumnoId={
-          alumnoId
-        }
+        alumnoId={alumnoId}
 
-        cantidadBloques={
-          cantidadBloques
-        }
+        cantidadBloques={cantidadBloques}
 
         entrenamientosPorBloque={
           entrenamientosPorBloque
@@ -354,6 +373,76 @@ export default function IndexConstructor({
 
       />
 
+      {/* ----------------------------------------------------- */}
+      {/* RESUMEN                                               */}
+      {/* ----------------------------------------------------- */}
+
+      {maxDias > 0 && (
+
+        <div
+          className="
+            border
+            rounded-xl
+            p-4
+            bg-gray-50
+          "
+        >
+
+          <div className="font-medium">
+
+            Días configurados:
+            {" "}
+            {diasActuales}
+            {" / "}
+            {maxDias}
+
+          </div>
+
+          {diasFaltantes > 0 && (
+
+            <div
+              className="
+                text-sm
+                text-amber-600
+                mt-1
+              "
+            >
+
+              Faltan
+              {" "}
+              {diasFaltantes}
+              {" "}
+              día(s) para completar
+              la planificación.
+
+            </div>
+
+          )}
+
+          {diasFaltantes === 0 && (
+
+            <div
+              className="
+                text-sm
+                text-green-600
+                mt-1
+              "
+            >
+
+              Rutina completa.
+
+            </div>
+
+          )}
+
+        </div>
+
+      )}
+
+      {/* ----------------------------------------------------- */}
+      {/* CREAR DÍA                                             */}
+      {/* ----------------------------------------------------- */}
+
       <button
 
         onClick={
@@ -369,10 +458,34 @@ export default function IndexConstructor({
         "
       >
 
-        + Agregar entrenamiento
+        + Crear Día
+
+      </button>
+
+      {/* ----------------------------------------------------- */}
+      {/* GUARDAR                                               */}
+      {/* ----------------------------------------------------- */}
+
+      <button
+
+        onClick={
+          guardarRutina
+        }
+
+        className="
+          bg-green-600
+          text-white
+          rounded-xl
+          px-5
+          py-4
+        "
+      >
+
+        Guardar rutina
 
       </button>
 
     </div>
+
   );
 }

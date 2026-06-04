@@ -54,7 +54,6 @@ export type ValorConfiguracion =
 
   | ProgresionBloque[];
 
-
 /*
 |--------------------------------------------------------------------------
 | CONFIGURACIÓN AVANZADA
@@ -135,6 +134,10 @@ export type EjercicioRutina = {
 |--------------------------------------------------------------------------
 | DRAFT TEMPORAL DEL CONSTRUCTOR
 |--------------------------------------------------------------------------
+|
+| Es el ejercicio temporal que el instructor configura
+| antes de agregarlo a un entrenamiento.
+|
 */
 
 export type EjercicioDraft = {
@@ -175,6 +178,31 @@ export type EntrenamientoRutina = {
 
 /*
 |--------------------------------------------------------------------------
+| ESTADO DE LA RUTINA
+|--------------------------------------------------------------------------
+|
+| en proceso:
+| La rutina todavía está en construcción.
+|
+| completa:
+| La rutina tiene todos los días cargados.
+|
+*/
+
+/*
+|--------------------------------------------------------------------------
+| ESTADO DE LA RUTINA
+|--------------------------------------------------------------------------
+*/
+
+export type EstadoRutina =
+
+  | "en_proceso"
+
+  | "completa";
+
+/*
+|--------------------------------------------------------------------------
 | RUTINA
 |--------------------------------------------------------------------------
 */
@@ -195,8 +223,7 @@ export type Rutina = {
 
   cantidadBloques: number;
 
-  entrenamientosPorBloque:
-    number;
+  entrenamientosPorBloque: number;
 
   /*
   |----------------------------------------------------------------------
@@ -215,6 +242,10 @@ export type Rutina = {
 
   activa: boolean;
 
+  estado: EstadoRutina;
+
+  fechaUltimaEdicion: string;
+
   /*
   |----------------------------------------------------------------------
   | CONTENIDO
@@ -223,4 +254,4 @@ export type Rutina = {
 
   entrenamientos:
     EntrenamientoRutina[];
-};
+}

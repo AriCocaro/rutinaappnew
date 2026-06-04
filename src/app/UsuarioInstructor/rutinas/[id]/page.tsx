@@ -150,11 +150,15 @@ export default function RutinaDetallePage() {
 
                       <div className="text-sm">
 
-                        {progresionBase?.series}
-                        {" x "}
-                        {progresionBase?.reps}
+                        
+
+                        Ver progresión semanal
 
                       </div>
+                        
+                        
+
+                      
 
                       {ejercicio.notas && (
 

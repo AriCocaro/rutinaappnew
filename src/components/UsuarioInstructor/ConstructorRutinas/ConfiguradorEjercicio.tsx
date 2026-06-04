@@ -261,9 +261,7 @@ export default function ConfiguradorEjercicio({
             )
           }
 
-          selectedId={
-            draft.ejercicioId
-          }
+          selectedId=""
 
           onSelect={(id) =>
             actualizarDraft(
@@ -295,9 +293,7 @@ export default function ConfiguradorEjercicio({
             )
           }
 
-          selectedId={
-            draft.materialId
-          }
+          selectedId=""
 
           onSelect={(id) =>
             actualizarDraft(

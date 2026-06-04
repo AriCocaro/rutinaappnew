@@ -78,12 +78,11 @@ const configuracionBase: ConfiguracionAvanzada = {
 | antes de agregarlo a un entrenamiento.
 |
 */
+ const draftBase: EjercicioDraft = {
 
-const draftBase: EjercicioDraft = {
+  ejercicioId: 0,
 
-  ejercicioId: 1,
-
-  materialId: 1,
+  materialId: 0,
 
   notas: "",
 
@@ -91,6 +90,7 @@ const draftBase: EjercicioDraft = {
     ...configuracionBase,
   },
 };
+
 
 /*
 |--------------------------------------------------------------------------
@@ -111,24 +111,15 @@ export function useRutina(
   | Ahora representan estructuras de entrenamiento.
   |
   */
-
+    
   const [
-    entrenamientos,
-    setEntrenamientos,
+  entrenamientos,
+  setEntrenamientos,
   ] = useState<EntrenamientoRutina[]>(
 
-    rutinaInicial?.entrenamientos ?? [
-
-      {
-        id: Date.now(),
-
-        orden: 1,
-
-        ejercicios: [],
-      },
-    ]
+   rutinaInicial?.entrenamientos ?? []
   );
-
+  
   /*
   |--------------------------------------------------------------------------
   | DRAFT
@@ -153,7 +144,11 @@ export function useRutina(
     const nuevoEntrenamiento:
       EntrenamientoRutina = {
 
-      id: Date.now(),
+      id:
+        Date.now() +
+        Math.floor(
+          Math.random() * 10000
+        ),
 
       orden:
         entrenamientos.length + 1,
@@ -162,8 +157,11 @@ export function useRutina(
     };
 
     setEntrenamientos([
+
       ...entrenamientos,
+
       nuevoEntrenamiento,
+
     ]);
   }
 
@@ -266,7 +264,23 @@ export function useRutina(
 
   function agregarEjercicio(
     entrenamientoId: number
-  ) {
+    ) {
+
+   if (!draft.ejercicioId) {
+
+      alert(
+        "Seleccionar ejercicio"
+      );
+
+      return;
+    }
+    if (!draft.materialId) {
+
+      alert(
+        "Seleccionar material"
+      );
+     return;
+    }
 
     const nuevosEntrenamientos =
       entrenamientos.map(
@@ -277,48 +291,54 @@ export function useRutina(
             entrenamientoId
           ) {
 
-            const nuevoEjercicio:
+              const nuevoEjercicio:
               EjercicioRutina = {
 
-              id: Date.now(),
+              id:
+                Date.now() +
+                Math.floor(
+                  Math.random() * 10000
+                ),
 
               ejercicioId:
                 draft.ejercicioId,
-
-              materialId:
+             materialId:
                 draft.materialId,
-
-              notas:
+             notas:
                 draft.notas,
 
               configuracion: {
-
-                ...draft.configuracion,
+               ...draft.configuracion,
               },
             };
 
             return {
-
-              ...entrenamiento,
+             ...entrenamiento,
 
               ejercicios: [
-
-                ...entrenamiento.ejercicios,
-
-                nuevoEjercicio,
+               ...entrenamiento.ejercicios,
+               nuevoEjercicio,
               ],
             };
           }
-
-          return entrenamiento;
-        }
-      );
-
+           return entrenamiento;
+       }
+     );
     setEntrenamientos(
       nuevosEntrenamientos
     );
 
-    setDraft(draftBase);
+    setDraft({
+
+     ejercicioId: 0,
+     materialId: 0,
+     notas: "",
+
+     configuracion: {
+
+        ...configuracionBase,
+      },
+    });
   }
 
   /*
@@ -607,11 +627,25 @@ export function useRutina(
       return null;
     }
 
+    const estado =
+
+      entrenamientos.length >=
+      entrenamientosPorBloque
+
+        ? "completa"
+
+        : "en_proceso";
+
     return {
 
       id:
         rutinaInicial?.id ??
-        Date.now(),
+        (
+          Date.now() +
+          Math.floor(
+            Math.random() * 10000
+          )
+        ),
 
       alumnoId,
 
@@ -625,14 +659,19 @@ export function useRutina(
 
       activa: true,
 
+      estado,
+
+      fechaUltimaEdicion:
+        new Date().toISOString(),
+
       entrenamientos,
     };
   }
 
   /*
-  |--------------------------------------------------------------------------
+  |------------------------------------------------------------------
   | RETURN
-  |--------------------------------------------------------------------------
+  |------------------------------------------------------------------
   */
 
   return {
@@ -663,4 +702,5 @@ export function useRutina(
 
     generarRutina,
   };
+
 }

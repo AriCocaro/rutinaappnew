@@ -38,6 +38,7 @@ type Alumno = {
 | Dashboard principal de rutinas.
 |
 | Lista todas las rutinas guardadas.
+|
 | Permite:
 |
 | - Ver
@@ -132,7 +133,11 @@ export default function RutinasPage() {
 
       ...rutina,
 
-      id: Date.now(),
+      id:
+        Date.now() +
+        Math.floor(
+          Math.random() * 10000
+        ),
 
       alumnoId:
         nuevoAlumnoId.trim() === ""
@@ -143,6 +148,10 @@ export default function RutinasPage() {
         new Date()
           .toISOString()
           .split("T")[0],
+
+      fechaUltimaEdicion:
+        new Date()
+          .toISOString(),
     };
 
     agregarRutina(
@@ -166,7 +175,9 @@ export default function RutinasPage() {
 
     <div className="p-6 flex flex-col gap-6">
 
-      {/* HEADER */}
+      {/* ------------------------------------------------------- */}
+      {/* HEADER                                                  */}
+      {/* ------------------------------------------------------- */}
 
       <div className="flex items-center justify-between">
 
@@ -182,25 +193,36 @@ export default function RutinasPage() {
 
         </div>
 
-        {/* IMPORTANTE:
-            En Next NO se navega al archivo.
-            Se navega a la ruta.
-        */}
-
         <Link
           href="/UsuarioInstructor/rutinas/nueva"
-          className="bg-blue-500 text-white px-5 py-3 rounded-xl"
+          className="
+            bg-blue-500
+            text-white
+            px-5
+            py-3
+            rounded-xl
+          "
         >
           + Nueva rutina
         </Link>
 
       </div>
 
-      {/* SIN RUTINAS */}
+      {/* ------------------------------------------------------- */}
+      {/* SIN RUTINAS                                             */}
+      {/* ------------------------------------------------------- */}
 
       {rutinas.length === 0 && (
 
-        <div className="border rounded-2xl p-10 text-center text-gray-500">
+        <div
+          className="
+            border
+            rounded-2xl
+            p-10
+            text-center
+            text-gray-500
+          "
+        >
 
           No hay rutinas guardadas
 
@@ -208,9 +230,19 @@ export default function RutinasPage() {
 
       )}
 
-      {/* LISTADO */}
+      {/* ------------------------------------------------------- */}
+      {/* LISTADO                                                 */}
+      {/* ------------------------------------------------------- */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          xl:grid-cols-3
+          gap-5
+        "
+      >
 
         {rutinas.map((rutina) => {
 
@@ -219,37 +251,68 @@ export default function RutinasPage() {
               rutina.alumnoId
             );
 
+          const estado =
+            rutina.estado ??
+            "en_proceso";
+
+          const fechaEdicion =
+            rutina.fechaUltimaEdicion
+              ? new Date(
+                  rutina.fechaUltimaEdicion
+                ).toLocaleDateString()
+              : "-";
+
           return (
 
             <div
               key={rutina.id}
-              className="border rounded-2xl p-5 bg-white flex flex-col gap-4"
+              className="
+                border
+                rounded-2xl
+                p-5
+                bg-white
+                flex
+                flex-col
+                gap-4
+              "
             >
 
-              {/* NOMBRE */}
+              {/* --------------------------------------------- */}
+              {/* CABECERA                                      */}
+              {/* --------------------------------------------- */}
 
               <div>
 
                 <h2 className="text-xl font-bold">
 
-                  {alumno?.nombre}{" "}
+                  {alumno?.nombre}
+                  {" "}
                   {alumno?.apellido}
 
                 </h2>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-sm mt-1">
 
-                  {rutina.activa
-                    ? "Rutina activa"
-                    : "Rutina archivada"}
+                  {estado === "completa"
+                    ? "✅ Completa"
+                    : "🟡 En proceso"}
 
                 </p>
 
               </div>
 
-              {/* INFO */}
+              {/* --------------------------------------------- */}
+              {/* INFORMACIÓN                                   */}
+              {/* --------------------------------------------- */}
 
-              <div className="flex flex-col gap-2 text-sm">
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-2
+                  text-sm
+                "
+              >
 
                 <div className="flex justify-between">
 
@@ -259,6 +322,18 @@ export default function RutinasPage() {
 
                   <span>
                     {rutina.fechaInicio}
+                  </span>
+
+                </div>
+
+                <div className="flex justify-between">
+
+                  <span>
+                    Última edición
+                  </span>
+
+                  <span>
+                    {fechaEdicion}
                   </span>
 
                 </div>
@@ -282,47 +357,77 @@ export default function RutinasPage() {
                   </span>
 
                   <span>
+
                     {
                       rutina.entrenamientos
                         .length
                     }
+
+                    {" / "}
+
+                    {
+                      rutina.entrenamientosPorBloque
+                    }
+
                   </span>
 
                 </div>
 
               </div>
 
-              {/* ACCIONES */}
+              {/* --------------------------------------------- */}
+              {/* ACCIONES                                      */}
+              {/* --------------------------------------------- */}
 
-              <div className="grid grid-cols-3 gap-2">
-
-                {/* VER */}
+              <div
+                className="
+                  grid
+                  grid-cols-3
+                  gap-2
+                "
+              >
 
                 <Link
                   href={`/UsuarioInstructor/rutinas/${rutina.id}`}
-                  className="bg-blue-500 text-white rounded-xl py-3 text-center text-sm"
+                  className="
+                    bg-blue-500
+                    text-white
+                    rounded-xl
+                    py-3
+                    text-center
+                    text-sm
+                  "
                 >
                   Ver
                 </Link>
 
-                {/* EDITAR */}
-
                 <Link
                   href={`/UsuarioInstructor/rutinas/${rutina.id}/editar`}
-                  className="border rounded-xl py-3 text-center text-sm"
+                  className="
+                    border
+                    rounded-xl
+                    py-3
+                    text-center
+                    text-sm
+                  "
                 >
                   Editar
                 </Link>
 
-                {/* DUPLICAR */}
-
                 <button
+
                   onClick={() =>
                     duplicarRutina(
                       rutina
                     )
                   }
-                  className="border rounded-xl py-3 text-sm"
+
+                  className="
+                    border
+                    rounded-xl
+                    py-3
+                    text-sm
+                  "
                 >
                   Duplicar
                 </button>
@@ -330,6 +435,7 @@ export default function RutinasPage() {
               </div>
 
             </div>
+
           );
         })}
 
