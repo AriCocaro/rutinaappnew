@@ -1,4 +1,25 @@
-import ConstructorRutinas from "@/components/UsuarioInstructor/ConstructorRutinas";
+"use client";
+
+/*
+|--------------------------------------------------------------------------
+| CONSTRUCTOR NUEVO
+|--------------------------------------------------------------------------
+|
+| Ya no usamos:
+| ConstructorRutinas.tsx
+|
+| Ahora usamos:
+| indexConstructor.tsx
+|
+*/
+
+import IndexConstructor from "@/components/UsuarioInstructor/ConstructorRutinas/indexConstructor";
+
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+*/
 
 export default function NuevaRutinaPage() {
 
@@ -6,8 +27,13 @@ export default function NuevaRutinaPage() {
 
     <div className="p-6">
 
-      <ConstructorRutinas />
+      {/* ------------------------------------------------------- */}
+      {/* CONSTRUCTOR NUEVO                                       */}
+      {/* ------------------------------------------------------- */}
+
+      <IndexConstructor />
 
     </div>
+
   );
 }

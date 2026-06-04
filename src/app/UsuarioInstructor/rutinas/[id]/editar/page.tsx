@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
 
-import ConstructorRutinas from "@/components/UsuarioInstructor/ConstructorRutinas";
+import IndexConstructor from "@/components/UsuarioInstructor/ConstructorRutinas/indexConstructor";
 
 import {
   obtenerRutinaPorId,
@@ -51,7 +51,7 @@ export default function EditarRutinaPage() {
 
   /*
   |--------------------------------------------------------------------------
-  | EFFECT
+  | CARGAR RUTINA
   |--------------------------------------------------------------------------
   */
 
@@ -64,6 +64,9 @@ export default function EditarRutinaPage() {
     */
 
     if (!params?.id) {
+
+      setCargando(false);
+
       return;
     }
 
@@ -118,6 +121,7 @@ export default function EditarRutinaPage() {
         Cargando...
 
       </div>
+
     );
   }
 
@@ -134,10 +138,13 @@ export default function EditarRutinaPage() {
       <div className="p-6">
 
         <h1 className="text-2xl font-bold">
+
           Rutina no encontrada
+
         </h1>
 
       </div>
+
     );
   }
 
@@ -151,10 +158,26 @@ export default function EditarRutinaPage() {
 
     <div className="p-6">
 
-      <ConstructorRutinas
+      {/* ------------------------------------------------------- */}
+      {/* MODO EDICIÓN                                            */}
+      {/* ------------------------------------------------------- */}
+      {/* 
+        indexConstructor ya recibe la rutina existente
+        y precarga:
+        
+        - alumno
+        - fecha
+        - bloques
+        - progresión
+        - entrenamientos
+        - ejercicios
+      */}
+
+      <IndexConstructor
         rutinaInicial={rutina}
       />
 
     </div>
+
   );
 }
