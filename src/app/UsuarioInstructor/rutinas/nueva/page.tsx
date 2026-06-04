@@ -13,7 +13,7 @@
 |
 */
 
-import IndexConstructor from "@/components/UsuarioInstructor/ConstructorRutinas/indexConstructor";
+import IndexConstructor from "@/components/UsuarioInstructor/ConstructorRutinas/constructorRutina";
 
 /*
 |--------------------------------------------------------------------------

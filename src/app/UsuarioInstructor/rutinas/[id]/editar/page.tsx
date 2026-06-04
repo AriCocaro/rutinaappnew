@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
 
-import IndexConstructor from "@/components/UsuarioInstructor/ConstructorRutinas/indexConstructor";
+import IndexConstructor from "@/components/UsuarioInstructor/ConstructorRutinas/constructorRutina";
 
 import {
   obtenerRutinaPorId,
