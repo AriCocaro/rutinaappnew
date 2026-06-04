@@ -8,7 +8,19 @@ import {
   obtenerRutinas,
 } from "@/lib/rutinasStorage";
 
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+*/
+
 export default function AlumnoDetallePage() {
+
+  /*
+  |--------------------------------------------------------------------------
+  | PARAMS
+  |--------------------------------------------------------------------------
+  */
 
   const params =
     useParams();
@@ -16,26 +28,39 @@ export default function AlumnoDetallePage() {
   const alumnoId =
     String(params.id);
 
+  /*
+  |--------------------------------------------------------------------------
+  | ALUMNO
+  |--------------------------------------------------------------------------
+  */
+
   const alumno =
     alumnos.find(
-
       (item) =>
-
-        item.id ===
-        alumnoId
+        item.id === alumnoId
     );
+
+  /*
+  |--------------------------------------------------------------------------
+  | RUTINA ACTIVA
+  |--------------------------------------------------------------------------
+  */
 
   const rutinas =
     obtenerRutinas();
 
   const rutinaActiva =
     rutinas.find(
-
       (rutina) =>
-
         rutina.alumnoId ===
         alumnoId
     );
+
+  /*
+  |--------------------------------------------------------------------------
+  | ALUMNO NO ENCONTRADO
+  |--------------------------------------------------------------------------
+  */
 
   if (!alumno) {
 
@@ -48,11 +73,19 @@ export default function AlumnoDetallePage() {
     );
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | RENDER
+  |--------------------------------------------------------------------------
+  */
+
   return (
 
     <div className="flex flex-col gap-6">
 
-      {/* DATOS */}
+      {/* ===================================================== */}
+      {/* DATOS DEL ALUMNO */}
+      {/* ===================================================== */}
 
       <div className="bg-white rounded-2xl p-6 border">
 
@@ -74,17 +107,23 @@ export default function AlumnoDetallePage() {
 
       </div>
 
-      {/* RUTINA */}
+      {/* ===================================================== */}
+      {/* RUTINA ACTIVA */}
+      {/* ===================================================== */}
 
       <div className="bg-white rounded-2xl p-6 border">
 
         <h2 className="text-xl font-bold mb-4">
+
           Rutina activa
+
         </h2>
 
         {rutinaActiva ? (
 
-          <div>
+          <div className="flex flex-col gap-2">
+
+            {/* FECHA */}
 
             <p>
 
@@ -94,19 +133,45 @@ export default function AlumnoDetallePage() {
 
             </p>
 
+            {/* BLOQUES */}
+
             <p>
 
-              Semanas:
+              Bloques:
               {" "}
-              {rutinaActiva.cantidadSemanas}
+              {rutinaActiva.cantidadBloques}
 
             </p>
 
+            {/* ENTRENAMIENTOS POR BLOQUE */}
+
             <p>
 
-              Días:
+              Entrenamientos por bloque:
               {" "}
-              {rutinaActiva.dias.length}
+              {rutinaActiva.entrenamientosPorBloque}
+
+            </p>
+
+            {/* CANTIDAD DE ENTRENAMIENTOS */}
+
+            <p>
+
+              Entrenamientos cargados:
+              {" "}
+              {rutinaActiva.entrenamientos.length}
+
+            </p>
+
+            {/* ESTADO */}
+
+            <p>
+
+              Estado:
+              {" "}
+              {rutinaActiva.activa
+                ? "Activa"
+                : "Inactiva"}
 
             </p>
 
@@ -124,12 +189,16 @@ export default function AlumnoDetallePage() {
 
       </div>
 
+      {/* ===================================================== */}
       {/* HISTORIAL */}
+      {/* ===================================================== */}
 
       <div className="bg-white rounded-2xl p-6 border">
 
         <h2 className="text-xl font-bold">
+
           Últimos entrenamientos
+
         </h2>
 
         <p className="text-gray-500">

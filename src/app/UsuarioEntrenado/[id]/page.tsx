@@ -12,6 +12,8 @@ import {
 
 import {
   Rutina,
+  EntrenamientoRutina,
+  EjercicioRutina,
 } from "@/types/rutinas";
 
 /*
@@ -76,7 +78,7 @@ export default function AlumnoPage() {
 
   /*
   |----------------------------------------------------------------
-  | EFFECT
+  | CARGAR RUTINA ACTIVA
   |----------------------------------------------------------------
   */
 
@@ -106,7 +108,7 @@ export default function AlumnoPage() {
 
   /*
   |----------------------------------------------------------------
-  | EMPTY
+  | ALUMNO NO ENCONTRADO
   |----------------------------------------------------------------
   */
 
@@ -121,6 +123,19 @@ export default function AlumnoPage() {
       </div>
     );
   }
+
+  /*
+  |----------------------------------------------------------------
+  | PROGRESIÓN BASE
+  |----------------------------------------------------------------
+  |
+  | Tomamos el primer bloque de la progresión global
+  | para mostrar una referencia rápida.
+  |
+  */
+
+  const progresionBase =
+    rutina?.progresionGlobal?.[0];
 
   /*
   |----------------------------------------------------------------
@@ -170,7 +185,7 @@ export default function AlumnoPage() {
 
         <div className="flex flex-col gap-5">
 
-          {/* INFO */}
+          {/* INFO GENERAL */}
 
           <div className="border rounded-2xl p-5 bg-white flex flex-col gap-3">
 
@@ -180,7 +195,9 @@ export default function AlumnoPage() {
 
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+              {/* FECHA */}
 
               <div className="border rounded-xl p-4">
 
@@ -194,26 +211,48 @@ export default function AlumnoPage() {
 
               </div>
 
+              {/* BLOQUES */}
+
               <div className="border rounded-xl p-4">
 
                 <p className="text-sm text-gray-500">
-                  Semanas
+                  Bloques
                 </p>
 
                 <p className="font-bold">
-                  {rutina.cantidadSemanas}
+                  {rutina.cantidadBloques}
                 </p>
 
               </div>
 
+              {/* ENTRENAMIENTOS */}
+
               <div className="border rounded-xl p-4">
 
                 <p className="text-sm text-gray-500">
-                  Días
+                  Entrenamientos
                 </p>
 
                 <p className="font-bold">
-                  {rutina.dias.length}
+                  {rutina.entrenamientos.length}
+                </p>
+
+              </div>
+
+              {/* PROGRESIÓN BASE */}
+
+              <div className="border rounded-xl p-4">
+
+                <p className="text-sm text-gray-500">
+                  Progresión inicial
+                </p>
+
+                <p className="font-bold">
+
+                  {progresionBase?.series ?? "-"}
+                  {" x "}
+                  {progresionBase?.reps ?? "-"}
+
                 </p>
 
               </div>
@@ -222,31 +261,57 @@ export default function AlumnoPage() {
 
           </div>
 
-          {/* DÍAS */}
+          {/* ENTRENAMIENTOS */}
 
           <div className="flex flex-col gap-4">
 
-            {rutina.dias.map(
+            {rutina.entrenamientos.map(
+
               (
-                dia,
+                entrenamiento:
+                  EntrenamientoRutina,
                 index
               ) => (
 
                 <div
-                  key={dia.id}
+                  key={entrenamiento.id}
                   className="border rounded-2xl p-5 bg-white flex flex-col gap-4"
                 >
 
-                  <h2 className="text-xl font-bold">
+                  {/* HEADER */}
 
-                    Día {index + 1}
+                  <div className="flex items-center justify-between">
 
-                  </h2>
+                    <h2 className="text-xl font-bold">
+
+                      Entrenamiento {index + 1}
+
+                    </h2>
+
+                    <span className="text-sm text-gray-500">
+
+                      {
+                        entrenamiento
+                          .ejercicios
+                          .length
+                      }
+                      {" "}
+                      ejercicios
+
+                    </span>
+
+                  </div>
+
+                  {/* EJERCICIOS */}
 
                   <div className="flex flex-col gap-3">
 
-                    {dia.ejercicios.map(
-                      (ejercicio) => (
+                    {entrenamiento.ejercicios.map(
+
+                      (
+                        ejercicio:
+                          EjercicioRutina
+                      ) => (
 
                         <div
                           key={ejercicio.id}
@@ -254,6 +319,8 @@ export default function AlumnoPage() {
                         >
 
                           <div className="flex items-center justify-between">
+
+                            {/* INFO */}
 
                             <div>
 
@@ -275,45 +342,29 @@ export default function AlumnoPage() {
 
                             </div>
 
-                            <div className="text-sm text-gray-500">
+                            {/* OVERRIDE */}
 
-                              {ejercicio
-                                .configuracion
-                                .overrideActivo
+                            {ejercicio
+                              .configuracion
+                              .overrideActivo && (
 
-                                ? (
-                                  <>
-                                    {
-                                      ejercicio
-                                        .configuracion
-                                        .seriesOverride
-                                    }
-                                    {" "}x{" "}
-                                    {
-                                      ejercicio
-                                        .configuracion
-                                        .repsOverride
-                                    }
-                                  </>
-                                )
+                              <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg">
 
-                                : (
-                                  <>
-                                    {
-                                      rutina
-                                        .progresion
-                                        .series
-                                    }
-                                    {" "}x{" "}
-                                    {
-                                      rutina
-                                        .progresion
-                                        .reps
-                                    }
-                                  </>
-                                )}
+                                Override
 
-                            </div>
+                              </span>
+
+                            )}
+
+                          </div>
+
+                          {/* PROGRESIÓN */}
+
+                          <div className="mt-3 text-sm text-gray-500">
+
+                            {progresionBase?.series ?? "-"}
+                            {" x "}
+                            {progresionBase?.reps ?? "-"}
 
                           </div>
 
