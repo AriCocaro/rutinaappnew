@@ -207,20 +207,26 @@ export function useRutina(
 
   function actualizarDraft(
 
-    campo:
-      keyof EjercicioDraft,
+      campo:
+        keyof EjercicioDraft,
 
-    valor:
-      string | number
-  ) {
+      valor:
+        string | number
+    ) {
 
-    setDraft({
+      console.log(
+        "ACTUALIZAR DRAFT",
+        campo,
+        valor
+      );
 
-      ...draft,
+      setDraft({
 
-      [campo]: valor,
-    });
-  }
+        ...draft,
+
+        [campo]: valor,
+      });
+    }
 
   function actualizarDraftConfig(
 

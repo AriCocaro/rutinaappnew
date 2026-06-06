@@ -194,23 +194,50 @@ export default function ConfiguradorEjercicio({
       </div>
 
       {/* EJERCICIO Y MATERIAL */}
+       
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* DEBUG */}
+
+        <div className="border rounded p-3 bg-yellow-50 text-xs col-span-full">
+          <div>
+            ejercicioId: {draft.ejercicioId}
+          </div>
+
+          <div>
+            materialId: {draft.materialId}
+          </div>
+        </div>
+
+        <div className="border rounded p-3 bg-green-50 text-xs">
+
+          ejercicioActual:
+
+          {" "}
+
+          {ejercicioActual?.nombre ?? "NULL"}
+
+        </div>
+
+
+
+        {/* EJERCICIO */}
+
         <SearchSelect
           options={ejercicios.map(
             (ejercicio) => ({
-              id:
-                ejercicio.id,
-
-              nombre:
-                ejercicio.nombre,
+              id: ejercicio.id,
+              nombre: ejercicio.nombre,
             })
           )}
-          selectedId={String(
-            draft.ejercicioId ||
-              ""
-          )}
+          selectedId={draft.ejercicioId}
           onSelect={(id) => {
+
+            console.log(
+              "EJERCICIO SELECCIONADO:",
+              id
+            );
+
             actualizarDraft(
               "ejercicioId",
               Number(id)
@@ -224,29 +251,33 @@ export default function ConfiguradorEjercicio({
           placeholder="Buscar ejercicio..."
         />
 
+        {/* MATERIAL */}
+
         <SearchSelect
           options={materialesDisponibles.map(
             (material) => ({
-              id:
-                material.id,
-
-              nombre:
-                material.nombre,
+              id: material.id,
+              nombre: material.nombre,
             })
           )}
-          selectedId={String(
-            draft.materialId ||
-              ""
-          )}
-          onSelect={(id) =>
+          selectedId={draft.materialId}
+          onSelect={(id) => {
+
+            console.log(
+              "MATERIAL SELECCIONADO:",
+              id
+            );
+
             actualizarDraft(
               "materialId",
               Number(id)
-            )
-          }
+            );
+          }}
           placeholder="Buscar material..."
         />
+
       </div>
+      
 
       {/* OVERRIDE */}
 

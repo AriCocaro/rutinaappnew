@@ -1,6 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +36,16 @@ type Props = {
 |--------------------------------------------------------------------------
 | COMPONENTE
 |--------------------------------------------------------------------------
+|
+| Select con búsqueda.
+|
+| Características:
+|
+| - Busca por nombre.
+| - Muestra el elemento seleccionado.
+| - Soporta IDs string o number.
+| - Mantiene visible el valor seleccionado.
+|
 */
 
 export default function SearchSelect({
@@ -52,11 +66,15 @@ export default function SearchSelect({
   |--------------------------------------------------------------------------
   */
 
-  const [busqueda, setBusqueda] =
-    useState("");
+  const [
+    busqueda,
+    setBusqueda,
+  ] = useState("");
 
-  const [abierto, setAbierto] =
-    useState(false);
+  const [
+    abierto,
+    setAbierto,
+  ] = useState(false);
 
   /*
   |--------------------------------------------------------------------------
@@ -68,59 +86,115 @@ export default function SearchSelect({
     useMemo(() => {
 
       if (!busqueda.trim()) {
+
         return [];
       }
 
-      return options.filter((option) =>
+      return options.filter(
+        (option) =>
 
-        option.nombre
-          .toLowerCase()
-          .includes(
-            busqueda.toLowerCase()
-          )
+          option.nombre
+            .toLowerCase()
+            .includes(
+              busqueda.toLowerCase()
+            )
       );
 
-    }, [busqueda, options]);
+    }, [
+      busqueda,
+      options,
+    ]);
 
   /*
   |--------------------------------------------------------------------------
-  | SELECCIONADO
+  | ELEMENTO SELECCIONADO
   |--------------------------------------------------------------------------
+  |
+  | Se compara como string para evitar
+  | problemas entre:
+  |
+  | 1 === "1"
+  |
   */
 
-  const seleccionado = options.find(
-    (option) =>
-      option.id === selectedId
-  );
+  const seleccionado =
+    options.find(
+      (option) =>
+
+        String(option.id) ===
+        String(selectedId)
+    );
 
   /*
   |--------------------------------------------------------------------------
-  | SELECCIONAR
+  | SINCRONIZAR INPUT
+  |--------------------------------------------------------------------------
+  |
+  | Cuando cambia selectedId desde el padre
+  | actualizamos el texto visible.
+  |
+  */
+
+  useEffect(() => {
+
+    if (!seleccionado) {
+
+      return;
+    }
+
+    setBusqueda(
+      seleccionado.nombre
+    );
+
+  }, [seleccionado]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | SELECCIONAR OPCIÓN
   |--------------------------------------------------------------------------
   */
 
   function seleccionar(
-    option: Option
-  ) {
+      option: Option
+    ) {
 
-    onSelect(option.id);
+      console.log(
+        "SEARCHSELECT ->",
+        option.id,
+        option.nombre
+      );
 
-    setBusqueda("");
+      onSelect(
+        option.id
+      );
 
-    setAbierto(false);
-  }
+      setBusqueda(
+        option.nombre
+      );
+
+      setAbierto(false);
+    }
+
+  /*
+  |--------------------------------------------------------------------------
+  | RENDER
+  |--------------------------------------------------------------------------
+  */
 
   return (
 
     <div className="relative flex flex-col gap-2">
 
-      {/* SELECCIONADO */}
+      {/* -------------------------------------------------- */}
+      {/* SELECCIONADO                                       */}
+      {/* -------------------------------------------------- */}
 
       {seleccionado && (
 
         <div className="text-sm text-gray-500">
 
           Seleccionado:
+
           {" "}
 
           <span className="font-semibold">
@@ -133,7 +207,9 @@ export default function SearchSelect({
 
       )}
 
-      {/* INPUT */}
+      {/* -------------------------------------------------- */}
+      {/* INPUT                                              */}
+      {/* -------------------------------------------------- */}
 
       <input
         type="text"
@@ -155,15 +231,35 @@ export default function SearchSelect({
           setAbierto(true);
         }}
 
-        className="border rounded-lg px-4 py-3"
+        className="
+          border
+          rounded-lg
+          px-4
+          py-3
+        "
       />
 
-      {/* DROPDOWN */}
+      {/* -------------------------------------------------- */}
+      {/* DROPDOWN                                           */}
+      {/* -------------------------------------------------- */}
 
       {abierto &&
         opcionesFiltradas.length > 0 && (
 
-          <div className="absolute top-full mt-2 w-full border rounded-xl bg-white shadow-lg overflow-hidden z-50">
+          <div
+            className="
+              absolute
+              top-full
+              mt-2
+              w-full
+              border
+              rounded-xl
+              bg-white
+              shadow-lg
+              overflow-hidden
+              z-50
+            "
+          >
 
             {opcionesFiltradas.map(
               (option) => (
@@ -171,11 +267,23 @@ export default function SearchSelect({
                 <button
                   key={option.id}
 
+                  type="button"
+
                   onClick={() =>
-                    seleccionar(option)
+                    seleccionar(
+                      option
+                    )
                   }
 
-                  className="w-full text-left px-4 py-3 hover:bg-gray-100 border-b transition"
+                  className="
+                    w-full
+                    text-left
+                    px-4
+                    py-3
+                    hover:bg-gray-100
+                    border-b
+                    transition
+                  "
                 >
 
                   {option.nombre}
