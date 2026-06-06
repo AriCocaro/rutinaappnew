@@ -591,32 +591,28 @@ export function useRutina(
   |--------------------------------------------------------------------------
   */
 
-  function generarRutina({
-
+   function generarRutina({
     alumnoId,
-
     fechaInicio,
-
     cantidadBloques,
-
     entrenamientosPorBloque,
-
     progresionGlobal,
-
   }: {
-
     alumnoId: string;
-
     fechaInicio: string;
-
     cantidadBloques: number;
-
     entrenamientosPorBloque: number;
+    progresionGlobal: ProgresionBloque[];
+    }): Rutina | null {
 
-    progresionGlobal:
-      ProgresionBloque[];
+    if (!alumnoId) {
 
-  }): Rutina | null {
+      alert(
+        "Seleccionar entrenado"
+      );
+
+      return null;
+    }
 
     if (!fechaInicio) {
 
@@ -629,8 +625,9 @@ export function useRutina(
 
     const estado =
 
+      entrenamientosPorBloque > 0 &&
       entrenamientos.length >=
-      entrenamientosPorBloque
+        entrenamientosPorBloque
 
         ? "completa"
 
@@ -657,7 +654,9 @@ export function useRutina(
 
       progresionGlobal,
 
-      activa: true,
+      activa:
+        rutinaInicial?.activa ??
+        true,
 
       estado,
 
@@ -666,7 +665,8 @@ export function useRutina(
 
       entrenamientos,
     };
-  }
+  }   
+  
 
   /*
   |------------------------------------------------------------------

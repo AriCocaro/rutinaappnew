@@ -13,6 +13,29 @@ const STORAGE_KEY =
 
 /*
 |--------------------------------------------------------------------------
+| GUARDAR EN STORAGE
+|--------------------------------------------------------------------------
+|
+| Centraliza todas las escrituras.
+|
+*/
+
+function guardarRutinas(
+  rutinas: Rutina[]
+) {
+
+  localStorage.setItem(
+
+    STORAGE_KEY,
+
+    JSON.stringify(
+      rutinas
+    )
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
 | OBTENER TODAS
 |--------------------------------------------------------------------------
 */
@@ -48,7 +71,30 @@ export function obtenerRutinas():
     return [];
   }
 
-  return JSON.parse(data);
+  /*
+  |--------------------------------------------------------------------------
+  | SEGURIDAD
+  |--------------------------------------------------------------------------
+  |
+  | Si el JSON se corrompe
+  | evitamos romper toda la app.
+  |
+  */
+
+  try {
+
+    return JSON.parse(
+      data
+    );
+
+  } catch {
+
+    console.error(
+      "Error leyendo rutinas desde localStorage"
+    );
+
+    return [];
+  }
 }
 
 /*
@@ -83,21 +129,34 @@ export function agregarRutina(
   const rutinas =
     obtenerRutinas();
 
-  const nuevasRutinas = [
+  /*
+  |--------------------------------------------------------------------------
+  | EVITAR DUPLICADOS
+  |--------------------------------------------------------------------------
+  */
+
+  const existe =
+    rutinas.some(
+      (r) =>
+        r.id === rutina.id
+    );
+
+  if (existe) {
+
+    console.warn(
+      "La rutina ya existe:",
+      rutina.id
+    );
+
+    return;
+  }
+
+  guardarRutinas([
 
     ...rutinas,
 
     rutina,
-  ];
-
-  localStorage.setItem(
-
-    STORAGE_KEY,
-
-    JSON.stringify(
-      nuevasRutinas
-    )
-  );
+  ]);
 }
 
 /*
@@ -114,26 +173,30 @@ export function actualizarRutina(
     obtenerRutinas();
 
   const nuevasRutinas =
-    rutinas.map((rutina) => {
+    rutinas.map(
+      (rutina) => {
 
-      if (
-        rutina.id ===
-        rutinaActualizada.id
-      ) {
+        if (
+          rutina.id ===
+          rutinaActualizada.id
+        ) {
 
-        return rutinaActualizada;
+          return {
+
+            ...rutinaActualizada,
+
+            fechaUltimaEdicion:
+              new Date()
+                .toISOString(),
+          };
+        }
+
+        return rutina;
       }
+    );
 
-      return rutina;
-    });
-
-  localStorage.setItem(
-
-    STORAGE_KEY,
-
-    JSON.stringify(
-      nuevasRutinas
-    )
+  guardarRutinas(
+    nuevasRutinas
   );
 }
 
@@ -156,12 +219,7 @@ export function eliminarRutina(
         rutina.id !== id
     );
 
-  localStorage.setItem(
-
-    STORAGE_KEY,
-
-    JSON.stringify(
-      nuevasRutinas
-    )
+  guardarRutinas(
+    nuevasRutinas
   );
 }

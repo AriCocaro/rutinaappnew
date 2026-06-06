@@ -8,29 +8,16 @@ import {
 |--------------------------------------------------------------------------
 | PROPS
 |--------------------------------------------------------------------------
-|
-| cantidadBloques:
-| determina cuántas filas mostrar.
-|
-| progresionGlobal:
-| estado actual de la progresión.
-|
-| onChange:
-| devuelve la progresión actualizada al padre.
-|
 */
 
 type Props = {
 
-  cantidadBloques:
-    number | null;
+  cantidadBloques: number | null;
 
-  progresionGlobal:
-    ProgresionBloque[];
+  progresionGlobal: ProgresionBloque[];
 
   onChange: (
-    progresion:
-      ProgresionBloque[]
+    progresion: ProgresionBloque[]
   ) => void;
 };
 
@@ -66,18 +53,15 @@ export default function ProgresionGlobal({
       <div className="border rounded-2xl p-5 bg-white">
 
         <h2 className="text-xl font-bold">
-
           Progresión global
-
         </h2>
 
         <p className="text-gray-500 text-sm mt-2">
-
           Primero indicar la cantidad de semanas.
-
         </p>
 
       </div>
+
     );
   }
 
@@ -85,9 +69,6 @@ export default function ProgresionGlobal({
   |--------------------------------------------------------------------------
   | OBTENER BLOQUE
   |--------------------------------------------------------------------------
-  |
-  | Busca un bloque existente.
-  |
   */
 
   function obtenerBloque(
@@ -115,9 +96,11 @@ export default function ProgresionGlobal({
 
     campo:
       | "series"
-      | "reps",
+      | "reps"
+      | "descansoSegundos",
 
     valor: number
+
   ) {
 
     const bloqueExistente =
@@ -185,6 +168,11 @@ export default function ProgresionGlobal({
         campo === "reps"
           ? valor
           : 0,
+
+      descansoSegundos:
+        campo === "descansoSegundos"
+          ? valor
+          : null,
     };
 
     onChange([
@@ -210,15 +198,13 @@ export default function ProgresionGlobal({
       <div>
 
         <h2 className="text-xl font-bold">
-
           Progresión global
-
         </h2>
 
         <p className="text-sm text-gray-500">
 
-          Define las series y repeticiones
-          para cada semana del plan.
+          Define series, repeticiones
+          y descanso para cada semana.
 
         </p>
 
@@ -254,32 +240,25 @@ export default function ProgresionGlobal({
 
               {/* TITULO */}
 
-              <div>
+              <h3 className="font-semibold">
 
-                <h3 className="font-semibold">
+                Semana {bloqueNumero}
 
-                  Semana {bloqueNumero}
-
-                </h3>
-
-              </div>
+              </h3>
 
               {/* INPUTS */}
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
 
                 {/* SERIES */}
 
                 <input
                   type="number"
-
                   min={0}
-
                   value={
                     bloque?.series ??
                     ""
                   }
-
                   onChange={(e) =>
 
                     actualizarBloque(
@@ -293,9 +272,7 @@ export default function ProgresionGlobal({
                       )
                     )
                   }
-
                   placeholder="Series"
-
                   className="border rounded-xl px-4 py-3"
                 />
 
@@ -303,14 +280,11 @@ export default function ProgresionGlobal({
 
                 <input
                   type="number"
-
                   min={0}
-
                   value={
                     bloque?.reps ??
                     ""
                   }
-
                   onChange={(e) =>
 
                     actualizarBloque(
@@ -324,9 +298,33 @@ export default function ProgresionGlobal({
                       )
                     )
                   }
+                  placeholder="Reps"
+                  className="border rounded-xl px-4 py-3"
+                />
 
-                  placeholder="Repeticiones"
+                {/* DESCANSO */}
 
+                <input
+                  type="number"
+                  min={0}
+                  value={
+                    bloque?.descansoSegundos ??
+                    ""
+                  }
+                  onChange={(e) =>
+
+                    actualizarBloque(
+
+                      bloqueNumero,
+
+                      "descansoSegundos",
+
+                      Number(
+                        e.target.value
+                      )
+                    )
+                  }
+                  placeholder="Descanso (seg)"
                   className="border rounded-xl px-4 py-3"
                 />
 
@@ -339,5 +337,6 @@ export default function ProgresionGlobal({
       </div>
 
     </div>
+
   );
 }
