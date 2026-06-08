@@ -14,6 +14,18 @@ import {
 |--------------------------------------------------------------------------
 | PROPS
 |--------------------------------------------------------------------------
+|
+| Card contenedora de un día de entrenamiento.
+|
+| Responsabilidades:
+|
+| - Mostrar nombre del día
+| - Permitir eliminar el día
+| - Renderizar contenido interno
+|
+| NO maneja ejercicios.
+| NO maneja configuraciones.
+|
 */
 
 type Props = {
@@ -22,9 +34,6 @@ type Props = {
     EntrenamientoRutina;
 
   onEliminar:
-    () => void;
-
-  onAgregarEjercicio:
     () => void;
 
   children:
@@ -43,19 +52,35 @@ export default function EntrenamientoCard({
 
   onEliminar,
 
-  onAgregarEjercicio,
-
   children,
 
 }: Props) {
 
   return (
 
-    <div className="border rounded-2xl p-5 bg-white flex flex-col gap-5">
+    <div
+      className="
+        border
+        rounded-2xl
+        p-5
+        bg-white
+        flex
+        flex-col
+        gap-5
+      "
+    >
 
+      {/* ------------------------------------------------------------ */}
       {/* HEADER */}
+      {/* ------------------------------------------------------------ */}
 
-      <div className="flex items-center justify-between">
+      <div
+        className="
+          flex
+          items-center
+          justify-between
+        "
+      >
 
         <h2 className="text-xl font-bold">
 
@@ -68,33 +93,29 @@ export default function EntrenamientoCard({
         </h2>
 
         <button
+          type="button"
           onClick={onEliminar}
-          className="text-red-500 text-sm"
+          className="
+            text-red-500
+            text-sm
+          "
         >
           Eliminar día
         </button>
 
       </div>
 
-      {/* AGREGAR EJERCICIO */}
+      {/* ------------------------------------------------------------ */}
+      {/* CONTENIDO */}
+      {/* ------------------------------------------------------------ */}
 
-      <button
-        onClick={onAgregarEjercicio}
+      <div
         className="
-          bg-gray-100
-          hover:bg-gray-200
-          transition
-          px-4
-          py-3
-          rounded-xl
+          flex
+          flex-col
+          gap-4
         "
       >
-        + Agregar ejercicio
-      </button>
-
-      {/* LISTA */}
-
-      <div className="flex flex-col gap-3">
 
         {children}
 

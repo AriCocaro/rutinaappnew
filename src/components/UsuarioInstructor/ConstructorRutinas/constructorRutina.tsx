@@ -39,7 +39,7 @@ import {
 import HeaderConstructor from "./HeaderConstructor";
 import DatosGenerales from "./DatosGenerales";
 import ProgresionGlobal from "./ProgresionGlobal";
-import ConfiguradorEjercicio from "./ConfiguradorEjercicio";
+
 import ListaEntrenamientos from "./ListaEntrenamientos";
 
 /*
@@ -103,8 +103,7 @@ export default function ConstructorRutina({
     eliminarEntrenamiento,
 
     actualizarDraft,
-    actualizarDraftConfig,
-    actualizarDraftNotas,
+    
 
     agregarEjercicio,
     moverEjercicio,
@@ -315,61 +314,26 @@ export default function ConstructorRutina({
 
       />
 
-      <ConfiguradorEjercicio
+      
+
+     <ListaEntrenamientos
+
+        entrenamientos={entrenamientos}
+
+        seriesGlobales={seriesGlobales}
+        repsGlobales={repsGlobales}
+
+        eliminarEntrenamiento={eliminarEntrenamiento}
+
+        agregarEjercicio={agregarEjercicio}
+        moverEjercicio={moverEjercicio}
+        eliminarEjercicio={eliminarEjercicio}
+
+        actualizarConfiguracion={actualizarConfiguracion}
+        actualizarNotas={actualizarNotas}
 
         draft={draft}
-
-        actualizarDraft={
-          actualizarDraft
-        }
-
-        actualizarDraftConfig={
-          actualizarDraftConfig
-        }
-
-        actualizarDraftNotas={
-          actualizarDraftNotas
-        }
-
-      />
-
-      <ListaEntrenamientos
-
-        entrenamientos={
-          entrenamientos
-        }
-
-        seriesGlobales={
-          seriesGlobales
-        }
-
-        repsGlobales={
-          repsGlobales
-        }
-
-        eliminarEntrenamiento={
-          eliminarEntrenamiento
-        }
-
-        agregarEjercicio={
-          agregarEjercicio
-        }
-
-        moverEjercicio={
-          moverEjercicio
-        }
-
-        eliminarEjercicio={
-          eliminarEjercicio
-        }
-
-        actualizarConfiguracion={
-          actualizarConfiguracion
-        }
-
-        actualizarNotas={
-          actualizarNotas
-        }
+        actualizarDraft={actualizarDraft}
 
       />
 

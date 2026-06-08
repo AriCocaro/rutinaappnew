@@ -169,6 +169,7 @@ export type EjercicioDraft = {
 |--------------------------------------------------------------------------
 */
 
+
 export type EntrenamientoRutina = {
 
   id: number;

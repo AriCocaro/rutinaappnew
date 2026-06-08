@@ -13,14 +13,12 @@ import {
 */
 
 type Option = {
-
   id: string | number;
 
   nombre: string;
 };
 
 type Props = {
-
   options: Option[];
 
   selectedId: string | number;
@@ -42,9 +40,10 @@ type Props = {
 | Características:
 |
 | - Busca por nombre.
-| - Muestra el elemento seleccionado.
-| - Soporta IDs string o number.
-| - Mantiene visible el valor seleccionado.
+| - Muestra elemento seleccionado.
+| - Permite IDs string o number.
+| - Se limpia automáticamente cuando selectedId vuelve a 0.
+| - Mantiene sincronizado el valor con el padre.
 |
 */
 
@@ -92,7 +91,6 @@ export default function SearchSelect({
 
       return options.filter(
         (option) =>
-
           option.nombre
             .toLowerCase()
             .includes(
@@ -110,8 +108,7 @@ export default function SearchSelect({
   | ELEMENTO SELECCIONADO
   |--------------------------------------------------------------------------
   |
-  | Se compara como string para evitar
-  | problemas entre:
+  | Comparación por string para evitar:
   |
   | 1 === "1"
   |
@@ -120,7 +117,6 @@ export default function SearchSelect({
   const seleccionado =
     options.find(
       (option) =>
-
         String(option.id) ===
         String(selectedId)
     );
@@ -130,14 +126,18 @@ export default function SearchSelect({
   | SINCRONIZAR INPUT
   |--------------------------------------------------------------------------
   |
-  | Cuando cambia selectedId desde el padre
-  | actualizamos el texto visible.
+  | Cuando cambia selectedId:
+  |
+  | - Si existe seleccionado → mostrar nombre
+  | - Si no existe → limpiar input
   |
   */
 
   useEffect(() => {
 
     if (!seleccionado) {
+
+      setBusqueda("");
 
       return;
     }
@@ -289,7 +289,7 @@ export default function SearchSelect({
 
           </div>
 
-        )}
+      )}
 
     </div>
   );
