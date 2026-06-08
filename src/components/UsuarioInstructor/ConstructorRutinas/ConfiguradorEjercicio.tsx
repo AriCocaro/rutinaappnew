@@ -199,25 +199,9 @@ export default function ConfiguradorEjercicio({
 
         {/* DEBUG */}
 
-        <div className="border rounded p-3 bg-yellow-50 text-xs col-span-full">
-          <div>
-            ejercicioId: {draft.ejercicioId}
-          </div>
+        
 
-          <div>
-            materialId: {draft.materialId}
-          </div>
-        </div>
-
-        <div className="border rounded p-3 bg-green-50 text-xs">
-
-          ejercicioActual:
-
-          {" "}
-
-          {ejercicioActual?.nombre ?? "NULL"}
-
-        </div>
+        
 
 
 
@@ -233,10 +217,8 @@ export default function ConfiguradorEjercicio({
           selectedId={draft.ejercicioId}
           onSelect={(id) => {
 
-            console.log(
-              "EJERCICIO SELECCIONADO:",
-              id
-            );
+             
+          
 
             actualizarDraft(
               "ejercicioId",
@@ -263,10 +245,7 @@ export default function ConfiguradorEjercicio({
           selectedId={draft.materialId}
           onSelect={(id) => {
 
-            console.log(
-              "MATERIAL SELECCIONADO:",
-              id
-            );
+            
 
             actualizarDraft(
               "materialId",

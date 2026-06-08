@@ -155,25 +155,19 @@ export default function SearchSelect({
   */
 
   function seleccionar(
-      option: Option
-    ) {
+    option: Option
+  ) {
 
-      console.log(
-        "SEARCHSELECT ->",
-        option.id,
-        option.nombre
-      );
+    onSelect(
+      option.id
+    );
 
-      onSelect(
-        option.id
-      );
+    setBusqueda(
+      option.nombre
+    );
 
-      setBusqueda(
-        option.nombre
-      );
-
-      setAbierto(false);
-    }
+    setAbierto(false);
+  }
 
   /*
   |--------------------------------------------------------------------------

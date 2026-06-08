@@ -135,6 +135,18 @@ export function useRutina(
 
   /*
   |--------------------------------------------------------------------------
+  | DEBUG DRAFT
+  |--------------------------------------------------------------------------
+  |
+  | Muestra cada cambio del draft.
+  |
+  | Eliminar cuando todo funcione.
+  |
+  */
+
+
+  /*
+  |--------------------------------------------------------------------------
   | ENTRENAMIENTOS
   |--------------------------------------------------------------------------
   */
@@ -205,61 +217,101 @@ export function useRutina(
   |--------------------------------------------------------------------------
   */
 
+ /*
+  |--------------------------------------------------------------------------
+  | DRAFT
+  |--------------------------------------------------------------------------
+  |
+  | Actualiza cualquier propiedad del draft.
+  |
+  | Se utiliza la versión funcional de setState
+  | para evitar problemas cuando React agrupa
+  | múltiples actualizaciones consecutivas.
+  |
+  | Ejemplo:
+  |
+  | actualizarDraft("ejercicioId", 12)
+  | actualizarDraft("materialId", 0)
+  |
+  | Sin esta versión se pueden perder cambios.
+  |
+  */
+
   function actualizarDraft(
 
-      campo:
-        keyof EjercicioDraft,
+    campo: keyof EjercicioDraft,
 
-      valor:
-        string | number
-    ) {
-
-      console.log(
-        "ACTUALIZAR DRAFT",
-        campo,
-        valor
-      );
-
-      setDraft({
-
-        ...draft,
-
-        [campo]: valor,
-      });
-    }
-
-  function actualizarDraftConfig(
-
-  campo:
-    keyof ConfiguracionAvanzada,
-
-  valor: ValorConfiguracion
+    valor: string | number
 
   ) {
 
-    setDraft({
+    setDraft((prev) => ({
 
-      ...draft,
+      ...prev,
+
+      [campo]: valor,
+
+    }));
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | CONFIGURACIÓN DEL DRAFT
+  |--------------------------------------------------------------------------
+  |
+  | Actualiza cualquier propiedad dentro de:
+  |
+  | draft.configuracion
+  |
+  | También utiliza la versión funcional
+  | para evitar sobrescribir cambios previos.
+  |
+  */
+
+  function actualizarDraftConfig(
+
+    campo: keyof ConfiguracionAvanzada,
+
+    valor: ValorConfiguracion
+
+  ) {
+
+    setDraft((prev) => ({
+
+      ...prev,
 
       configuracion: {
 
-        ...draft.configuracion,
+        ...prev.configuracion,
 
         [campo]: valor,
+
       },
-    });
+
+    }));
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | NOTAS DEL DRAFT
+  |--------------------------------------------------------------------------
+  |
+  | Actualiza las notas temporales
+  | antes de agregar el ejercicio.
+  |
+  */
 
   function actualizarDraftNotas(
     notas: string
   ) {
 
-    setDraft({
+    setDraft((prev) => ({
 
-      ...draft,
+      ...prev,
 
       notas,
-    });
+
+    }));
   }
 
   /*
