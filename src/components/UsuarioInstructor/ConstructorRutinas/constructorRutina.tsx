@@ -314,29 +314,31 @@ export default function ConstructorRutina({
 
       />
 
-      
 
      <ListaEntrenamientos
 
-        entrenamientos={entrenamientos}
+      entrenamientos={entrenamientos}
 
-        seriesGlobales={seriesGlobales}
-        repsGlobales={repsGlobales}
+      seriesGlobales={seriesGlobales}
+      repsGlobales={repsGlobales}
 
-        eliminarEntrenamiento={eliminarEntrenamiento}
+      cantidadBloques={cantidadBloques ?? 0}
 
-        agregarEjercicio={agregarEjercicio}
-        moverEjercicio={moverEjercicio}
-        eliminarEjercicio={eliminarEjercicio}
+      eliminarEntrenamiento={eliminarEntrenamiento}
 
-        actualizarConfiguracion={actualizarConfiguracion}
-        actualizarNotas={actualizarNotas}
+      agregarEjercicio={agregarEjercicio}
+      moverEjercicio={moverEjercicio}
+      eliminarEjercicio={eliminarEjercicio}
 
-        draft={draft}
-        actualizarDraft={actualizarDraft}
+      actualizarConfiguracion={actualizarConfiguracion}
+      actualizarNotas={actualizarNotas}
 
-      />
+      draft={draft}
+      actualizarDraft={actualizarDraft}
 
+    /> 
+
+     
       {/* ----------------------------------------------------- */}
       {/* RESUMEN                                               */}
       {/* ----------------------------------------------------- */}

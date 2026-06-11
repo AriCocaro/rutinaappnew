@@ -34,7 +34,20 @@ type Props = {
 
   repsGlobales:
     number;
+   
 
+    /*
+    |--------------------------------------------------------------------------
+    | ESTRUCTURA DE BLOQUES
+    |--------------------------------------------------------------------------
+    |
+    | Cantidad total de bloques configurados
+    | para la rutina.
+    |
+    */
+
+    cantidadBloques:
+      number;
   /*
   |--------------------------------------------------------------------------
   | ENTRENAMIENTOS
@@ -135,6 +148,8 @@ export default function ListaEntrenamientos({
   seriesGlobales,
   repsGlobales,
 
+  cantidadBloques,
+
   eliminarEntrenamiento,
 
   agregarEjercicio,
@@ -217,6 +232,8 @@ export default function ListaEntrenamientos({
                   repsGlobales={
                     repsGlobales
                   }
+
+                  cantidadBloques={cantidadBloques}
 
                   puedeSubir={
                     ejercicioIndex > 0

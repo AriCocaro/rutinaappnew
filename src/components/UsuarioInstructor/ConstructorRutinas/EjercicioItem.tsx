@@ -32,14 +32,28 @@ type Props = {
   | PROGRESIÓN GLOBAL
   |--------------------------------------------------------------------------
   */
+
   seriesGlobales: number;
   repsGlobales: number;
+
+  /*
+  |--------------------------------------------------------------------------
+  | ESTRUCTURA DE LA RUTINA
+  |--------------------------------------------------------------------------
+  |
+  | Se utiliza para limitar la cantidad
+  | de overrides que puede crear el instructor.
+  |
+  */
+
+  cantidadBloques: number;
 
   /*
   |--------------------------------------------------------------------------
   | ORDEN
   |--------------------------------------------------------------------------
   */
+
   puedeSubir: boolean;
   puedeBajar: boolean;
 
@@ -48,6 +62,7 @@ type Props = {
   | SUPERSERIES
   |--------------------------------------------------------------------------
   */
+
   indiceSuperserie: number | null;
 
   /*
@@ -55,6 +70,7 @@ type Props = {
   | ACCIONES
   |--------------------------------------------------------------------------
   */
+
   onMoverArriba: () => void;
   onMoverAbajo: () => void;
   onEliminar: () => void;
@@ -87,6 +103,7 @@ export default function EjercicioItem({
   notas,
   seriesGlobales,
   repsGlobales,
+  cantidadBloques,
   puedeSubir,
   puedeBajar,
   indiceSuperserie,
@@ -139,13 +156,14 @@ export default function EjercicioItem({
   return (
     <div className="border rounded-2xl p-5 bg-gray-50 flex flex-col gap-5">
 
-      {/* =========================================================== */}
+      {/* ========================================================== */}
       {/* HEADER */}
-      {/* =========================================================== */}
+      {/* ========================================================== */}
 
       <div className="flex items-start justify-between gap-4">
 
         {/* INFO PRINCIPAL */}
+
         <div>
           <h3 className="font-bold text-lg">
             {ejercicio.nombre}
@@ -157,6 +175,7 @@ export default function EjercicioItem({
         </div>
 
         {/* ACCIONES DE ORDEN */}
+
         <div className="flex items-center gap-2">
 
           {puedeSubir && (
@@ -188,11 +207,12 @@ export default function EjercicioItem({
           </button>
 
         </div>
+
       </div>
 
-      {/* =========================================================== */}
+      {/* ========================================================== */}
       {/* INDICADOR SUPERSERIE */}
-      {/* =========================================================== */}
+      {/* ========================================================== */}
 
       {indiceSuperserie !== null && (
         <div className="bg-purple-100 text-purple-700 px-3 py-2 rounded-xl text-sm w-fit">
@@ -200,11 +220,12 @@ export default function EjercicioItem({
         </div>
       )}
 
-      {/* =========================================================== */}
-      {/* CONFIGURACIÓN COMPLETA */}
-      {/* =========================================================== */}
+      {/* ========================================================== */}
+      {/* CONFIGURACIÓN DEL EJERCICIO */}
+      {/* ========================================================== */}
 
       <FormConfigEjercicio
+        cantidadBloques={cantidadBloques}
         configuracion={configuracion}
         notas={notas}
         seriesGlobales={seriesGlobales}

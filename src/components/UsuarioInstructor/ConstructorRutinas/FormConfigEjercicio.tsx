@@ -18,15 +18,23 @@ type Props = {
   |--------------------------------------------------------------------------
   | PROGRESIÓN GLOBAL
   |--------------------------------------------------------------------------
-  |
-  | Se utiliza como base cuando se crean
-  | bloques personalizados.
-  |
   */
 
   seriesGlobales: number;
 
   repsGlobales: number;
+
+  /*
+  |--------------------------------------------------------------------------
+  | CANTIDAD DE BLOQUES DE LA RUTINA
+  |--------------------------------------------------------------------------
+  |
+  | Se utiliza para impedir que el instructor
+  | genere overrides para bloques inexistentes.
+  |
+  */
+
+  cantidadBloques: number;
 
   /*
   |--------------------------------------------------------------------------
@@ -62,6 +70,7 @@ export default function FormConfigEjercicio({
   notas,
   seriesGlobales,
   repsGlobales,
+  cantidadBloques,
   onToggleOverride,
   onConfiguracionChange,
   onNotasChange,
@@ -73,23 +82,74 @@ export default function FormConfigEjercicio({
   |--------------------------------------------------------------------------
   */
 
-  function agregarBloqueOverride() {
+ /*
+|--------------------------------------------------------------------------
+| AGREGAR BLOQUE OVERRIDE
+|--------------------------------------------------------------------------
+|
+| Impide crear más bloques que los definidos
+| en la estructura general de la rutina.
+|
+| También busca el próximo número disponible
+| para evitar duplicados cuando se eliminan
+| bloques intermedios.
+|
+*/
+
+function agregarBloqueOverride() {
+
+    /*
+    |--------------------------------------------------------------------------
+    | LÍMITE DE BLOQUES
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      configuracion.overrideProgresiones.length >=
+      cantidadBloques
+    ) {
+      return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRÓXIMO BLOQUE DISPONIBLE
+    |--------------------------------------------------------------------------
+    */
+
+    const bloquesExistentes =
+      configuracion.overrideProgresiones.map(
+        (p) => p.bloque
+      );
+
+    let proximoBloque = 1;
+
+    while (
+      bloquesExistentes.includes(
+        proximoBloque
+      )
+    ) {
+      proximoBloque++;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEGURIDAD EXTRA
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      proximoBloque >
+      cantidadBloques
+    ) {
+      return;
+    }
 
     const nuevoBloque: OverrideProgresion = {
-
-      bloque:
-        configuracion
-          .overrideProgresiones
-          .length + 1,
-
-      series:
-        seriesGlobales,
-
-      reps:
-        repsGlobales,
-
-      descansoSegundos:
-        null,
+      bloque: proximoBloque,
+      series: seriesGlobales,
+      reps: repsGlobales,
+      descansoSegundos: null,
     };
 
     onConfiguracionChange(
@@ -100,7 +160,6 @@ export default function FormConfigEjercicio({
       ]
     );
   }
-
   function actualizarBloque(
     index: number,
     campo: keyof OverrideProgresion,
@@ -190,33 +249,48 @@ export default function FormConfigEjercicio({
               Bloques Override
             </h4>
 
-            <button
-              type="button"
-              onClick={
-                agregarBloqueOverride
-              }
-              className="
-                bg-blue-600
-                text-white
-                px-3
-                py-2
-                rounded-lg
-                text-sm
-              "
-            >
-              + Bloque
-            </button>
+            {configuracion.overrideProgresiones.length <
+              cantidadBloques && (
+
+              <button
+                type="button"
+                onClick={
+                  agregarBloqueOverride
+                }
+                className="
+                  bg-blue-600
+                  text-white
+                  px-3
+                  py-2
+                  rounded-lg
+                  text-sm
+                "
+              >
+                + Bloque
+              </button>
+            )}
+
+
+
+
 
           </div>
 
-          {configuracion.overrideProgresiones.map(
+            {[...configuracion.overrideProgresiones]
+
+              .sort(
+                (a, b) =>
+                  a.bloque - b.bloque
+              )
+
+              .map(
             (
               bloque,
               index
             ) => (
 
               <div
-                key={index}
+                key={`override-${bloque.bloque}`}
                 className="
                   grid
                   grid-cols-5
@@ -227,21 +301,32 @@ export default function FormConfigEjercicio({
 
                 {/* BLOQUE */}
 
-                <input
-                  type="number"
-                  value={bloque.bloque}
-                  onChange={(e) =>
-                    actualizarBloque(
-                      index,
-                      "bloque",
-                      Number(
-                        e.target.value
-                      )
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2"
-                  placeholder="Bloque"
-                />
+                {/*
+                |--------------------------------------------------------------------------
+                | BLOQUE
+                |--------------------------------------------------------------------------
+                |
+                | El número de bloque no debe ser editable.
+                | Se encuentra vinculado a la estructura
+                | principal de la rutina.
+                |
+                */}
+
+                <div
+                  className="
+                    border
+                    rounded-xl
+                    px-3
+                    py-2
+                    bg-gray-100
+                    text-center
+                    font-medium
+                  "
+                >
+                  Bloque {bloque.bloque}
+                </div>
+
+
 
                 {/* SERIES */}
 

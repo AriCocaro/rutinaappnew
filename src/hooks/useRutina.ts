@@ -518,70 +518,61 @@ export function useRutina(
 |
 */
 
-  function actualizarConfiguracion(
+function actualizarConfiguracion(
 
-    entrenamientoId: number,
+  entrenamientoId: number,
 
-    ejercicioId: number,
+  ejercicioId: number,
 
-    campo:
-      keyof ConfiguracionAvanzada,
+  campo: keyof ConfiguracionAvanzada,
 
-    valor:
-      ValorConfiguracion
+  valor: ValorConfiguracion
 
-  ) {
+) {
 
-    const nuevosEntrenamientos =
-      entrenamientos.map(
-        (entrenamiento) => {
+  setEntrenamientos((prev) =>
 
-          if (
-            entrenamiento.id ===
-            entrenamientoId
-          ) {
+    prev.map((entrenamiento) => {
 
-            return {
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
 
-              ...entrenamiento,
+      return {
 
-              ejercicios:
-                entrenamiento.ejercicios.map(
-                  (ejercicio) => {
+        ...entrenamiento,
 
-                    if (
-                      ejercicio.id ===
-                      ejercicioId
-                    ) {
+        ejercicios:
+          entrenamiento.ejercicios.map(
+            (ejercicio) => {
 
-                      return {
+              if (
+                ejercicio.id !==
+                ejercicioId
+              ) {
+                return ejercicio;
+              }
 
-                        ...ejercicio,
+              return {
 
-                        configuracion: {
+                ...ejercicio,
 
-                          ...ejercicio.configuracion,
+                configuracion: {
 
-                          [campo]:
-                            valor,
-                        },
-                      };
-                    }
+                  ...ejercicio.configuracion,
 
-                    return ejercicio;
-                  }
-                ),
-            };
-          }
-
-          return entrenamiento;
-        }
-      );
-
-    setEntrenamientos(
-      nuevosEntrenamientos
-    );
-  }
+                  [campo]: valor,
+                },
+              };
+            }
+          ),
+      };
+    })
+  );
+}
 
   /*
   |--------------------------------------------------------------------------
@@ -589,59 +580,54 @@ export function useRutina(
   |--------------------------------------------------------------------------
   */
 
-  function actualizarNotas(
+function actualizarNotas(
 
-    entrenamientoId: number,
+  entrenamientoId: number,
 
-    ejercicioId: number,
+  ejercicioId: number,
 
-    notas: string
-  ) {
+  notas: string
 
-    const nuevosEntrenamientos =
-      entrenamientos.map(
-        (entrenamiento) => {
+) {
 
-          if (
-            entrenamiento.id ===
-            entrenamientoId
-          ) {
+  setEntrenamientos((prev) =>
 
-            return {
+    prev.map((entrenamiento) => {
 
-              ...entrenamiento,
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
 
-              ejercicios:
-                entrenamiento.ejercicios.map(
-                  (ejercicio) => {
+      return {
 
-                    if (
-                      ejercicio.id ===
-                      ejercicioId
-                    ) {
+        ...entrenamiento,
 
-                      return {
+        ejercicios:
+          entrenamiento.ejercicios.map(
+            (ejercicio) => {
 
-                        ...ejercicio,
+              if (
+                ejercicio.id !==
+                ejercicioId
+              ) {
+                return ejercicio;
+              }
 
-                        notas,
-                      };
-                    }
+              return {
 
-                    return ejercicio;
-                  }
-                ),
-            };
-          }
+                ...ejercicio,
 
-          return entrenamiento;
-        }
-      );
-
-    setEntrenamientos(
-      nuevosEntrenamientos
-    );
-  }
+                notas,
+              };
+            }
+          ),
+      };
+    })
+  );
+}
 
   /*
   |--------------------------------------------------------------------------
