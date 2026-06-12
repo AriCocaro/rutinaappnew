@@ -68,13 +68,18 @@ type Props = {
     entrenamientoId: number
   ) => void;
 
-  moverEjercicio: (
+  moverItem: (
     entrenamientoId: number,
     index: number,
     direccion:
       | "arriba"
       | "abajo"
   ) => void;
+
+  agregarGrupo: (
+    entrenamientoId: number
+  ) => void;
+
 
   eliminarEjercicio: (
     entrenamientoId: number,
@@ -153,7 +158,8 @@ export default function ListaEntrenamientos({
   eliminarEntrenamiento,
 
   agregarEjercicio,
-  moverEjercicio,
+  agregarGrupo,
+  moverItem,
   eliminarEjercicio,
 
   actualizarConfiguracion,
@@ -174,13 +180,9 @@ export default function ListaEntrenamientos({
 
           <EntrenamientoCard
 
-            key={
-              entrenamiento.id
-            }
+            key={entrenamiento.id}
 
-            entrenamiento={
-              entrenamiento
-            }
+            entrenamiento={entrenamiento}
 
             onEliminar={() =>
               eliminarEntrenamiento(
@@ -188,162 +190,432 @@ export default function ListaEntrenamientos({
               )
             }
 
+            acciones={
+              <>
+                <button
+                  type="button"
+                  onClick={() =>
+                    agregarGrupo(
+                      entrenamiento.id
+                    )
+                  }
+                  className="
+                    bg-purple-600
+                    text-white
+                    px-4
+                    py-2
+                    rounded-xl
+                  "
+                >
+                  + Grupo
+                </button>
+              </>
+            }
+
           >
 
             {/* ------------------------------------------------------ */}
             {/* EJERCICIOS */}
             {/* ------------------------------------------------------ */}
+             {entrenamiento.items.map(
 
-            {entrenamiento.ejercicios.map(
+                (item, itemIndex) => {
 
-              (
-                ejercicio:
-                  EjercicioRutina,
+                  /*
+                  |----------------------------------------------------------
+                  | EJERCICIO INDIVIDUAL
+                  |----------------------------------------------------------
+                  */
 
-                ejercicioIndex
-              ) => (
+                  if (
+                    item.tipo ===
+                    "ejercicio"
+                  ) {
 
-                <EjercicioItem
+                    const ejercicio =
+                      item.contenido;
 
-                  key={
-                    ejercicio.id
+                    return (
+
+                      <EjercicioItem
+
+                        key={
+                          ejercicio.id
+                        }
+
+                        ejercicioId={
+                          ejercicio.ejercicioId
+                        }
+
+                        materialId={
+                          ejercicio.materialId
+                        }
+
+                        configuracion={
+                          ejercicio.configuracion
+                        }
+
+                        notas={
+                          ejercicio.notas
+                        }
+
+                        seriesGlobales={
+                          seriesGlobales
+                        }
+
+                        repsGlobales={
+                          repsGlobales
+                        }
+
+                        cantidadBloques={
+                          cantidadBloques
+                        }
+
+                        puedeSubir={
+                          itemIndex > 0
+                        }
+
+                        puedeBajar={
+
+                          itemIndex <
+
+                          entrenamiento.items
+                            .length - 1
+                        }
+
+                        onMoverArriba={() =>
+
+                          moverEjercicio(
+
+                            entrenamiento.id,
+
+                            itemIndex,
+
+                            "arriba"
+                          )
+
+                        }
+
+                        onMoverAbajo={() =>
+
+                          moverEjercicio(
+
+                            entrenamiento.id,
+
+                            itemIndex,
+
+                            "abajo"
+                          )
+
+                        }
+
+                        onToggleOverride={() =>
+
+                          actualizarConfiguracion(
+
+                            entrenamiento.id,
+
+                            ejercicio.id,
+
+                            "overrideActivo",
+
+                            !ejercicio
+                              .configuracion
+                              .overrideActivo
+                          )
+
+                        }
+
+                        onConfiguracionChange={
+
+                          (
+                            campo,
+                            valor
+                          ) =>
+
+                            actualizarConfiguracion(
+
+                              entrenamiento.id,
+
+                              ejercicio.id,
+
+                              campo,
+
+                              valor
+                            )
+
+                        }
+
+                        onNotasChange={
+
+                          (notas) =>
+
+                            actualizarNotas(
+
+                              entrenamiento.id,
+
+                              ejercicio.id,
+
+                              notas
+                            )
+
+                        }
+
+                        onEliminar={() =>
+
+                          eliminarEjercicio(
+
+                            entrenamiento.id,
+
+                            ejercicio.id
+                          )
+
+                        }
+                      />
+                    );
                   }
 
-                  ejercicioId={
-                    ejercicio.ejercicioId
-                  }
+                  /*
+                  |----------------------------------------------------------
+                  | GRUPO
+                  |----------------------------------------------------------
+                  */
 
-                  materialId={
-                    ejercicio.materialId
-                  }
+                  return (
 
-                  configuracion={
-                    ejercicio.configuracion
-                  }
+                    <div
+                      key={
+                        item.contenido.id
+                      }
+                      className="
+                        border
+                        rounded-xl
+                        p-4
+                        bg-purple-50
+                      "
+                    >
 
-                  notas={
-                    ejercicio.notas
-                  }
+                      <div className="font-bold mb-3">
 
-                  seriesGlobales={
-                    seriesGlobales
-                  }
+                        Grupo
 
-                  repsGlobales={
-                    repsGlobales
-                  }
+                      </div>
 
-                  cantidadBloques={cantidadBloques}
+                      {entrenamiento.items.map(
 
-                  puedeSubir={
-                    ejercicioIndex > 0
-                  }
+                        (
+                          item,
+                          itemIndex
+                        ) => {
 
-                  puedeBajar={
+                          /*
+                          |----------------------------------------------------------
+                          | EJERCICIO INDIVIDUAL
+                          |----------------------------------------------------------
+                          */
 
-                    ejercicioIndex <
+                          if (
+                            item.tipo ===
+                            "ejercicio"
+                          ) {
 
-                    entrenamiento
-                      .ejercicios
-                      .length - 1
+                            const ejercicio =
+                              item.contenido;
 
-                  }
+                            return (
 
-                  indiceSuperserie={
-                    ejercicio
-                      .configuracion
-                      .superserieId
-                  }
+                              <EjercicioItem
 
-                  onMoverArriba={() =>
+                                key={
+                                  ejercicio.id
+                                }
 
-                    moverEjercicio(
+                                ejercicioId={
+                                  ejercicio.ejercicioId
+                                }
 
-                      entrenamiento.id,
+                                materialId={
+                                  ejercicio.materialId
+                                }
 
-                      ejercicioIndex,
+                                configuracion={
+                                  ejercicio.configuracion
+                                }
 
-                      "arriba"
-                    )
+                                notas={
+                                  ejercicio.notas
+                                }
 
-                  }
+                                seriesGlobales={
+                                  seriesGlobales
+                                }
 
-                  onMoverAbajo={() =>
+                                repsGlobales={
+                                  repsGlobales
+                                }
 
-                    moverEjercicio(
+                                cantidadBloques={
+                                  cantidadBloques
+                                }
 
-                      entrenamiento.id,
+                                puedeSubir={
+                                  itemIndex > 0
+                                }
 
-                      ejercicioIndex,
+                                puedeBajar={
 
-                      "abajo"
-                    )
+                                  itemIndex <
 
-                  }
+                                  entrenamiento.items
+                                    .length - 1
+                                }
 
-                  onToggleOverride={() =>
+                                onMoverArriba={() =>
 
-                    actualizarConfiguracion(
+                                  moverItem(
 
-                      entrenamiento.id,
+                                    entrenamiento.id,
 
-                      ejercicio.id,
+                                    itemIndex,
 
-                      "overrideActivo",
+                                    "arriba"
+                                  )
+                                }
 
-                      !ejercicio
-                        .configuracion
-                        .overrideActivo
-                    )
+                                onMoverAbajo={() =>
 
-                  }
+                                  moverItem(
 
-                  onConfiguracionChange={
+                                    entrenamiento.id,
 
-                    (
-                      campo,
-                      valor
-                    ) =>
+                                    itemIndex,
 
-                      actualizarConfiguracion(
+                                    "abajo"
+                                  )
+                                }
 
-                        entrenamiento.id,
+                                onToggleOverride={() =>
 
-                        ejercicio.id,
+                                  actualizarConfiguracion(
 
-                        campo,
+                                    entrenamiento.id,
 
-                        valor
-                      )
-                  }
+                                    ejercicio.id,
 
-                  onNotasChange={(notas) =>
+                                    "overrideActivo",
 
-                    actualizarNotas(
+                                    !ejercicio
+                                      .configuracion
+                                      .overrideActivo
+                                  )
+                                }
 
-                      entrenamiento.id,
+                                onConfiguracionChange={
 
-                      ejercicio.id,
+                                  (
+                                    campo,
+                                    valor
+                                  ) =>
 
-                      notas
-                    )
+                                    actualizarConfiguracion(
 
-                  }
+                                      entrenamiento.id,
 
-                  onEliminar={() =>
+                                      ejercicio.id,
 
-                    eliminarEjercicio(
+                                      campo,
 
-                      entrenamiento.id,
+                                      valor
+                                    )
+                                }
 
-                      ejercicio.id
-                    )
+                                onNotasChange={
 
-                  }
-                />
+                                  (notas) =>
 
-              )
-            )}
+                                    actualizarNotas(
+
+                                      entrenamiento.id,
+
+                                      ejercicio.id,
+
+                                      notas
+                                    )
+                                }
+
+                                onEliminar={() =>
+
+                                  eliminarEjercicio(
+
+                                    entrenamiento.id,
+
+                                    ejercicio.id
+                                  )
+                                }
+                              />
+                            );
+                          }
+
+                          /*
+                          |----------------------------------------------------------
+                          | GRUPO
+                          |----------------------------------------------------------
+                          */
+
+                          return (
+
+                            <GrupoEjerciciosCard
+
+                              key={
+                                item.contenido.id
+                              }
+
+                              grupo={
+                                item.contenido
+                              }
+
+                              entrenamientoId={
+                                entrenamiento.id
+                              }
+
+                              seriesGlobales={
+                                seriesGlobales
+                              }
+
+                              repsGlobales={
+                                repsGlobales
+                              }
+
+                              cantidadBloques={
+                                cantidadBloques
+                              }
+
+                              actualizarConfiguracion={
+                                actualizarConfiguracion
+                              }
+
+                              actualizarNotas={
+                                actualizarNotas
+                              }
+
+                              eliminarEjercicio={
+                                eliminarEjercicio
+                              }
+                            />
+                          );
+                        }
+                      )}
+
+
+                    </div>
+                  );
+                }
+              )} 
+
+              
+
+              
+            
 
             {/* ------------------------------------------------------ */}
             {/* NUEVO EJERCICIO */}

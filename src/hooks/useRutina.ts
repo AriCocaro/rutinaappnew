@@ -8,8 +8,9 @@ import {
   Rutina,
   ProgresionBloque,
   ValorConfiguracion,
+  ItemEntrenamiento,
+  GrupoEjercicios,
 } from "@/types/rutinas";
-
 
 
 /*
@@ -17,7 +18,7 @@ import {
 | CONFIGURACIÓN BASE
 |--------------------------------------------------------------------------
 |
-| Configuración mínima que tendrá cualquier ejercicio
+|  mínima que tendrá cualquier ejercicio
 | agregado a una rutina.
 |
 */
@@ -66,7 +67,7 @@ const configuracionBase: ConfiguracionAvanzada = {
 
   cluster: false,
 
-  superserieId: null,
+
 };
 
 /*
@@ -150,6 +151,11 @@ export function useRutina(
   | ENTRENAMIENTOS
   |--------------------------------------------------------------------------
   */
+  /*
+|--------------------------------------------------------------------------
+| ENTRENAMIENTOS
+|--------------------------------------------------------------------------
+*/
 
   function agregarEntrenamiento() {
 
@@ -165,7 +171,7 @@ export function useRutina(
       orden:
         entrenamientos.length + 1,
 
-      ejercicios: [],
+      items: [],
     };
 
     setEntrenamientos([
@@ -188,12 +194,6 @@ export function useRutina(
           entrenamientoId
       );
 
-    /*
-    |--------------------------------------------------------------------------
-    | REORDENAR
-    |--------------------------------------------------------------------------
-    */
-
     setEntrenamientos(
 
       nuevosEntrenamientos.map(
@@ -210,6 +210,12 @@ export function useRutina(
       )
     );
   }
+ 
+
+  
+
+
+  
 
   /*
   |--------------------------------------------------------------------------
@@ -320,11 +326,17 @@ export function useRutina(
   |--------------------------------------------------------------------------
   */
 
+ /*
+  |--------------------------------------------------------------------------
+  | AGREGAR EJERCICIO
+  |--------------------------------------------------------------------------
+  */
+
   function agregarEjercicio(
     entrenamientoId: number
-    ) {
+  ) {
 
-   if (!draft.ejercicioId) {
+    if (!draft.ejercicioId) {
 
       alert(
         "Seleccionar ejercicio"
@@ -332,12 +344,14 @@ export function useRutina(
 
       return;
     }
+
     if (!draft.materialId) {
 
       alert(
         "Seleccionar material"
       );
-     return;
+
+      return;
     }
 
     const nuevosEntrenamientos =
@@ -345,54 +359,71 @@ export function useRutina(
         (entrenamiento) => {
 
           if (
-            entrenamiento.id ===
+            entrenamiento.id !==
             entrenamientoId
           ) {
-
-              const nuevoEjercicio:
-              EjercicioRutina = {
-
-              id:
-                Date.now() +
-                Math.floor(
-                  Math.random() * 10000
-                ),
-
-              ejercicioId:
-                draft.ejercicioId,
-             materialId:
-                draft.materialId,
-             notas:
-                draft.notas,
-
-              configuracion: {
-               ...draft.configuracion,
-              },
-            };
-
-            return {
-             ...entrenamiento,
-
-              ejercicios: [
-               ...entrenamiento.ejercicios,
-               nuevoEjercicio,
-              ],
-            };
+            return entrenamiento;
           }
-           return entrenamiento;
-       }
-     );
+
+          const nuevoEjercicio:
+            EjercicioRutina = {
+
+            id:
+              Date.now() +
+              Math.floor(
+                Math.random() * 10000
+              ),
+
+            ejercicioId:
+              draft.ejercicioId,
+
+            materialId:
+              draft.materialId,
+
+            notas:
+              draft.notas,
+
+            configuracion: {
+              ...draft.configuracion,
+            },
+          };
+
+          const nuevoItem:
+            ItemEntrenamiento = {
+
+            tipo: "ejercicio",
+
+            contenido:
+              nuevoEjercicio,
+          };
+
+          return {
+
+            ...entrenamiento,
+
+            items: [
+
+              ...entrenamiento.items,
+
+              nuevoItem,
+            ],
+          };
+        }
+      );
+
     setEntrenamientos(
       nuevosEntrenamientos
     );
 
     setDraft({
 
-     ejercicioId: 0,
-     materialId: 0,
-     notas: "",
+      ejercicioId: 0,
 
-     configuracion: {
+      materialId: 0,
+
+      notas: "",
+
+      configuracion: {
 
         ...configuracionBase,
       },
@@ -401,11 +432,72 @@ export function useRutina(
 
   /*
   |--------------------------------------------------------------------------
+  | AGREGAR GRUPO
+  |--------------------------------------------------------------------------
+  */
+
+  function agregarGrupo(
+    entrenamientoId: number
+  ) {
+
+    const nuevosEntrenamientos =
+      entrenamientos.map(
+        (entrenamiento) => {
+
+          if (
+            entrenamiento.id !==
+            entrenamientoId
+          ) {
+            return entrenamiento;
+          }
+
+          const nuevoGrupo:
+            GrupoEjercicios = {
+
+            id:
+              Date.now() +
+              Math.floor(
+                Math.random() * 10000
+              ),
+
+            ejercicios: [],
+          };
+
+          const nuevoItem:
+            ItemEntrenamiento = {
+
+            tipo: "grupo",
+
+            contenido:
+              nuevoGrupo,
+          };
+
+          return {
+
+            ...entrenamiento,
+
+            items: [
+
+              ...entrenamiento.items,
+
+              nuevoItem,
+            ],
+          };
+        }
+      );
+
+    setEntrenamientos(
+      nuevosEntrenamientos
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
   | MOVER EJERCICIO
   |--------------------------------------------------------------------------
   */
 
-  function moverEjercicio(
+  function moverItem(
 
     entrenamientoId: number,
 
@@ -427,8 +519,8 @@ export function useRutina(
             return entrenamiento;
           }
 
-          const ejercicios =
-            [...entrenamiento.ejercicios];
+          const items =
+          [...entrenamiento.items];
 
           const nuevoIndex =
             direccion === "arriba"
@@ -438,24 +530,24 @@ export function useRutina(
           if (
             nuevoIndex < 0 ||
             nuevoIndex >=
-              ejercicios.length
+            items.length
           ) {
             return entrenamiento;
           }
 
-          [
-            ejercicios[indexActual],
-            ejercicios[nuevoIndex],
+         [
+            items[indexActual],
+            items[nuevoIndex],
           ] = [
-            ejercicios[nuevoIndex],
-            ejercicios[indexActual],
-          ];
+            items[nuevoIndex],
+            items[indexActual],
+          ]; 
 
           return {
 
             ...entrenamiento,
 
-            ejercicios,
+            items,
           };
         }
       );
@@ -476,36 +568,43 @@ export function useRutina(
     entrenamientoId: number,
 
     ejercicioId: number
+
   ) {
 
-    const nuevosEntrenamientos =
-      entrenamientos.map(
-        (entrenamiento) => {
+    setEntrenamientos((prev) =>
 
-          if (
-            entrenamiento.id ===
-            entrenamientoId
-          ) {
+      prev.map((entrenamiento) => {
 
-            return {
-
-              ...entrenamiento,
-
-              ejercicios:
-                entrenamiento.ejercicios.filter(
-                  (ejercicio) =>
-                    ejercicio.id !==
-                    ejercicioId
-                ),
-            };
-          }
-
+        if (
+          entrenamiento.id !==
+          entrenamientoId
+        ) {
           return entrenamiento;
         }
-      );
 
-    setEntrenamientos(
-      nuevosEntrenamientos
+        return {
+
+          ...entrenamiento,
+
+          items:
+            entrenamiento.items.filter(
+              (item) => {
+
+                if (
+                  item.tipo !==
+                  "ejercicio"
+                ) {
+                  return true;
+                }
+
+                return (
+                  item.contenido.id !==
+                  ejercicioId
+                );
+              }
+            ),
+        };
+      })
     );
   }
   /*
@@ -517,16 +616,17 @@ export function useRutina(
 | ConfiguracionAvanzada para un ejercicio.
 |
 */
-
 function actualizarConfiguracion(
 
   entrenamientoId: number,
 
   ejercicioId: number,
 
-  campo: keyof ConfiguracionAvanzada,
+  campo:
+    keyof ConfiguracionAvanzada,
 
-  valor: ValorConfiguracion
+  valor:
+    ValorConfiguracion
 
 ) {
 
@@ -545,26 +645,39 @@ function actualizarConfiguracion(
 
         ...entrenamiento,
 
-        ejercicios:
-          entrenamiento.ejercicios.map(
-            (ejercicio) => {
+        items:
+          entrenamiento.items.map(
+            (item) => {
 
               if (
-                ejercicio.id !==
+                item.tipo !==
+                "ejercicio"
+              ) {
+                return item;
+              }
+
+              if (
+                item.contenido.id !==
                 ejercicioId
               ) {
-                return ejercicio;
+                return item;
               }
 
               return {
 
-                ...ejercicio,
+                ...item,
 
-                configuracion: {
+                contenido: {
 
-                  ...ejercicio.configuracion,
+                  ...item.contenido,
 
-                  [campo]: valor,
+                  configuracion: {
+
+                    ...item.contenido.configuracion,
+
+                    [campo]:
+                      valor,
+                  },
                 },
               };
             }
@@ -605,22 +718,34 @@ function actualizarNotas(
 
         ...entrenamiento,
 
-        ejercicios:
-          entrenamiento.ejercicios.map(
-            (ejercicio) => {
+        items:
+          entrenamiento.items.map(
+            (item) => {
 
               if (
-                ejercicio.id !==
+                item.tipo !==
+                "ejercicio"
+              ) {
+                return item;
+              }
+
+              if (
+                item.contenido.id !==
                 ejercicioId
               ) {
-                return ejercicio;
+                return item;
               }
 
               return {
 
-                ...ejercicio,
+                ...item,
 
-                notas,
+                contenido: {
+
+                  ...item.contenido,
+
+                  notas,
+                },
               };
             }
           ),
@@ -717,8 +842,7 @@ function actualizarNotas(
   | RETURN
   |------------------------------------------------------------------
   */
-
-  return {
+ return {
 
     entrenamientos,
 
@@ -735,8 +859,9 @@ function actualizarNotas(
     actualizarDraftNotas,
 
     agregarEjercicio,
+    agregarGrupo,
 
-    moverEjercicio,
+    moverItem,
 
     eliminarEjercicio,
 
@@ -746,5 +871,6 @@ function actualizarNotas(
 
     generarRutina,
   };
+  
 
 }

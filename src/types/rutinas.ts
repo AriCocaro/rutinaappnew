@@ -2,10 +2,6 @@
 |--------------------------------------------------------------------------
 | PROGRESIÓN GLOBAL DEL BLOQUE
 |--------------------------------------------------------------------------
-|
-| Se aplica a todos los ejercicios
-| salvo que tengan Override.
-|
 */
 
 export type ProgresionBloque = {
@@ -16,12 +12,6 @@ export type ProgresionBloque = {
 
   reps: number;
 
-  /*
-  |--------------------------------------------------------------------------
-  | DESCANSO GLOBAL
-  |--------------------------------------------------------------------------
-  */
-
   descansoSegundos: number | null;
 };
 
@@ -29,10 +19,6 @@ export type ProgresionBloque = {
 |--------------------------------------------------------------------------
 | OVERRIDE DE PROGRESIÓN
 |--------------------------------------------------------------------------
-|
-| Permite modificar únicamente
-| un ejercicio específico.
-|
 */
 
 export type OverrideProgresion = {
@@ -69,19 +55,20 @@ export type ValorConfiguracion =
 export type ConfiguracionAvanzada = {
 
   /*
-  |--------------------------------------------------------------------------
-  | PROGRESIÓN PERSONALIZADA
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
+  | OVERRIDES
+  |----------------------------------------------------------------------
   */
 
   overrideActivo: boolean;
 
-  overrideProgresiones: OverrideProgresion[];
+  overrideProgresiones:
+    OverrideProgresion[];
 
   /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | INTENSIDAD
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
   rir: number | null;
@@ -89,19 +76,20 @@ export type ConfiguracionAvanzada = {
   tempo: string | null;
 
   /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | DESCANSO
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
-  descansoSegundos: number | null;
+  descansoSegundos:
+    number | null;
 
   usarTimer: boolean;
 
   /*
-  |--------------------------------------------------------------------------
-  | TÉCNICAS AVANZADAS
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
+  | TÉCNICAS
+  |----------------------------------------------------------------------
   */
 
   warmup: boolean;
@@ -111,22 +99,20 @@ export type ConfiguracionAvanzada = {
   cluster: boolean;
 
   /*
-  |--------------------------------------------------------------------------
-  | SUPERSERIES
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
+  | FUTURAS TÉCNICAS
+  |----------------------------------------------------------------------
   */
 
-  superserieId: number | null;
+  restPause?: boolean;
+
+  myoReps?: boolean;
 };
 
 /*
 |--------------------------------------------------------------------------
-| EJERCICIO DE LA RUTINA
+| EJERCICIO
 |--------------------------------------------------------------------------
-|
-| Ejercicio ya agregado dentro
-| de un entrenamiento.
-|
 */
 
 export type EjercicioRutina = {
@@ -139,17 +125,70 @@ export type EjercicioRutina = {
 
   notas: string;
 
-  configuracion: ConfiguracionAvanzada;
+  configuracion:
+    ConfiguracionAvanzada;
 };
 
 /*
 |--------------------------------------------------------------------------
-| DRAFT TEMPORAL DEL CONSTRUCTOR
+| GRUPO DE EJERCICIOS
 |--------------------------------------------------------------------------
 |
-| Ejercicio temporal mientras
-| el instructor lo configura.
+| Representa ejercicios que se ejecutan juntos:
 |
+| - Superserie
+| - Triserie
+| - Circuito
+| - Giant Set
+| - Finisher
+|
+| No necesita nombre ni descripción.
+| La UI decidirá cómo mostrarlo.
+|
+*/
+
+export type GrupoEjercicios = {
+
+  id: number;
+
+  ejercicios:
+    EjercicioRutina[];
+};
+
+/*
+|--------------------------------------------------------------------------
+| ITEM DE ENTRENAMIENTO
+|--------------------------------------------------------------------------
+|
+| Un entrenamiento puede contener:
+|
+| - ejercicio individual
+| - grupo de ejercicios
+|
+*/
+
+export type ItemEntrenamiento =
+
+  | {
+
+      tipo: "ejercicio";
+
+      contenido:
+        EjercicioRutina;
+    }
+
+  | {
+
+      tipo: "grupo";
+
+      contenido:
+        GrupoEjercicios;
+    };
+
+/*
+|--------------------------------------------------------------------------
+| DRAFT TEMPORAL
+|--------------------------------------------------------------------------
 */
 
 export type EjercicioDraft = {
@@ -160,15 +199,23 @@ export type EjercicioDraft = {
 
   notas: string;
 
-  configuracion: ConfiguracionAvanzada;
+  configuracion:
+    ConfiguracionAvanzada;
 };
 
 /*
 |--------------------------------------------------------------------------
 | ENTRENAMIENTO
 |--------------------------------------------------------------------------
+|
+| Contiene una lista ordenada de items.
+|
+| Cada item puede ser:
+|
+| - ejercicio individual
+| - grupo
+|
 */
-
 
 export type EntrenamientoRutina = {
 
@@ -176,12 +223,13 @@ export type EntrenamientoRutina = {
 
   orden: number;
 
-  ejercicios: EjercicioRutina[];
+  items:
+    ItemEntrenamiento[];
 };
 
 /*
 |--------------------------------------------------------------------------
-| ESTADO DE LA RUTINA
+| ESTADO
 |--------------------------------------------------------------------------
 */
 
@@ -205,9 +253,9 @@ export type Rutina = {
   fechaInicio: string;
 
   /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | ESTRUCTURA
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
   cantidadBloques: number;
@@ -215,17 +263,18 @@ export type Rutina = {
   entrenamientosPorBloque: number;
 
   /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | PROGRESIÓN GLOBAL
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
-  progresionGlobal: ProgresionBloque[];
+  progresionGlobal:
+    ProgresionBloque[];
 
   /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | ESTADO
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
   activa: boolean;
@@ -235,10 +284,11 @@ export type Rutina = {
   fechaUltimaEdicion: string;
 
   /*
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   | CONTENIDO
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------------
   */
 
-  entrenamientos: EntrenamientoRutina[];
+  entrenamientos:
+    EntrenamientoRutina[];
 };

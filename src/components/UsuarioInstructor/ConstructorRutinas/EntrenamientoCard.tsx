@@ -15,16 +15,21 @@ import {
 | PROPS
 |--------------------------------------------------------------------------
 |
-| Card contenedora de un día de entrenamiento.
+| Card contenedora de un entrenamiento.
 |
 | Responsabilidades:
 |
-| - Mostrar nombre del día
-| - Permitir eliminar el día
+| - Mostrar encabezado del día
+| - Permitir eliminar el entrenamiento
+| - Renderizar acciones opcionales
 | - Renderizar contenido interno
 |
-| NO maneja ejercicios.
-| NO maneja configuraciones.
+| NO maneja:
+|
+| - ejercicios
+| - grupos
+| - configuraciones
+| - lógica de negocio
 |
 */
 
@@ -35,6 +40,32 @@ type Props = {
 
   onEliminar:
     () => void;
+
+  /*
+  |----------------------------------------------------------------------
+  | ACCIONES OPCIONALES
+  |----------------------------------------------------------------------
+  |
+  | Permite inyectar botones:
+  |
+  | + Ejercicio
+  | + Superserie
+  | + Triserie
+  | + Circuito
+  |
+  | sin acoplar este componente
+  | a la lógica de la rutina.
+  |
+  */
+
+  acciones?:
+    ReactNode;
+
+  /*
+  |----------------------------------------------------------------------
+  | CONTENIDO
+  |----------------------------------------------------------------------
+  */
 
   children:
     ReactNode;
@@ -51,6 +82,8 @@ export default function EntrenamientoCard({
   entrenamiento,
 
   onEliminar,
+
+  acciones,
 
   children,
 
@@ -82,14 +115,16 @@ export default function EntrenamientoCard({
         "
       >
 
-        <h2 className="text-xl font-bold">
-
-          Día {
-            obtenerLetraDia(
-              entrenamiento.orden
-            )
-          }
-
+        <h2
+          className="
+            text-xl
+            font-bold
+          "
+        >
+          Día{" "}
+          {obtenerLetraDia(
+            entrenamiento.orden
+          )}
         </h2>
 
         <button
@@ -104,6 +139,23 @@ export default function EntrenamientoCard({
         </button>
 
       </div>
+
+      {/* ------------------------------------------------------------ */}
+      {/* ACCIONES */}
+      {/* ------------------------------------------------------------ */}
+      {acciones && (
+
+        <div
+          className="
+            flex
+            flex-wrap
+            gap-2
+          "
+        >
+          {acciones}
+        </div>
+
+      )}
 
       {/* ------------------------------------------------------------ */}
       {/* CONTENIDO */}

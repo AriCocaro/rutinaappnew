@@ -15,16 +15,26 @@ import {
 | PROPS
 |--------------------------------------------------------------------------
 |
-| Este componente es SOLO una “caja contenedora visual + acciones”.
-| No debería contener lógica de negocio.
+| Componente visual de un ejercicio.
+|
+| Responsabilidades:
+|
+| - Mostrar ejercicio
+| - Mostrar material
+| - Mostrar acciones
+| - Mostrar configuración
+|
+| No contiene lógica de negocio.
 |
 */
 
 type Props = {
   ejercicioId: number;
+
   materialId: number;
 
   configuracion: ConfiguracionAvanzada;
+
   notas: string;
 
   /*
@@ -34,16 +44,13 @@ type Props = {
   */
 
   seriesGlobales: number;
+
   repsGlobales: number;
 
   /*
   |--------------------------------------------------------------------------
-  | ESTRUCTURA DE LA RUTINA
+  | ESTRUCTURA DE BLOQUES
   |--------------------------------------------------------------------------
-  |
-  | Se utiliza para limitar la cantidad
-  | de overrides que puede crear el instructor.
-  |
   */
 
   cantidadBloques: number;
@@ -55,15 +62,8 @@ type Props = {
   */
 
   puedeSubir: boolean;
+
   puedeBajar: boolean;
-
-  /*
-  |--------------------------------------------------------------------------
-  | SUPERSERIES
-  |--------------------------------------------------------------------------
-  */
-
-  indiceSuperserie: number | null;
 
   /*
   |--------------------------------------------------------------------------
@@ -72,7 +72,9 @@ type Props = {
   */
 
   onMoverArriba: () => void;
+
   onMoverAbajo: () => void;
+
   onEliminar: () => void;
 
   onToggleOverride: () => void;
@@ -106,7 +108,6 @@ export default function EjercicioItem({
   cantidadBloques,
   puedeSubir,
   puedeBajar,
-  indiceSuperserie,
   onMoverArriba,
   onMoverAbajo,
   onEliminar,
@@ -114,15 +115,10 @@ export default function EjercicioItem({
   onConfiguracionChange,
   onNotasChange,
 }: Props) {
-
   /*
   |--------------------------------------------------------------------------
   | RESOLUCIÓN DE DATOS
   |--------------------------------------------------------------------------
-  |
-  | Convertimos IDs en objetos legibles.
-  | IMPORTANTE: siempre proteger undefined.
-  |
   */
 
   const ejercicio = ejercicios.find(
@@ -135,14 +131,23 @@ export default function EjercicioItem({
 
   /*
   |--------------------------------------------------------------------------
-  | UI FALLBACK (IMPORTANTE)
+  | FALLBACK
   |--------------------------------------------------------------------------
   */
 
   if (!ejercicio) {
     return (
-      <div className="border rounded-xl p-4 bg-red-50 text-red-600">
-        Ejercicio no encontrado (ID: {ejercicioId})
+      <div
+        className="
+          border
+          rounded-xl
+          p-4
+          bg-red-50
+          text-red-600
+        "
+      >
+        Ejercicio no encontrado
+        (ID: {ejercicioId})
       </div>
     );
   }
@@ -154,35 +159,70 @@ export default function EjercicioItem({
   */
 
   return (
-    <div className="border rounded-2xl p-5 bg-gray-50 flex flex-col gap-5">
-
-      {/* ========================================================== */}
+    <div
+      className="
+        border
+        rounded-2xl
+        p-5
+        bg-gray-50
+        flex
+        flex-col
+        gap-5
+      "
+    >
+      {/* ---------------------------------------------------------- */}
       {/* HEADER */}
-      {/* ========================================================== */}
+      {/* ---------------------------------------------------------- */}
 
-      <div className="flex items-start justify-between gap-4">
-
-        {/* INFO PRINCIPAL */}
+      <div
+        className="
+          flex
+          items-start
+          justify-between
+          gap-4
+        "
+      >
+        {/* INFO */}
 
         <div>
-          <h3 className="font-bold text-lg">
+          <h3
+            className="
+              font-bold
+              text-lg
+            "
+          >
             {ejercicio.nombre}
           </h3>
 
-          <p className="text-sm text-gray-500">
+          <p
+            className="
+              text-sm
+              text-gray-500
+            "
+          >
             {material?.nombre ?? "Sin material"}
           </p>
         </div>
 
-        {/* ACCIONES DE ORDEN */}
+        {/* ACCIONES */}
 
-        <div className="flex items-center gap-2">
-
+        <div
+          className="
+            flex
+            items-center
+            gap-2
+          "
+        >
           {puedeSubir && (
             <button
               type="button"
               onClick={onMoverArriba}
-              className="border px-3 py-1 rounded-lg"
+              className="
+                border
+                px-3
+                py-1
+                rounded-lg
+              "
             >
               ↑
             </button>
@@ -192,7 +232,12 @@ export default function EjercicioItem({
             <button
               type="button"
               onClick={onMoverAbajo}
-              className="border px-3 py-1 rounded-lg"
+              className="
+                border
+                px-3
+                py-1
+                rounded-lg
+              "
             >
               ↓
             </button>
@@ -201,28 +246,19 @@ export default function EjercicioItem({
           <button
             type="button"
             onClick={onEliminar}
-            className="text-red-500 text-sm"
+            className="
+              text-red-500
+              text-sm
+            "
           >
             Eliminar
           </button>
-
         </div>
-
       </div>
 
-      {/* ========================================================== */}
-      {/* INDICADOR SUPERSERIE */}
-      {/* ========================================================== */}
-
-      {indiceSuperserie !== null && (
-        <div className="bg-purple-100 text-purple-700 px-3 py-2 rounded-xl text-sm w-fit">
-          Superserie #{indiceSuperserie}
-        </div>
-      )}
-
-      {/* ========================================================== */}
-      {/* CONFIGURACIÓN DEL EJERCICIO */}
-      {/* ========================================================== */}
+      {/* ---------------------------------------------------------- */}
+      {/* CONFIGURACIÓN */}
+      {/* ---------------------------------------------------------- */}
 
       <FormConfigEjercicio
         cantidadBloques={cantidadBloques}
@@ -234,7 +270,6 @@ export default function EjercicioItem({
         onConfiguracionChange={onConfiguracionChange}
         onNotasChange={onNotasChange}
       />
-
     </div>
   );
 }

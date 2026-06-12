@@ -103,10 +103,12 @@ export default function ConstructorRutina({
     eliminarEntrenamiento,
 
     actualizarDraft,
-    
 
     agregarEjercicio,
-    moverEjercicio,
+    agregarGrupo,
+
+    moverItem,
+
     eliminarEjercicio,
 
     actualizarConfiguracion,
@@ -117,7 +119,6 @@ export default function ConstructorRutina({
   } = useRutina(
     rutinaInicial
   );
-
   /*
   |--------------------------------------------------------------------------
   | GUARDAR RUTINA
@@ -327,7 +328,8 @@ export default function ConstructorRutina({
       eliminarEntrenamiento={eliminarEntrenamiento}
 
       agregarEjercicio={agregarEjercicio}
-      moverEjercicio={moverEjercicio}
+      agregarGrupo={agregarGrupo}
+      moverItem={moverItem}
       eliminarEjercicio={eliminarEjercicio}
 
       actualizarConfiguracion={actualizarConfiguracion}
