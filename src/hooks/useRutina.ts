@@ -435,62 +435,258 @@ export function useRutina(
   | AGREGAR GRUPO
   |--------------------------------------------------------------------------
   */
+/*
+|--------------------------------------------------------------------------
+| AGREGAR GRUPO
+|--------------------------------------------------------------------------
+|
+| Crea un grupo vacío dentro del entrenamiento.
+|
+| El grupo posee:
+|
+| - configuración propia
+| - notas propias
+| - ejercicios internos
+|
+*/
 
-  function agregarGrupo(
-    entrenamientoId: number
-  ) {
+function agregarGrupo(
+  entrenamientoId: number
+): void {
 
-    const nuevosEntrenamientos =
-      entrenamientos.map(
-        (entrenamiento) => {
+  setEntrenamientos((prev) =>
 
-          if (
-            entrenamiento.id !==
-            entrenamientoId
-          ) {
-            return entrenamiento;
-          }
+    prev.map((entrenamiento) => {
 
-          const nuevoGrupo:
-            GrupoEjercicios = {
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
 
-            id:
-              Date.now() +
-              Math.floor(
-                Math.random() * 10000
-              ),
+      const nuevoGrupo:
+        GrupoEjercicios = {
 
-            ejercicios: [],
-          };
+        id:
+          Date.now() +
+          Math.floor(
+            Math.random() * 10000
+          ),
 
-          const nuevoItem:
-            ItemEntrenamiento = {
+        /*
+        |------------------------------------------------------
+        | DATOS DEL GRUPO
+        |------------------------------------------------------
+        */
 
-            tipo: "grupo",
+        notas: "",
 
-            contenido:
-              nuevoGrupo,
-          };
+        configuracion: {
+          ...configuracionBase,
+        },
 
-          return {
+        /*
+        |------------------------------------------------------
+        | EJERCICIOS
+        |------------------------------------------------------
+        */
 
-            ...entrenamiento,
+        ejercicios: [],
+      };
 
-            items: [
+      const nuevoItem:
+        ItemEntrenamiento = {
 
-              ...entrenamiento.items,
+        tipo: "grupo",
 
-              nuevoItem,
-            ],
-          };
-        }
-      );
+        contenido:
+          nuevoGrupo,
+      };
 
-    setEntrenamientos(
-      nuevosEntrenamientos
+      return {
+
+        ...entrenamiento,
+
+        items: [
+
+          ...entrenamiento.items,
+
+          nuevoItem,
+        ],
+      };
+    })
+  );
+}
+
+  /*
+|--------------------------------------------------------------------------
+| AGREGAR EJERCICIO A GRUPO
+|--------------------------------------------------------------------------
+*/
+
+function agregarEjercicioAGrupo(
+
+  entrenamientoId: number,
+
+  grupoId: number
+
+): void {
+
+  if (!draft.ejercicioId) {
+
+    alert(
+      "Seleccionar ejercicio"
     );
+
+    return;
   }
 
+  if (!draft.materialId) {
+
+    alert(
+      "Seleccionar material"
+    );
+
+    return;
+  }
+
+  const nuevoEjercicio:
+    EjercicioRutina = {
+
+    id:
+      Date.now() +
+      Math.floor(
+        Math.random() * 10000
+      ),
+
+    ejercicioId:
+      draft.ejercicioId,
+
+    materialId:
+      draft.materialId,
+
+    notas:
+      draft.notas,
+
+    configuracion: {
+      ...draft.configuracion,
+    },
+  };
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          entrenamiento.items.map(
+            (item) => {
+
+              if (
+                item.tipo !==
+                "grupo"
+              ) {
+                return item;
+              }
+
+              if (
+                item.contenido.id !==
+                grupoId
+              ) {
+                return item;
+              }
+
+              return {
+
+                ...item,
+
+                contenido: {
+
+                  ...item.contenido,
+
+                  ejercicios: [
+
+                    ...item.contenido
+                      .ejercicios,
+
+                    nuevoEjercicio,
+                  ],
+                },
+              };
+            }
+          ),
+      };
+    })
+  );
+
+  setDraft(
+    draftBase
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| ELIMINAR GRUPO
+|--------------------------------------------------------------------------
+*/
+
+function eliminarGrupo(
+
+  entrenamientoId: number,
+
+  grupoId: number
+
+): void {
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          entrenamiento.items.filter(
+            (item) => {
+
+              if (
+                item.tipo !==
+                "grupo"
+              ) {
+                return true;
+              }
+
+              return (
+                item.contenido.id !==
+                grupoId
+              );
+            }
+          ),
+      };
+    })
+  );
+}
+
+  
   /*
   |--------------------------------------------------------------------------
   | MOVER EJERCICIO
@@ -687,6 +883,166 @@ function actualizarConfiguracion(
   );
 }
 
+/*
+|--------------------------------------------------------------------------
+| CONFIGURACIÓN DEL GRUPO
+|--------------------------------------------------------------------------
+|
+| Permite modificar cualquier propiedad de:
+|
+| grupo.configuracion
+|
+| Ejemplos:
+|
+| - rir
+| - tempo
+| - overrideActivo
+| - overrideProgresiones
+| - descansoSegundos
+|
+*/
+
+function actualizarConfiguracionGrupo(
+
+  entrenamientoId: number,
+
+  grupoId: number,
+
+  campo: keyof ConfiguracionAvanzada,
+
+  valor: ValorConfiguracion
+
+) {
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          entrenamiento.items.map(
+            (item) => {
+
+              if (
+                item.tipo !==
+                "grupo"
+              ) {
+                return item;
+              }
+
+              if (
+                item.contenido.id !==
+                grupoId
+              ) {
+                return item;
+              }
+
+              return {
+
+                ...item,
+
+                contenido: {
+
+                  ...item.contenido,
+
+                  configuracion: {
+
+                    ...item.contenido.configuracion,
+
+                    [campo]:
+                      valor,
+                  },
+                },
+              };
+            }
+          ),
+      };
+    })
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| NOTAS DEL GRUPO
+|--------------------------------------------------------------------------
+|
+| Actualiza las notas generales
+| asociadas al grupo.
+|
+*/
+
+function actualizarNotasGrupo(
+
+  entrenamientoId: number,
+
+  grupoId: number,
+
+  notas: string
+
+) {
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          entrenamiento.items.map(
+            (item) => {
+
+              if (
+                item.tipo !==
+                "grupo"
+              ) {
+                return item;
+              }
+
+              if (
+                item.contenido.id !==
+                grupoId
+              ) {
+                return item;
+              }
+
+              return {
+
+                ...item,
+
+                contenido: {
+
+                  ...item.contenido,
+
+                  notas,
+                },
+              };
+            }
+          ),
+      };
+    })
+  );
+}
+
+
   /*
   |--------------------------------------------------------------------------
   | NOTAS
@@ -844,33 +1200,40 @@ function actualizarNotas(
   */
  return {
 
-    entrenamientos,
+  entrenamientos,
 
-    draft,
+  draft,
 
-    agregarEntrenamiento,
+  agregarEntrenamiento,
 
-    eliminarEntrenamiento,
+  eliminarEntrenamiento,
 
-    actualizarDraft,
+  actualizarDraft,
 
-    actualizarDraftConfig,
+  actualizarDraftConfig,
 
-    actualizarDraftNotas,
+  actualizarDraftNotas,
 
-    agregarEjercicio,
-    agregarGrupo,
+  agregarEjercicio,
 
-    moverItem,
+  agregarGrupo,
 
-    eliminarEjercicio,
+  agregarEjercicioAGrupo,
 
-    actualizarConfiguracion,
+  eliminarGrupo,
 
-    actualizarNotas,
+  moverItem,
 
-    generarRutina,
-  };
-  
+  eliminarEjercicio,
 
+  actualizarConfiguracion,
+
+  actualizarConfiguracionGrupo,
+
+  actualizarNotas,
+
+  actualizarNotasGrupo,
+
+  generarRutina,
+};
 }

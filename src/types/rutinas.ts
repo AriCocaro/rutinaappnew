@@ -50,6 +50,10 @@ export type ValorConfiguracion =
 |--------------------------------------------------------------------------
 | CONFIGURACIÓN AVANZADA
 |--------------------------------------------------------------------------
+|
+| Utilizada tanto por ejercicios
+| como por grupos.
+|
 */
 
 export type ConfiguracionAvanzada = {
@@ -134,7 +138,8 @@ export type EjercicioRutina = {
 | GRUPO DE EJERCICIOS
 |--------------------------------------------------------------------------
 |
-| Representa ejercicios que se ejecutan juntos:
+| Representa cualquier conjunto de ejercicios
+| ejecutados como bloque:
 |
 | - Superserie
 | - Triserie
@@ -142,14 +147,28 @@ export type EjercicioRutina = {
 | - Giant Set
 | - Finisher
 |
-| No necesita nombre ni descripción.
-| La UI decidirá cómo mostrarlo.
+| La aplicación NO guarda un tipo.
+| El entrenador simplemente crea un grupo.
+|
+| El grupo puede tener:
+|
+| - notas propias
+| - override propio
+| - configuración propia
+|
+| Además cada ejercicio interno
+| mantiene su configuración individual.
 |
 */
 
 export type GrupoEjercicios = {
 
   id: number;
+
+  notas: string;
+
+  configuracion:
+    ConfiguracionAvanzada;
 
   ejercicios:
     EjercicioRutina[];
@@ -189,6 +208,10 @@ export type ItemEntrenamiento =
 |--------------------------------------------------------------------------
 | DRAFT TEMPORAL
 |--------------------------------------------------------------------------
+|
+| Utilizado para construir
+| un ejercicio antes de agregarlo.
+|
 */
 
 export type EjercicioDraft = {
@@ -208,11 +231,11 @@ export type EjercicioDraft = {
 | ENTRENAMIENTO
 |--------------------------------------------------------------------------
 |
-| Contiene una lista ordenada de items.
+| Lista ordenada de items.
 |
 | Cada item puede ser:
 |
-| - ejercicio individual
+| - ejercicio
 | - grupo
 |
 */
