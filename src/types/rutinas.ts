@@ -12,7 +12,8 @@ export type ProgresionBloque = {
 
   reps: number;
 
-  descansoSegundos: number | null;
+  descansoSegundos:
+    number | null;
 };
 
 /*
@@ -29,13 +30,18 @@ export type OverrideProgresion = {
 
   reps: number;
 
-  descansoSegundos: number | null;
+  descansoSegundos:
+    number | null;
 };
 
 /*
 |--------------------------------------------------------------------------
-| VALOR CONFIGURACIÓN
+| VALORES POSIBLES DE CONFIGURACIÓN
 |--------------------------------------------------------------------------
+|
+| Todos los campos que pueden ser modificados
+| dinámicamente desde formularios.
+|
 */
 
 export type ValorConfiguracion =
@@ -51,8 +57,10 @@ export type ValorConfiguracion =
 | CONFIGURACIÓN AVANZADA
 |--------------------------------------------------------------------------
 |
-| Utilizada tanto por ejercicios
-| como por grupos.
+| Utilizada tanto por:
+|
+| - ejercicios
+| - grupos
 |
 */
 
@@ -117,6 +125,10 @@ export type ConfiguracionAvanzada = {
 |--------------------------------------------------------------------------
 | EJERCICIO
 |--------------------------------------------------------------------------
+|
+| Datos reales del ejercicio dentro
+| de una rutina.
+|
 */
 
 export type EjercicioRutina = {
@@ -135,33 +147,37 @@ export type EjercicioRutina = {
 
 /*
 |--------------------------------------------------------------------------
-| GRUPO DE EJERCICIOS
+| ITEM EJERCICIO
+|--------------------------------------------------------------------------
+*/
+
+export interface EjercicioItem {
+
+  tipo: "ejercicio";
+
+  contenido:
+    EjercicioRutina;
+}
+
+/*
+|--------------------------------------------------------------------------
+| GRUPO
 |--------------------------------------------------------------------------
 |
-| Representa cualquier conjunto de ejercicios
-| ejecutados como bloque:
+| Ahora un grupo contiene ITEMS.
 |
-| - Superserie
-| - Triserie
-| - Circuito
-| - Giant Set
-| - Finisher
+| Esto permite:
 |
-| La aplicación NO guarda un tipo.
-| El entrenador simplemente crea un grupo.
-|
-| El grupo puede tener:
-|
-| - notas propias
-| - override propio
-| - configuración propia
-|
-| Además cada ejercicio interno
-| mantiene su configuración individual.
+| Grupo
+| ├─ Ejercicio
+| ├─ Ejercicio
+| └─ Grupo
+|     ├─ Ejercicio
+|     └─ Ejercicio
 |
 */
 
-export type GrupoEjercicios = {
+export interface GrupoEjercicios {
 
   id: number;
 
@@ -170,47 +186,48 @@ export type GrupoEjercicios = {
   configuracion:
     ConfiguracionAvanzada;
 
-  ejercicios:
-    EjercicioRutina[];
-};
+  items:
+    ItemEntrenamiento[];
+}
+
+/*
+|--------------------------------------------------------------------------
+| ITEM GRUPO
+|--------------------------------------------------------------------------
+*/
+
+export interface GrupoItem {
+
+  tipo: "grupo";
+
+  contenido:
+    GrupoEjercicios;
+}
 
 /*
 |--------------------------------------------------------------------------
 | ITEM DE ENTRENAMIENTO
 |--------------------------------------------------------------------------
 |
-| Un entrenamiento puede contener:
+| Unidad mínima renderizable.
 |
-| - ejercicio individual
-| - grupo de ejercicios
+| Toda la aplicación debería trabajar
+| únicamente con ItemEntrenamiento.
 |
 */
 
 export type ItemEntrenamiento =
 
-  | {
-
-      tipo: "ejercicio";
-
-      contenido:
-        EjercicioRutina;
-    }
-
-  | {
-
-      tipo: "grupo";
-
-      contenido:
-        GrupoEjercicios;
-    };
+  | EjercicioItem
+  | GrupoItem;
 
 /*
 |--------------------------------------------------------------------------
 | DRAFT TEMPORAL
 |--------------------------------------------------------------------------
 |
-| Utilizado para construir
-| un ejercicio antes de agregarlo.
+| Utilizado mientras el instructor
+| configura un ejercicio.
 |
 */
 
@@ -233,11 +250,6 @@ export type EjercicioDraft = {
 |
 | Lista ordenada de items.
 |
-| Cada item puede ser:
-|
-| - ejercicio
-| - grupo
-|
 */
 
 export type EntrenamientoRutina = {
@@ -252,7 +264,7 @@ export type EntrenamientoRutina = {
 
 /*
 |--------------------------------------------------------------------------
-| ESTADO
+| ESTADO DE RUTINA
 |--------------------------------------------------------------------------
 */
 
@@ -283,7 +295,8 @@ export type Rutina = {
 
   cantidadBloques: number;
 
-  entrenamientosPorBloque: number;
+  entrenamientosPorBloque:
+    number;
 
   /*
   |----------------------------------------------------------------------
@@ -304,7 +317,8 @@ export type Rutina = {
 
   estado: EstadoRutina;
 
-  fechaUltimaEdicion: string;
+  fechaUltimaEdicion:
+    string;
 
   /*
   |----------------------------------------------------------------------

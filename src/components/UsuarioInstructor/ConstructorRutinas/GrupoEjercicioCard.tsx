@@ -75,7 +75,7 @@ export default function GrupoEjercicioCard({
   onEliminar,
   onMoverArriba,
   onMoverAbajo,
-}: Props): JSX.Element {
+}: Props): {
   return (
     <div
       className="
@@ -117,7 +117,7 @@ export default function GrupoEjercicioCard({
               text-purple-600
             "
           >
-            {grupo.ejercicios.length} ejercicio(s)
+           {grupo.items.length} item(s)
           </p>
         </div>
 
