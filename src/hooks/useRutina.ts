@@ -12,6 +12,18 @@ import {
   GrupoEjercicios,
 } from "@/types/rutinas";
 
+import {
+
+  actualizarGrupoRecursivo,
+
+  actualizarEjercicioRecursivo,
+
+  eliminarNodoRecursivo,
+
+  eliminarEjercicioRecursivo,
+
+} from "@/components/UsuarioInstructor/ConstructorRutinas/treeHelpers";
+
 
 /*
 |--------------------------------------------------------------------------
@@ -568,10 +580,21 @@ function agregarGrupo(
     })
   );
 }
-  /*
+
+/*
 |--------------------------------------------------------------------------
 | AGREGAR EJERCICIO A GRUPO
 |--------------------------------------------------------------------------
+|
+| Inserta un ejercicio dentro de un grupo.
+|
+| Ahora utiliza búsqueda recursiva para soportar:
+|
+| Grupo
+| └─ Grupo
+|     └─ Grupo
+|         └─ Ejercicio
+|
 */
 
 function agregarEjercicioAGrupo(
@@ -581,6 +604,12 @@ function agregarEjercicioAGrupo(
   grupoId: number
 
 ): void {
+
+  /*
+  |--------------------------------------------------------------------------
+  | VALIDACIONES
+  |--------------------------------------------------------------------------
+  */
 
   if (!draft.ejercicioId) {
 
@@ -600,11 +629,11 @@ function agregarEjercicioAGrupo(
     return;
   }
 
-  /*                                                                         */
-  /* -------------------------------------------------------------------------- */
-  /* NUEVO EJERCICIO                                                            */
-  /* -------------------------------------------------------------------------- */
-  /*                                                                         */
+  /*
+  |--------------------------------------------------------------------------
+  | NUEVO EJERCICIO
+  |--------------------------------------------------------------------------
+  */
 
   const nuevoEjercicio:
     EjercicioRutina = {
@@ -627,18 +656,17 @@ function agregarEjercicioAGrupo(
     configuracion: {
       ...draft.configuracion,
     },
-
   };
 
-  /*                                                                         */
-  /* -------------------------------------------------------------------------- */
-  /* ITEM EJERCICIO                                                             */
-  /*                                                                            */
-  /* Desde la migración toda la estructura                                      */
-  /* trabaja con ItemEntrenamiento.                                             */
-  /*                                                                            */
-  /* -------------------------------------------------------------------------- */
-  /*                                                                         */
+  /*
+  |--------------------------------------------------------------------------
+  | ITEM EJERCICIO
+  |--------------------------------------------------------------------------
+  |
+  | Toda la estructura interna trabaja
+  | con ItemEntrenamiento.
+  |
+  */
 
   const nuevoItem:
     ItemEntrenamiento = {
@@ -647,8 +675,18 @@ function agregarEjercicioAGrupo(
 
     contenido:
       nuevoEjercicio,
-
   };
+
+  /*
+  |--------------------------------------------------------------------------
+  | INSERTAR EN EL GRUPO
+  |--------------------------------------------------------------------------
+  |
+  | Busca el grupo de forma recursiva.
+  | Funciona aunque el grupo esté
+  | anidado dentro de otros grupos.
+  |
+  */
 
   setEntrenamientos((prev) =>
 
@@ -666,51 +704,33 @@ function agregarEjercicioAGrupo(
         ...entrenamiento,
 
         items:
-          entrenamiento.items.map(
-            (item) => {
+          actualizarGrupoRecursivo(
 
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return item;
-              }
+            entrenamiento.items,
 
-              if (
-                item.contenido.id !==
-                grupoId
-              ) {
-                return item;
-              }
+            grupoId,
 
-              return {
+            (grupo) => ({
 
-                ...item,
+              ...grupo,
 
-                contenido: {
+              items: [
 
-                  ...item.contenido,
+                ...grupo.items,
 
-                  items: [
-
-                    ...item.contenido.items,
-
-                    nuevoItem,
-                  ],
-                },
-              };
-            }
+                nuevoItem,
+              ],
+            })
           ),
       };
     })
-
   );
 
-  /*                                                                         */
-  /* -------------------------------------------------------------------------- */
-  /* LIMPIAR DRAFT                                                              */
-  /* -------------------------------------------------------------------------- */
-  /*                                                                         */
+  /*
+  |--------------------------------------------------------------------------
+  | LIMPIAR DRAFT
+  |--------------------------------------------------------------------------
+  */
 
   setDraft(
     draftBase
@@ -721,6 +741,15 @@ function agregarEjercicioAGrupo(
 |--------------------------------------------------------------------------
 | ELIMINAR GRUPO
 |--------------------------------------------------------------------------
+|
+| Elimina un grupo en cualquier nivel del árbol.
+|
+| Soporta:
+|
+| Grupo
+| └─ Grupo
+|     └─ Grupo
+|
 */
 
 function eliminarGrupo(
@@ -735,6 +764,12 @@ function eliminarGrupo(
 
     prev.map((entrenamiento) => {
 
+      /*
+      |--------------------------------------------------------------------------
+      | NO ES EL ENTRENAMIENTO BUSCADO
+      |--------------------------------------------------------------------------
+      */
+
       if (
         entrenamiento.id !==
         entrenamientoId
@@ -742,26 +777,20 @@ function eliminarGrupo(
         return entrenamiento;
       }
 
+      /*
+      |--------------------------------------------------------------------------
+      | ELIMINACIÓN RECURSIVA
+      |--------------------------------------------------------------------------
+      */
+
       return {
 
         ...entrenamiento,
 
         items:
-          entrenamiento.items.filter(
-            (item) => {
-
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return true;
-              }
-
-              return (
-                item.contenido.id !==
-                grupoId
-              );
-            }
+          eliminarNodoRecursivo(
+            entrenamiento.items,
+            grupoId
           ),
       };
     })
@@ -773,11 +802,8 @@ function eliminarGrupo(
 | ELIMINAR EJERCICIO DE GRUPO
 |--------------------------------------------------------------------------
 |
-| Elimina un ejercicio interno de:
-|
-| grupo.ejercicios[]
-|
-| No afecta al grupo.
+| Elimina un ejercicio sin importar
+| la profundidad donde se encuentre.
 |
 */
 
@@ -807,76 +833,30 @@ function eliminarEjercicioGrupo(
         ...entrenamiento,
 
         items:
-          entrenamiento.items.map(
-            (item) => {
-
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return item;
-              }
-
-              if (
-                item.contenido.id !==
-                grupoId
-              ) {
-                return item;
-              }
-
-              return {
-
-                ...item,
-
-                contenido: {
-
-                  ...item.contenido,
-
-                  items:
-                    item.contenido.items.filter(
-                      (subItem) => {
-
-                        if (
-                          subItem.tipo !==
-                          "ejercicio"
-                        ) {
-                          return true;
-                        }
-
-                        return (
-                          subItem.contenido.id !==
-                          ejercicioId
-                        );
-                      }
-                    ),
-                },
-              };
-            }
+          eliminarEjercicioRecursivo(
+            entrenamiento.items,
+            ejercicioId
           ),
       };
     })
-
   );
 }
 
 /*
 |--------------------------------------------------------------------------
-| CONFIGURACIÓN DE EJERCICIO EN GRUPO
+| ACTUALIZAR CONFIGURACIÓN DE GRUPO
 |--------------------------------------------------------------------------
 |
-| Actualiza cualquier propiedad de:
-|
-| grupo.ejercicios[].configuracion
+| Permite modificar cualquier campo de configuración
+| de un grupo en cualquier profundidad.
 |
 */
 
-function actualizarConfiguracionEjercicioGrupo(
+function actualizarConfiguracionGrupo(
 
   entrenamientoId: number,
 
   grupoId: number,
-
-  ejercicioId: number,
 
   campo: keyof ConfiguracionAvanzada,
 
@@ -888,6 +868,12 @@ function actualizarConfiguracionEjercicioGrupo(
 
     prev.map((entrenamiento) => {
 
+      /*
+      |--------------------------------------------------------------------------
+      | NO ES EL ENTRENAMIENTO BUSCADO
+      |--------------------------------------------------------------------------
+      */
+
       if (
         entrenamiento.id !==
         entrenamientoId
@@ -895,102 +881,53 @@ function actualizarConfiguracionEjercicioGrupo(
         return entrenamiento;
       }
 
+      /*
+      |--------------------------------------------------------------------------
+      | ACTUALIZACIÓN RECURSIVA
+      |--------------------------------------------------------------------------
+      */
+
       return {
 
         ...entrenamiento,
 
         items:
-          entrenamiento.items.map(
-            (item) => {
+          actualizarGrupoRecursivo(
+            entrenamiento.items,
+            grupoId,
+            (grupo) => ({
 
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return item;
-              }
+              ...grupo,
 
-              if (
-                item.contenido.id !==
-                grupoId
-              ) {
-                return item;
-              }
+              configuracion: {
 
-              return {
+                ...grupo.configuracion,
 
-                ...item,
-
-                contenido: {
-
-                  ...item.contenido,
-
-                  items:
-                    item.contenido.items.map(
-                      (subItem) => {
-
-                        if (
-                          subItem.tipo !==
-                          "ejercicio"
-                        ) {
-                          return subItem;
-                        }
-
-                        if (
-                          subItem.contenido.id !==
-                          ejercicioId
-                        ) {
-                          return subItem;
-                        }
-
-                        return {
-
-                          ...subItem,
-
-                          contenido: {
-
-                            ...subItem.contenido,
-
-                            configuracion: {
-
-                              ...subItem.contenido
-                                .configuracion,
-
-                              [campo]:
-                                valor,
-                            },
-                          },
-                        };
-                      }
-                    ),
-                },
-              };
-            }
+                [campo]:
+                  valor,
+              },
+            })
           ),
       };
     })
-
   );
 }
 
 /*
 |--------------------------------------------------------------------------
-| NOTAS DE EJERCICIO EN GRUPO
+| ACTUALIZAR NOTAS DE GRUPO
 |--------------------------------------------------------------------------
 |
-| Actualiza:
-|
-| grupo.ejercicios[].notas
+| Modifica las notas de un grupo
+| en cualquier nivel del árbol.
 |
 */
 
-function actualizarNotasEjercicioGrupo(
+function actualizarNotasGrupo(
 
   entrenamientoId: number,
 
   grupoId: number,
-
-  ejercicioId: number,
 
   notas: string
 
@@ -1012,72 +949,20 @@ function actualizarNotasEjercicioGrupo(
         ...entrenamiento,
 
         items:
-          entrenamiento.items.map(
-            (item) => {
+          actualizarGrupoRecursivo(
+            entrenamiento.items,
+            grupoId,
+            (grupo) => ({
 
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return item;
-              }
+              ...grupo,
 
-              if (
-                item.contenido.id !==
-                grupoId
-              ) {
-                return item;
-              }
-
-              return {
-
-                ...item,
-
-                contenido: {
-
-                  ...item.contenido,
-
-                  items:
-                    item.contenido.items.map(
-                      (subItem) => {
-
-                        if (
-                          subItem.tipo !==
-                          "ejercicio"
-                        ) {
-                          return subItem;
-                        }
-
-                        if (
-                          subItem.contenido.id !==
-                          ejercicioId
-                        ) {
-                          return subItem;
-                        }
-
-                        return {
-
-                          ...subItem,
-
-                          contenido: {
-
-                            ...subItem.contenido,
-
-                            notas,
-                          },
-                        };
-                      }
-                    ),
-                },
-              };
-            }
+              notas,
+            })
           ),
       };
     })
-
   );
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -1204,6 +1089,85 @@ function moverEjercicioGrupo(
   );
 }
 
+/*
+|--------------------------------------------------------------------------
+| AGREGAR GRUPO DENTRO DE GRUPO
+|--------------------------------------------------------------------------
+|
+| Permite crear grupos anidados.
+|
+*/
+
+function agregarGrupoDentroDeGrupo(
+
+  entrenamientoId: number,
+
+  grupoPadreId: number,
+
+  nombre: string,
+
+  notas: string
+
+): void {
+
+  const nuevoGrupo = {
+
+    tipo: "grupo" as const,
+
+    contenido: {
+
+      id: Date.now(),
+
+      nombre,
+
+      notas,
+
+      configuracion:{
+        ...configuracionBase
+      },
+
+      items: [],
+    },
+  };
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          actualizarGrupoRecursivo(
+
+            entrenamiento.items,
+
+            grupoPadreId,
+
+            (grupo) => ({
+
+              ...grupo,
+
+              items: [
+
+                ...grupo.items,
+
+                nuevoGrupo,
+              ],
+            })
+          ),
+      };
+    })
+  );
+}
 
   
   /*
@@ -1402,164 +1366,9 @@ function actualizarConfiguracion(
   );
 }
 
-/*
-|--------------------------------------------------------------------------
-| CONFIGURACIÓN DEL GRUPO
-|--------------------------------------------------------------------------
-|
-| Permite modificar cualquier propiedad de:
-|
-| grupo.configuracion
-|
-| Ejemplos:
-|
-| - rir
-| - tempo
-| - overrideActivo
-| - overrideProgresiones
-| - descansoSegundos
-|
-*/
 
-function actualizarConfiguracionGrupo(
 
-  entrenamientoId: number,
 
-  grupoId: number,
-
-  campo: keyof ConfiguracionAvanzada,
-
-  valor: ValorConfiguracion
-
-) {
-
-  setEntrenamientos((prev) =>
-
-    prev.map((entrenamiento) => {
-
-      if (
-        entrenamiento.id !==
-        entrenamientoId
-      ) {
-        return entrenamiento;
-      }
-
-      return {
-
-        ...entrenamiento,
-
-        items:
-          entrenamiento.items.map(
-            (item) => {
-
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return item;
-              }
-
-              if (
-                item.contenido.id !==
-                grupoId
-              ) {
-                return item;
-              }
-
-              return {
-
-                ...item,
-
-                contenido: {
-
-                  ...item.contenido,
-
-                  configuracion: {
-
-                    ...item.contenido.configuracion,
-
-                    [campo]:
-                      valor,
-                  },
-                },
-              };
-            }
-          ),
-      };
-    })
-  );
-}
-
-/*
-|--------------------------------------------------------------------------
-| NOTAS DEL GRUPO
-|--------------------------------------------------------------------------
-|
-| Actualiza las notas generales
-| asociadas al grupo.
-|
-*/
-
-function actualizarNotasGrupo(
-
-  entrenamientoId: number,
-
-  grupoId: number,
-
-  notas: string
-
-) {
-
-  setEntrenamientos((prev) =>
-
-    prev.map((entrenamiento) => {
-
-      if (
-        entrenamiento.id !==
-        entrenamientoId
-      ) {
-        return entrenamiento;
-      }
-
-      return {
-
-        ...entrenamiento,
-
-        items:
-          entrenamiento.items.map(
-            (item) => {
-
-              if (
-                item.tipo !==
-                "grupo"
-              ) {
-                return item;
-              }
-
-              if (
-                item.contenido.id !==
-                grupoId
-              ) {
-                return item;
-              }
-
-              return {
-
-                ...item,
-
-                contenido: {
-
-                  ...item.contenido,
-
-                  notas,
-                },
-              };
-            }
-          ),
-      };
-    })
-  );
-}
 
 
   /*
@@ -1710,6 +1519,100 @@ function actualizarNotas(
       entrenamientos,
     };
   }   
+
+  function actualizarConfiguracionEjercicioGrupo(
+
+  entrenamientoId: number,
+
+  grupoId: number,
+
+  ejercicioId: number,
+
+  campo: keyof ConfiguracionAvanzada,
+
+  valor: ValorConfiguracion
+
+): void {
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          actualizarEjercicioRecursivo(
+            entrenamiento.items,
+            ejercicioId,
+            (ejercicio) => ({
+
+              ...ejercicio,
+
+              configuracion: {
+
+                ...ejercicio.configuracion,
+
+                [campo]:
+                  valor,
+              },
+            })
+          ),
+      };
+    })
+  );
+}
+
+function actualizarNotasEjercicioGrupo(
+
+  entrenamientoId: number,
+
+  grupoId: number,
+
+  ejercicioId: number,
+
+  notas: string
+
+): void {
+
+  setEntrenamientos((prev) =>
+
+    prev.map((entrenamiento) => {
+
+      if (
+        entrenamiento.id !==
+        entrenamientoId
+      ) {
+        return entrenamiento;
+      }
+
+      return {
+
+        ...entrenamiento,
+
+        items:
+          actualizarEjercicioRecursivo(
+            entrenamiento.items,
+            ejercicioId,
+            (ejercicio) => ({
+
+              ...ejercicio,
+
+              notas,
+            })
+          ),
+      };
+    })
+  );
+}
   
 
   /*
@@ -1731,6 +1634,7 @@ function actualizarNotas(
   agregarEjercicio,
   agregarGrupo,
   agregarEjercicioAGrupo,
+  agregarGrupoDentroDeGrupo,
 
   moverItem,
 
@@ -1747,17 +1651,15 @@ function actualizarNotas(
 
   actualizarConfiguracionGrupo,
 
-  grupoActualizarConfigEjercicio:
-    actualizarConfiguracionEjercicioGrupo,
+  actualizarConfiguracionEjercicioGrupo,
 
   actualizarNotas,
 
   actualizarNotasGrupo,
 
-  grupoActualizarNotasEjercicio:
-    actualizarNotasEjercicioGrupo,
+  actualizarNotasEjercicioGrupo,
 
   generarRutina,
 
-}
+};
 }

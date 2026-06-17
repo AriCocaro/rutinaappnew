@@ -1,14 +1,16 @@
 "use client";
 
-/*
-|--------------------------------------------------------------------------
-| HOOKS
-|--------------------------------------------------------------------------
-*/
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { useRutina } from "@/hooks/useRutina";
 import { useConstructorRutina } from "@/hooks/useConstructorRutina";
 import GrupoOverlay from "./GrupoOverlay";
+
+
 /*
 |--------------------------------------------------------------------------
 | STORAGE
@@ -118,17 +120,73 @@ const {
 
   actualizarConfiguracion,
   actualizarConfiguracionGrupo,
-  grupoActualizarConfigEjercicio,
+  actualizarConfiguracionEjercicioGrupo,
 
   actualizarNotas,
   actualizarNotasGrupo,
-  grupoActualizarNotasEjercicio,
+  actualizarNotasEjercicioGrupo,
 
   generarRutina,
 
 } = useRutina(
   rutinaInicial
 );
+
+
+function abrirGrupo(
+  entrenamientoId: number
+): void {
+
+  setGrupoDraft({
+
+    entrenamientoId,
+
+    nombre: "",
+
+    notas: "",
+  });
+
+  setGrupoModal({
+    entrenamientoId,
+  });
+}
+
+/*
+|--------------------------------------------------------------------------
+| CERRAR OVERLAY
+|--------------------------------------------------------------------------
+*/
+
+function cerrarGrupo(): void {
+
+  setGrupoModal(null);
+}
+
+function guardarGrupo(): void {
+
+  if (
+    !grupoDraft.nombre.trim()
+  ) {
+
+    alert(
+      "Ingresar nombre del grupo"
+    );
+
+    return;
+  }
+
+  agregarGrupo(
+
+    grupoDraft.entrenamientoId,
+
+    grupoDraft.nombre,
+
+    grupoDraft.notas
+
+  );
+
+  cerrarGrupo();
+}
 
   /*
   |--------------------------------------------------------------------------
@@ -145,7 +203,23 @@ const {
   ] = useState<{
     entrenamientoId: number;
   } | null>(null);
+/*
+|--------------------------------------------------------------------------
+| DRAFT DEL GRUPO
+|--------------------------------------------------------------------------
+*/
 
+const [
+  grupoDraft,
+  setGrupoDraft,
+] = useState({
+
+  entrenamientoId: 0,
+
+  nombre: "",
+
+  notas: "",
+});
   
   /*
   |--------------------------------------------------------------------------
@@ -343,6 +417,8 @@ const {
 
       />
 
+      
+
 
      <ListaEntrenamientos
 
@@ -352,6 +428,8 @@ const {
   repsGlobales={repsGlobales}
 
   cantidadBloques={cantidadBloques ?? 0}
+
+  abrirGrupo = {abrirGrupo}
 
   eliminarEntrenamiento={eliminarEntrenamiento}
 
@@ -381,7 +459,7 @@ const {
   }
 
   grupoActualizarConfigEjercicio={
-    grupoActualizarConfigEjercicio
+    actualizarConfiguracionEjercicioGrupo
   }
 
   actualizarNotas={
@@ -393,7 +471,7 @@ const {
   }
 
   grupoActualizarNotasEjercicio={
-    grupoActualizarNotasEjercicio
+    actualizarNotasEjercicioGrupo
   }
 
   draft={draft}
@@ -516,6 +594,43 @@ const {
         Guardar rutina
 
       </button>
+
+      {grupoModal && (
+
+        <GrupoOverlay
+
+          grupoDraft={
+            grupoDraft
+          }
+
+          onChange={(
+            campo,
+            valor
+          ) =>
+
+            setGrupoDraft(
+              (prev) => ({
+
+                ...prev,
+
+                [campo]:
+                  valor,
+              })
+            )
+
+          }
+
+          onCancelar={
+            cerrarGrupo
+          }
+
+          onGuardar={
+            guardarGrupo
+          }
+
+        />
+
+      )}
 
     </div>
 

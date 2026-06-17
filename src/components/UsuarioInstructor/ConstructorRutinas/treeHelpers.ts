@@ -1,4 +1,5 @@
 import {
+  EjercicioRutina,
   GrupoEjercicios,
   GrupoItem,
   ItemEntrenamiento,
@@ -121,6 +122,153 @@ export function eliminarNodoRecursivo(
       }
 
       return item;
+    });
+}
+
+/*
+|--------------------------------------------------------------------------
+| ACTUALIZAR EJERCICIO RECURSIVO
+|--------------------------------------------------------------------------
+|
+| Busca un ejercicio dentro de cualquier nivel
+| de grupos y aplica un updater.
+|
+| Ejemplo:
+|
+| Grupo
+| └─ Grupo
+|     └─ Ejercicio
+|
+*/
+
+export function actualizarEjercicioRecursivo(
+
+  items: ItemEntrenamiento[],
+
+  ejercicioId: number,
+
+  updater: (
+    ejercicio: EjercicioRutina
+  ) => EjercicioRutina
+
+): ItemEntrenamiento[] {
+
+  return items.map((item) => {
+
+    /*
+    |--------------------------------------------------------------------------
+    | EJERCICIO
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      item.tipo ===
+      "ejercicio"
+    ) {
+
+      if (
+        item.contenido.id !==
+        ejercicioId
+      ) {
+        return item;
+      }
+
+      return {
+
+        ...item,
+
+        contenido:
+          updater(
+            item.contenido
+          ),
+      };
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | GRUPO
+    |--------------------------------------------------------------------------
+    */
+
+    return {
+
+      ...item,
+
+      contenido: {
+
+        ...item.contenido,
+
+        items:
+          actualizarEjercicioRecursivo(
+            item.contenido.items,
+            ejercicioId,
+            updater
+          ),
+      },
+    };
+  });
+}
+
+/*
+|--------------------------------------------------------------------------
+| ELIMINAR EJERCICIO RECURSIVO
+|--------------------------------------------------------------------------
+|
+| Elimina un ejercicio sin importar
+| la profundidad.
+|
+*/
+
+export function eliminarEjercicioRecursivo(
+
+  items: ItemEntrenamiento[],
+
+  ejercicioId: number
+
+): ItemEntrenamiento[] {
+
+  return items
+
+    .filter((item) => {
+
+      if (
+        item.tipo ===
+        "ejercicio"
+      ) {
+
+        return (
+          item.contenido.id !==
+          ejercicioId
+        );
+      }
+
+      return true;
+    })
+
+    .map((item) => {
+
+      if (
+        item.tipo !==
+        "grupo"
+      ) {
+        return item;
+      }
+
+      return {
+
+        ...item,
+
+        contenido: {
+
+          ...item.contenido,
+
+          items:
+            eliminarEjercicioRecursivo(
+              item.contenido.items,
+              ejercicioId
+            ),
+        },
+      };
     });
 }
 
