@@ -250,14 +250,35 @@ export default function ListaEntrenamientos({
         (entrenamiento) => (
 
           <EntrenamientoCard
-            key={entrenamiento.id}
-            entrenamiento={entrenamiento}
-            onEliminar={() =>
-              eliminarEntrenamiento(
-                entrenamiento.id
-              )
-            }
-          >
+              key={entrenamiento.id}
+              entrenamiento={entrenamiento}
+              onEliminar={() =>
+                eliminarEntrenamiento(
+                  entrenamiento.id
+                )
+              }
+              acciones={
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      agregarGrupo(
+                        entrenamiento.id
+                      )
+                    }
+                    className="
+                      bg-purple-600
+                      text-white
+                      px-4
+                      py-2
+                      rounded-xl
+                    "
+                  >
+                    + Grupo
+                  </button>
+                </>
+              }
+            >
 
             {entrenamiento.items.map(
 
