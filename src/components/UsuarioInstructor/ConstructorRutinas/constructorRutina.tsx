@@ -93,32 +93,44 @@ export default function ConstructorRutina({
   | RUTINA
   |--------------------------------------------------------------------------
   */
+const {
 
-  const {
-    entrenamientos,
+  entrenamientos,
 
-    draft,
+  draft,
 
-    agregarEntrenamiento,
-    eliminarEntrenamiento,
+  agregarEntrenamiento,
+  eliminarEntrenamiento,
 
-    actualizarDraft,
+  actualizarDraft,
 
-    agregarEjercicio,
-    agregarGrupo,
+  agregarEjercicio,
+  agregarGrupo,
+  agregarEjercicioAGrupo,
 
-    moverItem,
+  moverItem,
 
-    eliminarEjercicio,
+  eliminarEjercicio,
+  eliminarGrupo,
 
-    actualizarConfiguracion,
-    actualizarNotas,
+  grupoEliminarEjercicio,
+  grupoMoverEjercicio,
 
-    generarRutina,
+  actualizarConfiguracion,
+  actualizarConfiguracionGrupo,
+  grupoActualizarConfigEjercicio,
 
-  } = useRutina(
-    rutinaInicial
-  );
+  actualizarNotas,
+  actualizarNotasGrupo,
+  grupoActualizarNotasEjercicio,
+
+  generarRutina,
+
+} = useRutina(
+  rutinaInicial
+);
+
+  
   /*
   |--------------------------------------------------------------------------
   | GUARDAR RUTINA
@@ -318,27 +330,63 @@ export default function ConstructorRutina({
 
      <ListaEntrenamientos
 
-      entrenamientos={entrenamientos}
+  entrenamientos={entrenamientos}
 
-      seriesGlobales={seriesGlobales}
-      repsGlobales={repsGlobales}
+  seriesGlobales={seriesGlobales}
+  repsGlobales={repsGlobales}
 
-      cantidadBloques={cantidadBloques ?? 0}
+  cantidadBloques={cantidadBloques ?? 0}
 
-      eliminarEntrenamiento={eliminarEntrenamiento}
+  eliminarEntrenamiento={eliminarEntrenamiento}
 
-      agregarEjercicio={agregarEjercicio}
-      agregarGrupo={agregarGrupo}
-      moverItem={moverItem}
-      eliminarEjercicio={eliminarEjercicio}
+  agregarEjercicio={agregarEjercicio}
+  agregarGrupo={agregarGrupo}
+  agregarEjercicioAGrupo={agregarEjercicioAGrupo}
 
-      actualizarConfiguracion={actualizarConfiguracion}
-      actualizarNotas={actualizarNotas}
+  moverItem={moverItem}
 
-      draft={draft}
-      actualizarDraft={actualizarDraft}
+  eliminarEjercicio={eliminarEjercicio}
+  eliminarGrupo={eliminarGrupo}
 
-    /> 
+  grupoEliminarEjercicio={
+    grupoEliminarEjercicio
+  }
+
+  grupoMoverEjercicio={
+    grupoMoverEjercicio
+  }
+
+  actualizarConfiguracion={
+    actualizarConfiguracion
+  }
+
+  actualizarConfiguracionGrupo={
+    actualizarConfiguracionGrupo
+  }
+
+  grupoActualizarConfigEjercicio={
+    grupoActualizarConfigEjercicio
+  }
+
+  actualizarNotas={
+    actualizarNotas
+  }
+
+  actualizarNotasGrupo={
+    actualizarNotasGrupo
+  }
+
+  grupoActualizarNotasEjercicio={
+    grupoActualizarNotasEjercicio
+  }
+
+  draft={draft}
+
+  actualizarDraft={
+    actualizarDraft
+  }
+
+/>
 
      
       {/* ----------------------------------------------------- */}

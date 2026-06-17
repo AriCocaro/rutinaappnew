@@ -96,6 +96,41 @@ type Props = {
       ejercicioId: number
     ) => void;
 
+      /*
+      |--------------------------------------------------------------------------
+      | GRUPOS
+      |--------------------------------------------------------------------------
+      */
+
+      agregarEjercicioAGrupo:
+        (
+          entrenamientoId: number,
+          grupoId: number
+        ) => void;
+
+      eliminarGrupo:
+        (
+          entrenamientoId: number,
+          grupoId: number
+        ) => void;
+
+      grupoEliminarEjercicio:
+        (
+          entrenamientoId: number,
+          grupoId: number,
+          ejercicioId: number
+        ) => void;
+
+      grupoMoverEjercicio:
+        (
+          entrenamientoId: number,
+          grupoId: number,
+          indexActual: number,
+          direccion:
+            | "arriba"
+            | "abajo"
+        ) => void;
+
   /*
   |--------------------------------------------------------------------------
   | CONFIGURACIÓN
@@ -110,6 +145,23 @@ type Props = {
       valor: ValorConfiguracion
     ) => void;
 
+      actualizarConfiguracionGrupo:
+    (
+      entrenamientoId: number,
+      grupoId: number,
+      campo: keyof ConfiguracionAvanzada,
+      valor: ValorConfiguracion
+    ) => void;
+
+  grupoActualizarConfigEjercicio:
+    (
+      entrenamientoId: number,
+      grupoId: number,
+      ejercicioId: number,
+      campo: keyof ConfiguracionAvanzada,
+      valor: ValorConfiguracion
+    ) => void;
+
   actualizarNotas:
     (
       entrenamientoId: number,
@@ -117,6 +169,20 @@ type Props = {
       notas: string
     ) => void;
 
+      actualizarNotasGrupo:
+    (
+      entrenamientoId: number,
+      grupoId: number,
+      notas: string
+    ) => void;
+
+  grupoActualizarNotasEjercicio:
+    (
+      entrenamientoId: number,
+      grupoId: number,
+      ejercicioId: number,
+      notas: string
+    ) => void;
   /*
   |--------------------------------------------------------------------------
   | DRAFT
@@ -152,13 +218,23 @@ export default function ListaEntrenamientos({
 
   agregarEjercicio,
   agregarGrupo,
+  agregarEjercicioAGrupo,
 
   moverItem,
 
   eliminarEjercicio,
+  eliminarGrupo,
+
+  grupoEliminarEjercicio,
+  grupoMoverEjercicio,
 
   actualizarConfiguracion,
+  actualizarConfiguracionGrupo,
+  grupoActualizarConfigEjercicio,
+
   actualizarNotas,
+  actualizarNotasGrupo,
+  grupoActualizarNotasEjercicio,
 
   draft,
   actualizarDraft,
@@ -174,66 +250,22 @@ export default function ListaEntrenamientos({
         (entrenamiento) => (
 
           <EntrenamientoCard
-
-            key={
-              entrenamiento.id
-            }
-
-            entrenamiento={
-              entrenamiento
-            }
-
+            key={entrenamiento.id}
+            entrenamiento={entrenamiento}
             onEliminar={() =>
               eliminarEntrenamiento(
                 entrenamiento.id
               )
             }
-
-            acciones={
-
-              <>
-                <button
-
-                  type="button"
-
-                  onClick={() =>
-                    agregarGrupo(
-                      entrenamiento.id
-                    )
-                  }
-
-                  className="
-                    bg-purple-600
-                    text-white
-                    px-4
-                    py-2
-                    rounded-xl
-                  "
-                >
-
-                  + Grupo
-
-                </button>
-              </>
-
-            }
-
           >
-
-            {/* -------------------------------------------------- */}
-            {/* ITEMS */}
-            {/* -------------------------------------------------- */}
 
             {entrenamiento.items.map(
 
-              (
-                item,
-                itemIndex
-              ) => {
+              (item, itemIndex) => {
 
                 /*
                 --------------------------------------------------
-                EJERCICIO
+                EJERCICIO NORMAL
                 --------------------------------------------------
                 */
 
@@ -286,34 +318,27 @@ export default function ListaEntrenamientos({
                       }
 
                       puedeBajar={
-
                         itemIndex <
                         entrenamiento.items.length - 1
-
                       }
 
                       onMoverArriba={() =>
-
                         moverItem(
                           entrenamiento.id,
                           itemIndex,
                           "arriba"
                         )
-
                       }
 
                       onMoverAbajo={() =>
-
                         moverItem(
                           entrenamiento.id,
                           itemIndex,
                           "abajo"
                         )
-
                       }
 
                       onToggleOverride={() =>
-
                         actualizarConfiguracion(
                           entrenamiento.id,
                           ejercicio.id,
@@ -321,42 +346,33 @@ export default function ListaEntrenamientos({
                           !ejercicio.configuracion
                             .overrideActivo
                         )
-
                       }
 
-                      onConfiguracionChange={
-
-                        (
+                      onConfiguracionChange={(
+                        campo,
+                        valor
+                      ) =>
+                        actualizarConfiguracion(
+                          entrenamiento.id,
+                          ejercicio.id,
                           campo,
                           valor
-                        ) =>
-
-                          actualizarConfiguracion(
-                            entrenamiento.id,
-                            ejercicio.id,
-                            campo,
-                            valor
-                          )
-
+                        )
                       }
 
                       onNotasChange={(notas) =>
-
                         actualizarNotas(
                           entrenamiento.id,
                           ejercicio.id,
                           notas
                         )
-
                       }
 
                       onEliminar={() =>
-
                         eliminarEjercicio(
                           entrenamiento.id,
                           ejercicio.id
                         )
-
                       }
 
                     />
@@ -390,24 +406,175 @@ export default function ListaEntrenamientos({
                         grupo
                       }
 
+                      onEliminar={() =>
+                        eliminarGrupo(
+                          entrenamiento.id,
+                          grupo.id
+                        )
+                      }
+
+                      onMoverArriba={() =>
+                        moverItem(
+                          entrenamiento.id,
+                          itemIndex,
+                          "arriba"
+                        )
+                      }
+
+                      onMoverAbajo={() =>
+                        moverItem(
+                          entrenamiento.id,
+                          itemIndex,
+                          "abajo"
+                        )
+                      }
+
                     >
 
-                      <div
-                        className="
-                          text-sm
-                          text-purple-700
-                        "
-                      >
+                      {grupo.items.map(
 
-                        {
-                          grupo.ejercicios.length
+                        (
+                          subItem,
+                          subIndex
+                        ) => {
+
+                          if (
+                            subItem.tipo !==
+                            "ejercicio"
+                          ) {
+                            return null;
+                          }
+
+                          const ejercicio =
+                            subItem.contenido;
+
+                          return (
+
+                            <EjercicioItem
+
+                              key={
+                                ejercicio.id
+                              }
+
+                              ejercicioId={
+                                ejercicio.ejercicioId
+                              }
+
+                              materialId={
+                                ejercicio.materialId
+                              }
+
+                              configuracion={
+                                ejercicio.configuracion
+                              }
+
+                              notas={
+                                ejercicio.notas
+                              }
+
+                              seriesGlobales={
+                                seriesGlobales
+                              }
+
+                              repsGlobales={
+                                repsGlobales
+                              }
+
+                              cantidadBloques={
+                                cantidadBloques
+                              }
+
+                              puedeSubir={
+                                subIndex > 0
+                              }
+
+                              puedeBajar={
+                                subIndex <
+                                grupo.items.length - 1
+                              }
+
+                              onMoverArriba={() =>
+                                grupoMoverEjercicio(
+                                  entrenamiento.id,
+                                  grupo.id,
+                                  subIndex,
+                                  "arriba"
+                                )
+                              }
+
+                              onMoverAbajo={() =>
+                                grupoMoverEjercicio(
+                                  entrenamiento.id,
+                                  grupo.id,
+                                  subIndex,
+                                  "abajo"
+                                )
+                              }
+
+                              onToggleOverride={() =>
+                                grupoActualizarConfigEjercicio(
+                                  entrenamiento.id,
+                                  grupo.id,
+                                  ejercicio.id,
+                                  "overrideActivo",
+                                  !ejercicio.configuracion
+                                    .overrideActivo
+                                )
+                              }
+
+                              onConfiguracionChange={(
+                                campo,
+                                valor
+                              ) =>
+                                grupoActualizarConfigEjercicio(
+                                  entrenamiento.id,
+                                  grupo.id,
+                                  ejercicio.id,
+                                  campo,
+                                  valor
+                                )
+                              }
+
+                              onNotasChange={(notas) =>
+                                grupoActualizarNotasEjercicio(
+                                  entrenamiento.id,
+                                  grupo.id,
+                                  ejercicio.id,
+                                  notas
+                                )
+                              }
+
+                              onEliminar={() =>
+                                grupoEliminarEjercicio(
+                                  entrenamiento.id,
+                                  grupo.id,
+                                  ejercicio.id
+                                )
+                              }
+
+                            />
+
+                          );
                         }
 
-                        {" "}
+                      )}
 
-                        ejercicio(s)
+                      <ConfiguradorEjercicio
 
-                      </div>
+                        draft={draft}
+
+                        actualizarDraft={
+                          actualizarDraft
+                        }
+
+                        onAgregar={() =>
+                          agregarEjercicioAGrupo(
+                            entrenamiento.id,
+                            grupo.id
+                          )
+                        }
+
+                      />
 
                     </GrupoEjercicioCard>
 
@@ -420,26 +587,18 @@ export default function ListaEntrenamientos({
 
             )}
 
-            {/* -------------------------------------------------- */}
-            {/* NUEVO EJERCICIO */}
-            {/* -------------------------------------------------- */}
-
             <ConfiguradorEjercicio
 
-              draft={
-                draft
-              }
+              draft={draft}
 
               actualizarDraft={
                 actualizarDraft
               }
 
               onAgregar={() =>
-
                 agregarEjercicio(
                   entrenamiento.id
                 )
-
               }
 
             />
@@ -453,4 +612,5 @@ export default function ListaEntrenamientos({
     </>
 
   );
+
 }
