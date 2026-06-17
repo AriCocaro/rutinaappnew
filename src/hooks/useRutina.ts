@@ -437,24 +437,52 @@ export function useRutina(
   | AGREGAR GRUPO
   |--------------------------------------------------------------------------
   */
+
 /*
 |--------------------------------------------------------------------------
 | AGREGAR GRUPO
 |--------------------------------------------------------------------------
 |
-| Crea un grupo vacío dentro del entrenamiento.
+| Crea un nuevo grupo dentro de un entrenamiento.
 |
-| El grupo posee:
+| El grupo puede representar:
 |
-| - configuración propia
-| - notas propias
-| - ejercicios internos
+| - Superserie
+| - Triserie
+| - Circuito
+| - Giant Set
+| - Dropset
+| - Cualquier nombre definido por el instructor
+|
+| El grupo se agrega como un ItemEntrenamiento
+| de tipo "grupo".
 |
 */
 
 function agregarGrupo(
-  entrenamientoId: number
+
+  entrenamientoId: number,
+
+  nombre: string,
+
+  notas: string = ""
+
 ): void {
+
+  /*
+  |--------------------------------------------------------------------------
+  | VALIDACIÓN
+  |--------------------------------------------------------------------------
+  */
+
+  if (!nombre.trim()) {
+
+    alert(
+      "Ingresar nombre del grupo"
+    );
+
+    return;
+  }
 
   setEntrenamientos((prev) =>
 
@@ -467,6 +495,12 @@ function agregarGrupo(
         return entrenamiento;
       }
 
+      /*
+      |--------------------------------------------------------------------------
+      | NUEVO GRUPO
+      |--------------------------------------------------------------------------
+      */
+
       const nuevoGrupo:
         GrupoEjercicios = {
 
@@ -478,11 +512,13 @@ function agregarGrupo(
 
         /*
         |------------------------------------------------------
-        | DATOS DEL GRUPO
+        | DATOS GENERALES
         |------------------------------------------------------
         */
 
-        notas: "",
+        nombre,
+
+        notas,
 
         configuracion: {
           ...configuracionBase,
@@ -490,12 +526,18 @@ function agregarGrupo(
 
         /*
         |------------------------------------------------------
-        | EJERCICIOS
+        | CONTENIDO
         |------------------------------------------------------
         */
 
-         items: [],
+        items: [],
       };
+
+      /*
+      |--------------------------------------------------------------------------
+      | ITEM ENTRENAMIENTO
+      |--------------------------------------------------------------------------
+      */
 
       const nuevoItem:
         ItemEntrenamiento = {
@@ -505,6 +547,12 @@ function agregarGrupo(
         contenido:
           nuevoGrupo,
       };
+
+      /*
+      |--------------------------------------------------------------------------
+      | INSERTAR EN EL ENTRENAMIENTO
+      |--------------------------------------------------------------------------
+      */
 
       return {
 
@@ -520,7 +568,6 @@ function agregarGrupo(
     })
   );
 }
-
   /*
 |--------------------------------------------------------------------------
 | AGREGAR EJERCICIO A GRUPO

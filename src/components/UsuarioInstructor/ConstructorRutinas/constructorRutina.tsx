@@ -130,6 +130,22 @@ const {
   rutinaInicial
 );
 
+  /*
+  |--------------------------------------------------------------------------
+  | OVERLAY DE GRUPO
+  |--------------------------------------------------------------------------
+  |
+  | Estado visual para crear grupos personalizados.
+  |
+  */
+
+  const [
+    grupoModal,
+    setGrupoModal,
+  ] = useState<{
+    entrenamientoId: number;
+  } | null>(null);
+
   
   /*
   |--------------------------------------------------------------------------

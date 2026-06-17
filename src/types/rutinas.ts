@@ -181,6 +181,8 @@ export interface GrupoEjercicios {
 
   id: number;
 
+  nombre: string;
+
   notas: string;
 
   configuracion:
