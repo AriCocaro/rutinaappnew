@@ -262,7 +262,7 @@ export default function ListaEntrenamientos({
                   <button
                     type="button"
                     onClick={() =>
-                      agregarGrupo(
+                      abrirGrupo(
                         entrenamiento.id
                       )
                     }

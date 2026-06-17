@@ -8,7 +8,7 @@
 
 import { useRutina } from "@/hooks/useRutina";
 import { useConstructorRutina } from "@/hooks/useConstructorRutina";
-
+import GrupoOverlay from "./GrupoOverlay";
 /*
 |--------------------------------------------------------------------------
 | STORAGE

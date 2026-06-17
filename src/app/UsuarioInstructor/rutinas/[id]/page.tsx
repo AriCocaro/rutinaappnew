@@ -1,5 +1,21 @@
 "use client";
 
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| PAGE                                                                       |
+| -------------------------------------------------------------------------- |
+|                                                                            |
+| Detalle completo de una rutina.                                            |
+|                                                                            |
+| Compatible con la nueva estructura:                                        |
+|                                                                            |
+| entrenamiento.items[]                                                      |
+|                                                                            |
+| - ejercicio                                                                |
+| - grupo                                                                    |
+|                                                                            |
+| */                                                                         
+
 import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
@@ -10,298 +26,408 @@ import materiales from "@/data/materiales.json";
 import { useBranding } from "@/hooks/useBranding";
 
 import {
-  obtenerRutinaPorId,
+obtenerRutinaPorId,
 } from "@/lib/rutinasStorage";
 
 import {
-  Rutina,
-  EntrenamientoRutina,
-  EjercicioRutina,
+Rutina,
+EntrenamientoRutina,
+ItemEntrenamiento,
+EjercicioRutina,
+GrupoEjercicios,
 } from "@/types/rutinas";
 
-/*
-|--------------------------------------------------------------------------
-| COMPONENTE
-|--------------------------------------------------------------------------
-*/
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| COMPONENTE                                                                 |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
 export default function RutinaDetallePage() {
 
-  /*
-  |--------------------------------------------------------------------------
-  | BRANDING
-  |--------------------------------------------------------------------------
-  */
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| BRANDING                                                                   |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
-  const branding =
-    useBranding();
+const branding =
+useBranding();
 
-  /*
-  |--------------------------------------------------------------------------
-  | PARAMS
-  |--------------------------------------------------------------------------
-  */
 
-  const params =
-    useParams();
 
-  const id =
-    Number(params.id);
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| PARAMS                                                                     |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
-  /*
-  |--------------------------------------------------------------------------
-  | STATE
-  |--------------------------------------------------------------------------
-  */
+const params =
+useParams();
 
-  const [
-    rutina,
-    setRutina,
-  ] = useState<Rutina | null>(
-    null
-  );
+const id =
+Number(params.id);
 
-  /*
-  |--------------------------------------------------------------------------
-  | CARGAR RUTINA
-  |--------------------------------------------------------------------------
-  */
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| STATE                                                                      |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
-  useEffect(() => {
+const [
+rutina,
+setRutina,
+] = useState<Rutina | null>(
+null
+);
 
-    const data =
-      obtenerRutinaPorId(id);
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| CARGAR RUTINA                                                              |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
-    if (data) {
+useEffect(() => {
 
-      setRutina(data);
 
-    }
+const data =
+  obtenerRutinaPorId(id);
 
-  }, [id]);
+if (data) {
 
-  /*
-  |--------------------------------------------------------------------------
-  | NOT FOUND
-  |--------------------------------------------------------------------------
-  */
+  setRutina(data);
 
-  if (!rutina) {
+}
 
-    return (
 
-      <div className="p-6">
+}, [id]);
 
-        {branding.rutina}
-        {" "}
-        no encontrada
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| NOT FOUND                                                                  |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
-      </div>
+if (!rutina) {
 
-    );
-  }
 
-  /*
-  |--------------------------------------------------------------------------
-  | RENDER
-  |--------------------------------------------------------------------------
-  */
+return (
 
-  return (
+  <div className="p-6">
 
-    <div className="p-6 flex flex-col gap-6">
+    {branding.rutina}
+    {" "}
+    no encontrada
 
-      {/* HEADER */}
+  </div>
 
-      <div>
+);
 
-        <h1 className="text-3xl font-bold">
 
-          {branding.rutina}
-          {" "}
-          #{rutina.id}
+}
 
-        </h1>
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| RENDER                                                                     |
+| -------------------------------------------------------------------------- |
+| */                                                                         
 
-        <p className="text-gray-500">
+return (
 
-          Inicio:
-          {" "}
-          {rutina.fechaInicio}
 
-        </p>
+<div className="p-6 flex flex-col gap-6">
 
-        <p className="text-gray-500">
+  {/* ---------------------------------------------------------- */}
+  {/* HEADER */}
+  {/* ---------------------------------------------------------- */}
 
-          {branding.bloque}s:
-          {" "}
-          {rutina.cantidadBloques}
+  <div>
 
-        </p>
+    <h1 className="text-3xl font-bold">
 
-      </div>
+      {branding.rutina}
+      {" "}
+      #{rutina.id}
 
-      {/* ENTRENAMIENTOS */}
+    </h1>
 
-      {rutina.entrenamientos.map(
+    <p className="text-gray-500">
 
-        (
-          entrenamiento:
-            EntrenamientoRutina,
-          index
-        ) => (
+      Inicio:
+      {" "}
+      {rutina.fechaInicio}
 
-          <div
-            key={entrenamiento.id}
-            className="
-              border
-              rounded-2xl
-              p-5
-              bg-white
-              flex
-              flex-col
-              gap-4
-            "
-          >
+    </p>
 
-            <div className="flex items-center justify-between">
+    <p className="text-gray-500">
 
-              <h2 className="text-xl font-bold">
+      {branding.bloque}s:
+      {" "}
+      {rutina.cantidadBloques}
 
-                {branding.entrenamiento}
-                {" "}
-                {index + 1}
+    </p>
 
-              </h2>
+  </div>
 
-              <span className="text-sm text-gray-500">
+  {/* ---------------------------------------------------------- */}
+  {/* ENTRENAMIENTOS */}
+  {/* ---------------------------------------------------------- */}
 
-                {entrenamiento.ejercicios.length}
-                {" "}
-                {branding.ejercicio.toLowerCase()}
-                {entrenamiento.ejercicios.length !== 1
-                  ? "s"
-                  : ""}
+  {rutina.entrenamientos.map(
 
-              </span>
+    (
+      entrenamiento:
+        EntrenamientoRutina,
+      index
+    ) => (
 
-            </div>
+      <div
+        key={entrenamiento.id}
+        className="
+          border
+          rounded-2xl
+          p-5
+          bg-white
+          flex
+          flex-col
+          gap-4
+        "
+      >
 
-            <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
 
-              {entrenamiento.ejercicios.map(
+          <h2 className="text-xl font-bold">
 
-                (
-                  ejercicio:
-                    EjercicioRutina
-                ) => {
+            {branding.entrenamiento}
+            {" "}
+            {index + 1}
 
-                  const ejercicioData =
-                    ejercicios.find(
-                      (e) =>
-                        e.id ===
-                        ejercicio.ejercicioId
-                    );
+          </h2>
 
-                  const materialData =
-                    materiales.find(
-                      (m) =>
-                        m.id ===
-                        ejercicio.materialId
-                    );
+          <span className="text-sm text-gray-500">
 
-                  return (
+            {entrenamiento.items.length}
+            {" "}
+            item(s)
 
-                    <div
-                      key={ejercicio.id}
+          </span>
+
+        </div>
+
+        {/* -------------------------------------------------- */}
+        {/* ITEMS */}
+        {/* -------------------------------------------------- */}
+
+        {entrenamiento.items.map(
+
+          (
+            item:
+              ItemEntrenamiento
+          ) => {
+
+            /*
+            --------------------------------------------------
+            EJERCICIO
+            --------------------------------------------------
+            */
+
+            if (
+              item.tipo ===
+              "ejercicio"
+            ) {
+
+              const ejercicio:
+                EjercicioRutina =
+                  item.contenido;
+
+              const ejercicioData =
+                ejercicios.find(
+                  (e) =>
+                    e.id ===
+                    ejercicio.ejercicioId
+                );
+
+              const materialData =
+                materiales.find(
+                  (m) =>
+                    m.id ===
+                    ejercicio.materialId
+                );
+
+              return (
+
+                <div
+                  key={ejercicio.id}
+                  className="
+                    border
+                    rounded-xl
+                    p-4
+                    flex
+                    flex-col
+                    gap-3
+                  "
+                >
+
+                  <h3 className="font-semibold">
+
+                    {ejercicioData?.nombre}
+
+                  </h3>
+
+                  <p className="text-sm text-gray-500">
+
+                    {materialData?.nombre}
+
+                  </p>
+
+                  {ejercicio.notas && (
+
+                    <p className="text-sm text-gray-600">
+
+                      {ejercicio.notas}
+
+                    </p>
+
+                  )}
+
+                </div>
+
+              );
+            }
+
+            /*
+            --------------------------------------------------
+            GRUPO
+            --------------------------------------------------
+            */
+
+            if (
+              item.tipo ===
+              "grupo"
+            ) {
+
+              const grupo:
+                GrupoEjercicios =
+                  item.contenido;
+
+              return (
+
+                <div
+                  key={grupo.id}
+                  className="
+                    border-2
+                    border-purple-300
+                    bg-purple-50
+                    rounded-xl
+                    p-4
+                    flex
+                    flex-col
+                    gap-3
+                  "
+                >
+
+                  <div>
+
+                    <h3
                       className="
-                        border
-                        rounded-xl
-                        p-4
-                        flex
-                        flex-col
-                        gap-3
+                        font-bold
+                        text-purple-700
                       "
                     >
+                      Grupo
+                    </h3>
 
-                      <div className="flex items-center justify-between">
+                    <p
+                      className="
+                        text-xs
+                        text-purple-600
+                      "
+                    >
+                      {grupo.items.length}
+                      {" "}
+                      ejercicio(s)
+                    </p>
 
-                        <div>
+                  </div>
 
-                          <h3 className="font-semibold">
+                  {grupo.items.map(
 
-                            {ejercicioData?.nombre}
+                    (subItem) => {
 
-                          </h3>
+                      if (
+                        subItem.tipo !==
+                        "ejercicio"
+                      ) {
+                        return null;
+                      }
 
-                          <p className="text-sm text-gray-500">
+                      const ejercicio =
+                        subItem.contenido;
 
-                            {materialData?.nombre}
+                      const ejercicioData =
+                        ejercicios.find(
+                          (e) =>
+                            e.id ===
+                            ejercicio.ejercicioId
+                        );
 
-                          </p>
+                      const materialData =
+                        materiales.find(
+                          (m) =>
+                            m.id ===
+                            ejercicio.materialId
+                        );
 
-                        </div>
-
-                        {ejercicio.configuracion
-                          .overrideActivo && (
-
-                          <span
-                            className="
-                              text-xs
-                              bg-yellow-100
-                              text-yellow-700
-                              px-2
-                              py-1
-                              rounded-lg
-                            "
-                          >
-
-                            Override
-
-                          </span>
-
-                        )}
-
-                      </div>
-
-                      <div className="text-sm text-gray-600">
-
-                        Ver
-                        {" "}
-                        {branding.progresion.toLowerCase()}
-
-                      </div>
-
-                      {ejercicio.notas && (
+                      return (
 
                         <div
+                          key={ejercicio.id}
                           className="
-                            border-t
-                            pt-2
-                            text-sm
-                            text-gray-600
+                            border
+                            rounded-lg
+                            p-3
+                            bg-white
                           "
                         >
 
-                          {ejercicio.notas}
+                          <div className="font-medium">
+
+                            {ejercicioData?.nombre}
+
+                          </div>
+
+                          <div className="text-sm text-gray-500">
+
+                            {materialData?.nombre}
+
+                          </div>
 
                         </div>
 
-                      )}
+                      );
+                    }
 
-                    </div>
+                  )}
 
-                  );
-                }
-              )}
+                </div>
 
-            </div>
+              );
+            }
 
-          </div>
+            return null;
 
-        )
-      )}
+          }
 
-    </div>
-  );
+        )}
+
+      </div>
+
+    )
+
+  )}
+
+</div>
+
+
+);
 }
