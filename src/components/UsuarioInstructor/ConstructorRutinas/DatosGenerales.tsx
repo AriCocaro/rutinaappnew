@@ -1,6 +1,8 @@
 "use client";
 
-import alumnosData from "@/data/alumnos.json";
+import {
+  obtenerAlumnos,
+} from "@/lib/alumnosStorage";
 
 import SearchSelect from "@/components/ui/SearchSelect";
 
@@ -21,9 +23,8 @@ type Alumno = {
   apellido: string;
 };
 
-const alumnos =
-  alumnosData as Alumno[];
-
+const alumnos: Alumno[] =
+  obtenerAlumnos();
 /*
 |--------------------------------------------------------------------------
 | PROPS

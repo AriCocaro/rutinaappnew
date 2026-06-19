@@ -11,6 +11,8 @@ useEffect,
 useState,
 } from "react";
 
+import Link from "next/link";
+
 import {
 useParams,
 useRouter,
@@ -568,6 +570,78 @@ return (
     )}
 
   </div>
+
+  {rutinas.map((rutina) => (
+
+    <div
+      key={rutina.id}
+      className="
+        border
+        rounded-xl
+        p-4
+      "
+    >
+
+      <div>
+
+        Rutina ID:
+        {" "}
+        {rutina.id.slice(0, 8)}
+
+      </div>
+
+      <div>
+
+        Inicio:
+        {" "}
+        {rutina.fechaInicio}
+
+      </div>
+
+      <div>
+
+        Bloques:
+        {" "}
+        {rutina.cantidadBloques}
+
+      </div>
+
+      <div>
+
+        Entrenamientos:
+        {" "}
+        {rutina.entrenamientos.length}
+
+      </div>
+
+      <div>
+
+        Estado:
+        {" "}
+        {rutina.estado}
+
+      </div>
+
+      <Link
+        href={`/UsuarioInstructor/rutinas/${rutina.id}/editar`}
+        className="
+          mt-3
+          inline-block
+          bg-blue-600
+          text-white
+          px-4
+          py-2
+          rounded-xl
+        "
+      >
+
+        Ver Rutina
+
+      </Link>
+
+    </div>
+
+  ))}
 
   {/* ---------------------------------------------------- */}
   {/* MEDICIONES                                           */}

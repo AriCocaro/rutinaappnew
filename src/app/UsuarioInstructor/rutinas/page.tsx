@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import alumnos from "@/data/alumnos.json";
+import {
+  obtenerAlumnoPorId,
+} from "@/lib/alumnosStorage";
+
 
 import {
   obtenerRutinas,
@@ -95,16 +98,11 @@ export default function RutinasPage() {
   | BUSCAR ALUMNO
   |--------------------------------------------------------------------------
   */
-
   function obtenerAlumno(
     alumnoId: string
   ) {
-
-    return (
-      alumnos as Alumno[]
-    ).find(
-      (alumno) =>
-        alumno.id === alumnoId
+    return obtenerAlumnoPorId(
+      alumnoId
     );
   }
 
@@ -136,7 +134,7 @@ export default function RutinasPage() {
 
       ...rutina,
 
-      id: string,
+      id: crypto.randomUUID(),
 
       alumnoId:
         nuevoAlumnoId.trim() === ""
@@ -160,8 +158,7 @@ export default function RutinasPage() {
     cargarRutinas();
 
     alert(
-      alert(
-      `${branding.rutina} duplicado`)
+      `${branding.rutina} duplicado`
     );
   }
 

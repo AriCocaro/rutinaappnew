@@ -139,7 +139,7 @@ export default function EntrenamientoAlumnoPage({
 
       <div className="flex flex-col gap-4">
 
-        {entrenamiento.ejercicios.map(
+        {entrenamiento.items.map(
 
           (
             ejercicio:

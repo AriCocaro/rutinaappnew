@@ -1,103 +1,132 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { useParams } from "next/navigation";
-
-import alumnos from "@/data/alumnos.json";
+/*
+|--------------------------------------------------------------------------
+| HOOKS
+|--------------------------------------------------------------------------
+*/
 
 import {
-  obtenerRutinas,
-} from "@/lib/rutinasStorage";
+  useEffect,
+  useState,
+} from "react";
+
+import Link from "next/link";
+
+import {
+  useParams,
+} from "next/navigation";
+
+/*
+|--------------------------------------------------------------------------
+| TYPES
+|--------------------------------------------------------------------------
+*/
+
+import {
+  Alumno,
+} from "@/types/alumnos";
 
 import {
   Rutina,
-  EntrenamientoRutina,
-  EjercicioRutina,
 } from "@/types/rutinas";
 
 /*
-|------------------------------------------------------------------
-| TYPES
-|------------------------------------------------------------------
+|--------------------------------------------------------------------------
+| STORAGE
+|--------------------------------------------------------------------------
 */
 
-type Alumno = {
+import {
+  obtenerAlumnoPorId,
+} from "@/lib/alumnosStorage";
 
-  id: string;
-
-  nombre: string;
-
-  apellido: string;
-};
+import {
+  obtenerRutinaActivaPorAlumno,
+} from "@/lib/rutinasStorage";
 
 /*
-|------------------------------------------------------------------
+|--------------------------------------------------------------------------
+| HELPERS
+|--------------------------------------------------------------------------
+*/
+
+import {
+  contarEjercicios,
+} from "@/lib/rutinaHelpers";
+
+/*
+|--------------------------------------------------------------------------
 | COMPONENTE
-|------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 
 export default function AlumnoPage() {
 
   /*
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
   | PARAMS
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
   */
 
   const params =
     useParams();
 
   const alumnoId =
-    params.id as string;
+    String(
+      params.id
+    );
 
   /*
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
   | STATE
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
   */
+
+  const [
+    alumno,
+    setAlumno,
+  ] = useState<
+    Alumno | null
+  >(null);
 
   const [
     rutina,
     setRutina,
-  ] = useState<Rutina | null>(
-    null
-  );
+  ] = useState<
+    Rutina | null
+  >(null);
 
   /*
-  |----------------------------------------------------------------
-  | ALUMNO
-  |----------------------------------------------------------------
-  */
-
-  const alumno =
-    (alumnos as Alumno[]).find(
-      (item) =>
-        item.id === alumnoId
-    );
-
-  /*
-  |----------------------------------------------------------------
-  | CARGAR RUTINA ACTIVA
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
+  | INIT
+  |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
 
-    const rutinas =
-      obtenerRutinas();
-
-    const rutinaActiva =
-      rutinas.find(
-        (item) =>
-
-          item.alumnoId ===
-            alumnoId &&
-
-          item.activa
+    const alumnoData =
+      obtenerAlumnoPorId(
+        alumnoId
       );
 
-    if (rutinaActiva) {
+    if (
+      alumnoData
+    ) {
+
+      setAlumno(
+        alumnoData
+      );
+    }
+
+    const rutinaActiva =
+      obtenerRutinaActivaPorAlumno(
+        alumnoId
+      );
+
+    if (
+      rutinaActiva
+    ) {
 
       setRutina(
         rutinaActiva
@@ -107,9 +136,9 @@ export default function AlumnoPage() {
   }, [alumnoId]);
 
   /*
-  |----------------------------------------------------------------
-  | ALUMNO NO ENCONTRADO
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
+  | NOT FOUND
+  |--------------------------------------------------------------------------
   */
 
   if (!alumno) {
@@ -121,139 +150,205 @@ export default function AlumnoPage() {
         Alumno no encontrado
 
       </div>
+
     );
   }
 
   /*
-  |----------------------------------------------------------------
-  | PROGRESIÓN BASE
-  |----------------------------------------------------------------
-  |
-  | Tomamos el primer bloque de la progresión global
-  | para mostrar una referencia rápida.
-  |
-  */
-
-  const progresionBase =
-    rutina?.progresionGlobal?.[0];
-
-  /*
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
   | RENDER
-  |----------------------------------------------------------------
+  |--------------------------------------------------------------------------
   */
 
   return (
 
-    <div className="p-6 flex flex-col gap-6">
+    <div
+      className="
+        p-6
+        flex
+        flex-col
+        gap-6
+      "
+    >
 
-      {/* HEADER */}
+      {/* ------------------------------------------------ */}
+      {/* HEADER                                           */}
+      {/* ------------------------------------------------ */}
 
       <div>
 
-        <h1 className="text-3xl font-bold">
+        <h1
+          className="
+            text-3xl
+            font-bold
+          "
+        >
 
-          {alumno.nombre}{" "}
+          {alumno.nombre}
+          {" "}
           {alumno.apellido}
 
         </h1>
 
-        <p className="text-gray-500">
+        <p
+          className="
+            text-gray-500
+          "
+        >
 
-          Dashboard alumno
+          Vista alumno
 
         </p>
 
       </div>
 
-      {/* SIN RUTINA */}
+      {/* ------------------------------------------------ */}
+      {/* SIN RUTINA                                       */}
+      {/* ------------------------------------------------ */}
 
       {!rutina && (
 
-        <div className="border rounded-2xl p-10 bg-white text-center text-gray-500">
+        <div
+          className="
+            border
+            rounded-2xl
+            p-8
+            bg-white
+          "
+        >
 
-          El alumno no tiene
-          rutina activa
+          Este alumno no posee
+          una rutina activa.
 
         </div>
 
       )}
 
-      {/* RUTINA */}
+      {/* ------------------------------------------------ */}
+      {/* RUTINA ACTIVA                                    */}
+      {/* ------------------------------------------------ */}
 
       {rutina && (
 
-        <div className="flex flex-col gap-5">
+        <div
+          className="
+            border
+            rounded-2xl
+            p-5
+            bg-white
+            flex
+            flex-col
+            gap-5
+          "
+        >
 
-          {/* INFO GENERAL */}
+          <h2
+            className="
+              text-xl
+              font-bold
+            "
+          >
 
-          <div className="border rounded-2xl p-5 bg-white flex flex-col gap-3">
+            Rutina activa
 
-            <h2 className="text-xl font-bold">
+          </h2>
 
-              Rutina activa
+          <div
+            className="
+              grid
+              md:grid-cols-4
+              gap-4
+            "
+          >
 
-            </h2>
+            <div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div
+                className="
+                  text-sm
+                  text-gray-500
+                "
+              >
 
-              {/* FECHA */}
-
-              <div className="border rounded-xl p-4">
-
-                <p className="text-sm text-gray-500">
-                  Inicio
-                </p>
-
-                <p className="font-bold">
-                  {rutina.fechaInicio}
-                </p>
-
-              </div>
-
-              {/* BLOQUES */}
-
-              <div className="border rounded-xl p-4">
-
-                <p className="text-sm text-gray-500">
-                  Bloques
-                </p>
-
-                <p className="font-bold">
-                  {rutina.cantidadBloques}
-                </p>
-
-              </div>
-
-              {/* ENTRENAMIENTOS */}
-
-              <div className="border rounded-xl p-4">
-
-                <p className="text-sm text-gray-500">
-                  Entrenamientos
-                </p>
-
-                <p className="font-bold">
-                  {rutina.entrenamientos.length}
-                </p>
+                Inicio
 
               </div>
 
-              {/* PROGRESIÓN BASE */}
+              <div>
 
-              <div className="border rounded-xl p-4">
+                {
+                  rutina.fechaInicio
+                }
 
-                <p className="text-sm text-gray-500">
-                  Progresión inicial
-                </p>
+              </div>
 
-                <p className="font-bold">
+            </div>
 
-                  {progresionBase?.series ?? "-"}
-                  {" x "}
-                  {progresionBase?.reps ?? "-"}
+            <div>
 
-                </p>
+              <div
+                className="
+                  text-sm
+                  text-gray-500
+                "
+              >
+
+                Bloques
+
+              </div>
+
+              <div>
+
+                {
+                  rutina.cantidadBloques
+                }
+
+              </div>
+
+            </div>
+
+            <div>
+
+              <div
+                className="
+                  text-sm
+                  text-gray-500
+                "
+              >
+
+                Entrenamientos
+
+              </div>
+
+              <div>
+
+                {
+                  rutina.entrenamientos
+                    .length
+                }
+
+              </div>
+
+            </div>
+
+            <div>
+
+              <div
+                className="
+                  text-sm
+                  text-gray-500
+                "
+              >
+
+                Estado
+
+              </div>
+
+              <div>
+
+                {
+                  rutina.estado
+                }
 
               </div>
 
@@ -261,135 +356,88 @@ export default function AlumnoPage() {
 
           </div>
 
-          {/* ENTRENAMIENTOS */}
+          {/* -------------------------------------------- */}
+          {/* ENTRENAMIENTOS                               */}
+          {/* -------------------------------------------- */}
 
-          <div className="flex flex-col gap-4">
+          <div
+            className="
+              flex
+              flex-col
+              gap-3
+            "
+          >
 
             {rutina.entrenamientos.map(
 
               (
-                entrenamiento:
-                  EntrenamientoRutina,
+                entrenamiento,
                 index
               ) => (
 
-                <div
-                  key={entrenamiento.id}
-                  className="border rounded-2xl p-5 bg-white flex flex-col gap-4"
+                <Link
+
+                  key={
+                    entrenamiento.id
+                  }
+
+                  href={`/UsuarioEntrenado/${alumno.id}/entrenamiento`}
+
+                  className="
+                    border
+                    rounded-xl
+                    p-4
+                    hover:bg-gray-50
+                  "
                 >
 
-                  {/* HEADER */}
+                  <div
+                    className="
+                      flex
+                      items-center
+                      justify-between
+                    "
+                  >
 
-                  <div className="flex items-center justify-between">
+                    <div>
 
-                    <h2 className="text-xl font-bold">
+                      <div
+                        className="
+                          font-semibold
+                        "
+                      >
 
-                      Entrenamiento {index + 1}
+                        Entrenamiento
+                        {" "}
+                        {index + 1}
 
-                    </h2>
+                      </div>
 
-                    <span className="text-sm text-gray-500">
+                      <div
+                        className="
+                          text-sm
+                          text-gray-500
+                        "
+                      >
 
-                      {
-                        entrenamiento
-                          .ejercicios
-                          .length
-                      }
-                      {" "}
-                      ejercicios
+                        {
+                          contarEjercicios(
+                            entrenamiento.items
+                          )
+                        }
+                        {" "}
+                        ejercicios
 
-                    </span>
+                      </div>
 
-                  </div>
-
-                  {/* EJERCICIOS */}
-
-                  <div className="flex flex-col gap-3">
-
-                    {entrenamiento.ejercicios.map(
-
-                      (
-                        ejercicio:
-                          EjercicioRutina
-                      ) => (
-
-                        <div
-                          key={ejercicio.id}
-                          className="border rounded-xl p-4"
-                        >
-
-                          <div className="flex items-center justify-between">
-
-                            {/* INFO */}
-
-                            <div>
-
-                              <p className="font-semibold">
-
-                                Ejercicio ID:
-                                {" "}
-                                {ejercicio.ejercicioId}
-
-                              </p>
-
-                              <p className="text-sm text-gray-500">
-
-                                Material:
-                                {" "}
-                                {ejercicio.materialId}
-
-                              </p>
-
-                            </div>
-
-                            {/* OVERRIDE */}
-
-                            {ejercicio
-                              .configuracion
-                              .overrideActivo && (
-
-                              <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg">
-
-                                Override
-
-                              </span>
-
-                            )}
-
-                          </div>
-
-                          {/* PROGRESIÓN */}
-
-                          <div className="mt-3 text-sm text-gray-500">
-
-                            {progresionBase?.series ?? "-"}
-                            {" x "}
-                            {progresionBase?.reps ?? "-"}
-
-                          </div>
-
-                          {/* NOTAS */}
-
-                          {ejercicio.notas && (
-
-                            <div className="mt-3 text-sm text-gray-600">
-
-                              {ejercicio.notas}
-
-                            </div>
-
-                          )}
-
-                        </div>
-
-                      )
-                    )}
+                    </div>
 
                   </div>
 
-                </div>
+                </Link>
 
               )
+
             )}
 
           </div>
@@ -399,5 +447,6 @@ export default function AlumnoPage() {
       )}
 
     </div>
+
   );
 }

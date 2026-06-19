@@ -57,12 +57,6 @@ export default function EditarRutinaPage() {
 
   useEffect(() => {
 
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDAR ID
-    |--------------------------------------------------------------------------
-    */
-
     if (!params?.id) {
 
       setCargando(false);
@@ -70,30 +64,10 @@ export default function EditarRutinaPage() {
       return;
     }
 
-    const id =
-      Number(params.id);
-
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDAR NUMBER
-    |--------------------------------------------------------------------------
-    */
-
-    if (isNaN(id)) {
-
-      setCargando(false);
-
-      return;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | BUSCAR RUTINA
-    |--------------------------------------------------------------------------
-    */
-
     const rutinaEncontrada =
-      obtenerRutinaPorId(id);
+      obtenerRutinaPorId(
+        String(params.id)
+      );
 
     if (rutinaEncontrada) {
 
