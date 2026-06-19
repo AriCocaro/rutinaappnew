@@ -24,7 +24,7 @@ export type Postura =
 export type Material = {
 
   // ID único
-  id: number;
+  id: string;
 
   // Nombre visible
   nombre: string;
@@ -47,7 +47,7 @@ export type Material = {
 export type EjercicioBase = {
 
   // ID único
-  id: number;
+  id: string;
 
   // Nombre ejercicio
   nombre: string;

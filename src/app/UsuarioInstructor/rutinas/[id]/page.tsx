@@ -66,7 +66,9 @@ const params =
 useParams();
 
 const id =
-Number(params.id);
+String(
+  params.id
+);
 
  /*                                                                         |
 | -------------------------------------------------------------------------- |

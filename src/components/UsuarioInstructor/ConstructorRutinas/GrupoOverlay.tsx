@@ -4,7 +4,7 @@ type Props = {
 
   grupoDraft: {
 
-    entrenamientoId: number;
+    entrenamientoId: string;
 
     nombre: string;
 

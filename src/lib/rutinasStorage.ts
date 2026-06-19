@@ -22,7 +22,7 @@ const STORAGE_KEY =
 
 function guardarRutinas(
   rutinas: Rutina[]
-) {
+): void {
 
   localStorage.setItem(
 
@@ -85,7 +85,7 @@ export function obtenerRutinas():
 
     return JSON.parse(
       data
-    );
+    ) as Rutina[];
 
   } catch {
 
@@ -104,7 +104,7 @@ export function obtenerRutinas():
 */
 
 export function obtenerRutinaPorId(
-  id: number
+  id: string
 ): Rutina | undefined {
 
   const rutinas =
@@ -124,7 +124,7 @@ export function obtenerRutinaPorId(
 
 export function agregarRutina(
   rutina: Rutina
-) {
+): void {
 
   const rutinas =
     obtenerRutinas();
@@ -167,7 +167,7 @@ export function agregarRutina(
 
 export function actualizarRutina(
   rutinaActualizada: Rutina
-) {
+): void {
 
   const rutinas =
     obtenerRutinas();
@@ -207,8 +207,8 @@ export function actualizarRutina(
 */
 
 export function eliminarRutina(
-  id: number
-) {
+  id: string
+): void {
 
   const rutinas =
     obtenerRutinas();
@@ -221,5 +221,54 @@ export function eliminarRutina(
 
   guardarRutinas(
     nuevasRutinas
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| OBTENER RUTINAS DE UN ALUMNO
+|--------------------------------------------------------------------------
+|
+| Devuelve todas las rutinas
+| asociadas a un alumno.
+|
+*/
+
+export function obtenerRutinasPorAlumno(
+  alumnoId: string
+): Rutina[] {
+
+  const rutinas =
+    obtenerRutinas();
+
+  return rutinas.filter(
+    (rutina) =>
+      rutina.alumnoId ===
+      alumnoId
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| OBTENER RUTINA ACTIVA DE UN ALUMNO
+|--------------------------------------------------------------------------
+|
+| Devuelve únicamente la rutina
+| marcada como activa.
+|
+*/
+
+export function obtenerRutinaActivaPorAlumno(
+  alumnoId: string
+): Rutina | undefined {
+
+  const rutinas =
+    obtenerRutinas();
+
+  return rutinas.find(
+    (rutina) =>
+      rutina.alumnoId ===
+      alumnoId &&
+      rutina.activa
   );
 }

@@ -1,18 +1,18 @@
 [
   {
-    "id": 1,
+    "id": "1",
 
     "nombre": "Pectoral"
   },
 
   {
-    "id": 2,
+    "id": "2",
 
     "nombre": "Dorsal"
   },
 
   {
-    "id": 3,
+    "id": "3",
 
     "nombre": "Cuádriceps"
   },

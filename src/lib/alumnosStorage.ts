@@ -93,7 +93,7 @@ alumnos
 
 
 export function obtenerAlumnoPorId(
-id: number
+id: string
 ): Alumno | null {
 
 const alumnos =
@@ -191,7 +191,7 @@ nuevosAlumnos
 | */                                                                         
 
 export function eliminarAlumno(
-id: number
+id: string
 ): void {
 
 const alumnos =
@@ -215,12 +215,9 @@ nuevosAlumnos
 | */                                                                         
 
 export function generarAlumnoId():
-number {
+string {
 
-return (
-Date.now() +
-Math.floor(
-Math.random() * 10000
-)
+return String(
+  Date.now()
 );
 }

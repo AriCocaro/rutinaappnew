@@ -36,6 +36,14 @@ import {
 obtenerAlumnoPorId,
 } from "@/lib/alumnosStorage";
 
+import {
+  obtenerRutinasPorAlumno,
+} from "@/lib/rutinasStorage";
+
+import {
+  Rutina,
+} from "@/types/rutinas";
+
 /*                                                                         |
 | -------------------------------------------------------------------------- |
 | COMPONENTE                                                                 |
@@ -74,7 +82,7 @@ useRouter();
 | */                                                                         
 
 const id =
-Number(
+String(
 params.id
 );
 
@@ -85,12 +93,17 @@ params.id
 | */                                                                         
 
 const [
-alumno,
-setAlumno,
-] = useState<
-Alumno | null
+  alumno,
+  setAlumno,
+  ] = useState<
+  Alumno | null
 
-> (null);
+  > (null);
+  const [
+    rutinas,
+    setRutinas,
+  ] = useState<Rutina[]>([])
+;
 
 /*                                                                         |
 | -------------------------------------------------------------------------- |
@@ -100,21 +113,25 @@ Alumno | null
 
 useEffect(() => {
 
-const data =
-  obtenerAlumnoPorId(
-    id
-  );
+    const data =
+      obtenerAlumnoPorId(id);
 
-if (data) {
+    if (!data) {
+      return;
+    }
 
-  setAlumno(
-    data
-  );
+    setAlumno(data);
 
-}
+    const rutinasAlumno =
+      obtenerRutinasPorAlumno(
+        id
+      );
 
+    setRutinas(
+      rutinasAlumno
+    );
 
-}, [id]);
+  }, [id]);           
 
  /*                                                                         |
 | -------------------------------------------------------------------------- |
@@ -407,6 +424,9 @@ return (
     </p>
 
   </div>
+
+
+
 
   {/* ---------------------------------------------------- */}
   {/* OBJETIVOS                                            */}

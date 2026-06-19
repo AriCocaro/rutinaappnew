@@ -136,11 +136,7 @@ export default function RutinasPage() {
 
       ...rutina,
 
-      id:
-        Date.now() +
-        Math.floor(
-          Math.random() * 10000
-        ),
+      id: string,
 
       alumnoId:
         nuevoAlumnoId.trim() === ""

@@ -14,7 +14,7 @@ export function esGrupo(
 
 export function buscarGrupo(
   items: ItemEntrenamiento[],
-  grupoId: number
+  grupoId: string
 ): GrupoEjercicios | null {
 
   for (const item of items) {
@@ -45,7 +45,7 @@ export function buscarGrupo(
 
 export function actualizarGrupoRecursivo(
   items: ItemEntrenamiento[],
-  grupoId: number,
+  grupoId: string,
   updater: (
     grupo: GrupoEjercicios
   ) => GrupoEjercicios
@@ -87,7 +87,7 @@ export function actualizarGrupoRecursivo(
 
 export function eliminarNodoRecursivo(
   items: ItemEntrenamiento[],
-  nodoId: number
+  nodoId: string
 ): ItemEntrenamiento[] {
 
   return items

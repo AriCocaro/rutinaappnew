@@ -93,9 +93,9 @@ const configuracionBase: ConfiguracionAvanzada = {
 */
  const draftBase: EjercicioDraft = {
 
-  ejercicioId: 0,
+  ejercicioId: "",
 
-  materialId: 0,
+  materialId: "",
 
   notas: "",
 
@@ -176,12 +176,7 @@ export function useRutina(
     const nuevoEntrenamiento:
       EntrenamientoRutina = {
 
-      id:
-        Date.now() +
-        Math.floor(
-          Math.random() * 10000
-        ),
-
+      id: crypto.randomUUID(),
       orden:
         entrenamientos.length + 1,
 
@@ -198,7 +193,7 @@ export function useRutina(
   }
 
   function eliminarEntrenamiento(
-    entrenamientoId: number
+    entrenamientoId: string
   ) {
 
     const nuevosEntrenamientos =
@@ -347,7 +342,7 @@ export function useRutina(
   */
 
   function agregarEjercicio(
-    entrenamientoId: number
+    entrenamientoId: string
   ) {
 
     if (!draft.ejercicioId) {
@@ -382,11 +377,8 @@ export function useRutina(
           const nuevoEjercicio:
             EjercicioRutina = {
 
-            id:
-              Date.now() +
-              Math.floor(
-                Math.random() * 10000
-              ),
+            id: crypto.randomUUID(),
+            
 
             ejercicioId:
               draft.ejercicioId,
@@ -431,9 +423,9 @@ export function useRutina(
 
     setDraft({
 
-      ejercicioId: 0,
+      ejercicioId: "",
 
-      materialId: 0,
+      materialId: "",
 
       notas: "",
 
@@ -473,7 +465,7 @@ export function useRutina(
 
 function agregarGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
   nombre: string,
 
@@ -516,11 +508,7 @@ function agregarGrupo(
       const nuevoGrupo:
         GrupoEjercicios = {
 
-        id:
-          Date.now() +
-          Math.floor(
-            Math.random() * 10000
-          ),
+        id: crypto.randomUUID(),
 
         /*
         |------------------------------------------------------
@@ -599,9 +587,9 @@ function agregarGrupo(
 
 function agregarEjercicioAGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number
+  grupoId: tring
 
 ): void {
 
@@ -638,11 +626,7 @@ function agregarEjercicioAGrupo(
   const nuevoEjercicio:
     EjercicioRutina = {
 
-    id:
-      Date.now() +
-      Math.floor(
-        Math.random() * 10000
-      ),
+    id: crypto.randomUUID(),
 
     ejercicioId:
       draft.ejercicioId,
@@ -754,9 +738,9 @@ function agregarEjercicioAGrupo(
 
 function eliminarGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number
+  grupoId: string
 
 ): void {
 
@@ -809,11 +793,11 @@ function eliminarGrupo(
 
 function eliminarEjercicioGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number,
+  grupoId: string,
 
-  ejercicioId: number
+  ejercicioId: string
 
 ): void {
 
@@ -854,9 +838,9 @@ function eliminarEjercicioGrupo(
 
 function actualizarConfiguracionGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number,
+  grupoId: string,
 
   campo: keyof ConfiguracionAvanzada,
 
@@ -925,9 +909,9 @@ function actualizarConfiguracionGrupo(
 
 function actualizarNotasGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number,
+  grupoId: string,
 
   notas: string
 
@@ -981,9 +965,9 @@ function actualizarNotasGrupo(
 
 function moverEjercicioGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number,
+  grupoId: string,
 
   indexActual: number,
 
@@ -1100,9 +1084,9 @@ function moverEjercicioGrupo(
 
 function agregarGrupoDentroDeGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoPadreId: number,
+  grupoPadreId: string,
 
   nombre: string,
 
@@ -1178,7 +1162,7 @@ function agregarGrupoDentroDeGrupo(
 
   function moverItem(
 
-    entrenamientoId: number,
+    entrenamientoId: string,
 
     indexActual: number,
 
@@ -1244,9 +1228,9 @@ function agregarGrupoDentroDeGrupo(
 
   function eliminarEjercicio(
 
-    entrenamientoId: number,
+    entrenamientoId: string,
 
-    ejercicioId: number
+    ejercicioId: string
 
   ) {
 
@@ -1297,9 +1281,9 @@ function agregarGrupoDentroDeGrupo(
 */
 function actualizarConfiguracion(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  ejercicioId: number,
+  ejercicioId: string,
 
   campo:
     keyof ConfiguracionAvanzada,
@@ -1379,9 +1363,9 @@ function actualizarConfiguracion(
 
 function actualizarNotas(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  ejercicioId: number,
+  ejercicioId: string,
 
   notas: string
 
@@ -1489,14 +1473,10 @@ function actualizarNotas(
     return {
 
       id:
-        rutinaInicial?.id ??
-        (
-          Date.now() +
-          Math.floor(
-            Math.random() * 10000
-          )
-        ),
+      rutinaInicial?.id ??
+      crypto.randomUUID(),
 
+   
       alumnoId,
 
       fechaInicio,
@@ -1522,11 +1502,11 @@ function actualizarNotas(
 
   function actualizarConfiguracionEjercicioGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number,
+  grupoId: string,
 
-  ejercicioId: number,
+  ejercicioId: string,
 
   campo: keyof ConfiguracionAvanzada,
 
@@ -1573,11 +1553,11 @@ function actualizarNotas(
 
 function actualizarNotasEjercicioGrupo(
 
-  entrenamientoId: number,
+  entrenamientoId: string,
 
-  grupoId: number,
+  grupoId: string,
 
-  ejercicioId: number,
+  ejercicioId: string,
 
   notas: string
 

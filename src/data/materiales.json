@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": "1",
 
     "nombre": "Barra",
 
@@ -10,7 +10,7 @@
   },
 
   {
-    "id": 2,
+    "id": "2",
 
     "nombre": "Mancuerna",
 
@@ -20,7 +20,7 @@
   },
 
   {
-    "id": 3,
+    "id": "3",
 
     "nombre": "Polea",
 
@@ -30,7 +30,7 @@
   },
 
   {
-    "id": 4,
+    "id": "4",
 
     "nombre": "Máquina",
 
@@ -40,7 +40,7 @@
   },
 
   {
-    "id": 5,
+    "id": "5",
 
     "nombre": "Smith",
 
@@ -50,19 +50,19 @@
   },
 
   {
-    "id": 6,
+    "id": "6",
 
     "nombre": "Peso corporal"
   },
   {
-    "id": 7,
+    "id": "7",
 
     "nombre": "Jack",
 
     "incrementoBase": 2.5
   },
   {
-    "id": 8,
+    "id": "8",
 
     "nombre": "Mancuernas Exagonales",
 

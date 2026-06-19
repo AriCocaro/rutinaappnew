@@ -13,7 +13,7 @@ import {
 */
 
 type Option = {
-  id: string | number;
+  id: string ;
 
   nombre: string;
 };
@@ -21,10 +21,10 @@ type Option = {
 type Props = {
   options: Option[];
 
-  selectedId: string | number;
+  selectedId: string ;
 
   onSelect: (
-    id: string | number
+    id: string 
   ) => void;
 
   placeholder?: string;

@@ -106,7 +106,7 @@ cargarAlumnos();
 | */                                                                         
 
 function borrarAlumno(
-id: number
+id: string
 ) {
 
 

@@ -23,7 +23,7 @@ type Props = {
     ItemEntrenamiento;
 
   entrenamientoId:
-    number;
+    string;
 
   index:
     number;
@@ -41,17 +41,17 @@ type Props = {
     number;
 
   draft:
-        EjercicioDraft;
+    EjercicioDraft;
 
-        actualizarDraft:
-        (
-        campo: keyof EjercicioDraft,
-        valor: string | number
-        ) => void;  
+  actualizarDraft:
+    (
+      campo: keyof EjercicioDraft,
+      valor: string | number
+    ) => void;
 
   moverItem:
     (
-      entrenamientoId: number,
+      entrenamientoId: string,
       index: number,
       direccion:
         | "arriba"
@@ -60,8 +60,8 @@ type Props = {
 
   grupoMoverEjercicio:
     (
-      entrenamientoId: number,
-      grupoId: number,
+      entrenamientoId: string,
+      grupoId: string,
       index: number,
       direccion:
         | "arriba"
@@ -70,74 +70,74 @@ type Props = {
 
   eliminarEjercicio:
     (
-      entrenamientoId: number,
-      ejercicioId: number
+      entrenamientoId: string,
+      ejercicioId: string
     ) => void;
 
   eliminarGrupo:
     (
-      entrenamientoId: number,
-      grupoId: number
+      entrenamientoId: string,
+      grupoId: string
     ) => void;
 
   grupoEliminarEjercicio:
     (
-      entrenamientoId: number,
-      grupoId: number,
-      ejercicioId: number
+      entrenamientoId: string,
+      grupoId: string,
+      ejercicioId: string
     ) => void;
 
   actualizarConfiguracion:
     (
-      entrenamientoId: number,
-      ejercicioId: number,
+      entrenamientoId: string,
+      ejercicioId: string,
       campo: keyof ConfiguracionAvanzada,
       valor: ValorConfiguracion
     ) => void;
 
   actualizarConfiguracionGrupo:
     (
-      entrenamientoId: number,
-      grupoId: number,
+      entrenamientoId: string,
+      grupoId: string,
       campo: keyof ConfiguracionAvanzada,
       valor: ValorConfiguracion
     ) => void;
 
   actualizarConfiguracionEjercicioGrupo:
     (
-      entrenamientoId: number,
-      grupoId: number,
-      ejercicioId: number,
+      entrenamientoId: string,
+      grupoId: string,
+      ejercicioId: string,
       campo: keyof ConfiguracionAvanzada,
       valor: ValorConfiguracion
     ) => void;
 
   actualizarNotas:
     (
-      entrenamientoId: number,
-      ejercicioId: number,
+      entrenamientoId: string,
+      ejercicioId: string,
       notas: string
     ) => void;
 
   actualizarNotasGrupo:
     (
-      entrenamientoId: number,
-      grupoId: number,
+      entrenamientoId: string,
+      grupoId: string,
       notas: string
     ) => void;
 
   actualizarNotasEjercicioGrupo:
     (
-      entrenamientoId: number,
-      grupoId: number,
-      ejercicioId: number,
+      entrenamientoId: string,
+      grupoId: string,
+      ejercicioId: string,
       notas: string
     ) => void;
 
   agregarEjercicioAGrupo:
     (
-      entrenamientoId: number,
-      grupoId: number
+      entrenamientoId: string,
+      grupoId: string
     ) => void;
 };
 

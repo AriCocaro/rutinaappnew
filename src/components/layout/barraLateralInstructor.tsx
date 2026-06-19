@@ -16,8 +16,8 @@ export default function BarraLateralInstructor() {
           Dashboard
         </Link>
 
-        <Link href="/UsuarioInstructor/entrenados">
-          Entrenados
+        <Link href="/UsuarioInstructor/alumnos">
+          Alumnos
         </Link>
 
         <Link href="/UsuarioInstructor/rutinas">

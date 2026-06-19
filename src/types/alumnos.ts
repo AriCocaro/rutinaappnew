@@ -16,7 +16,7 @@
 
 export type ObjetivoAlumno = {
 
-id: number;
+id: string;
 
 titulo: string;
 
@@ -54,7 +54,7 @@ estado:
 
 export type ArchivoAlumno = {
 
-id: number;
+id: string;
 
 nombre: string;
 
@@ -84,7 +84,7 @@ observaciones?: string;
 
 export type MedicionAlumno = {
 
-id: number;
+id: string;
 
 fecha: string;
 
@@ -174,7 +174,7 @@ export type Alumno = {
 | -------------------------------------------------------------------------- |
 | */                                                                         
 
-id: number;
+id: string;
 
 nombre: string;
 

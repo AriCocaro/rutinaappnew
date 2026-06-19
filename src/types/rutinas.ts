@@ -133,11 +133,11 @@ export type ConfiguracionAvanzada = {
 
 export type EjercicioRutina = {
 
-  id: number;
+  id: string;
 
-  ejercicioId: number;
+  ejercicioId: string;
 
-  materialId: number;
+  materialId: string;
 
   notas: string;
 
@@ -179,7 +179,7 @@ export interface EjercicioItem {
 
 export interface GrupoEjercicios {
 
-  id: number;
+  id: string;
 
   nombre: string;
 
@@ -235,9 +235,9 @@ export type ItemEntrenamiento =
 
 export type EjercicioDraft = {
 
-  ejercicioId: number;
+  ejercicioId: string;
 
-  materialId: number;
+  materialId: string;
 
   notas: string;
 
@@ -256,7 +256,7 @@ export type EjercicioDraft = {
 
 export type EntrenamientoRutina = {
 
-  id: number;
+  id: string;
 
   orden: number;
 
@@ -283,7 +283,7 @@ export type EstadoRutina =
 
 export type Rutina = {
 
-  id: number;
+  id: string;
 
   alumnoId: string;
 

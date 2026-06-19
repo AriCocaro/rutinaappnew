@@ -134,7 +134,7 @@ const {
 
 
 function abrirGrupo(
-  entrenamientoId: number
+  entrenamientoId: string
 ): void {
 
   setGrupoDraft({
@@ -201,7 +201,7 @@ function guardarGrupo(): void {
     grupoModal,
     setGrupoModal,
   ] = useState<{
-    entrenamientoId: number;
+    entrenamientoId: string;
   } | null>(null);
 /*
 |--------------------------------------------------------------------------
