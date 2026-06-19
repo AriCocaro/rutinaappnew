@@ -145,7 +145,7 @@ export function actualizarEjercicioRecursivo(
 
   items: ItemEntrenamiento[],
 
-  ejercicioId: number,
+  ejercicioId: string,
 
   updater: (
     ejercicio: EjercicioRutina
@@ -223,7 +223,7 @@ export function eliminarEjercicioRecursivo(
 
   items: ItemEntrenamiento[],
 
-  ejercicioId: number
+  ejercicioId: string
 
 ): ItemEntrenamiento[] {
 

@@ -177,7 +177,7 @@ function guardarGrupo(): void {
 
   agregarGrupo(
 
-    grupoDraft.entrenamientoId,
+    String(grupoDraft.entrenamientoId),
 
     grupoDraft.nombre,
 
@@ -214,7 +214,7 @@ const [
   setGrupoDraft,
 ] = useState({
 
-  entrenamientoId: 0,
+  entrenamientoId: "",
 
   nombre: "",
 

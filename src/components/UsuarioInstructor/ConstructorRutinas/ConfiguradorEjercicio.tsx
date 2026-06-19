@@ -145,12 +145,13 @@ export default function ConfiguradorEjercicio({
         <SearchSelect
           options={ejercicios.map(
             (ejercicio) => ({
-              id: ejercicio.id,
+              id: String(ejercicio.id),
               nombre: ejercicio.nombre,
             })
           )}
           selectedId={draft.ejercicioId}
           onSelect={(id) => {
+
             /*
             |------------------------------------------------------
             | CAMBIO DE EJERCICIO
@@ -163,12 +164,12 @@ export default function ConfiguradorEjercicio({
 
             actualizarDraft(
               "ejercicioId",
-              Number(id)
+              id
             );
 
             actualizarDraft(
               "materialId",
-              0
+              ""
             );
           }}
           placeholder="Buscar ejercicio..."

@@ -589,7 +589,7 @@ function agregarEjercicioAGrupo(
 
   entrenamientoId: string,
 
-  grupoId: tring
+  grupoId: string
 
 ): void {
 
@@ -1100,7 +1100,7 @@ function agregarGrupoDentroDeGrupo(
 
     contenido: {
 
-      id: Date.now(),
+      id:crypto.randomUUID(),
 
       nombre,
 

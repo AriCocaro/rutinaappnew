@@ -96,7 +96,7 @@ type Props = {
   eliminarEjercicio:
     (
       entrenamientoId: string,
-      ejercicioId: number
+      ejercicioId: string
     ) => void;
 
       /*
@@ -121,14 +121,14 @@ type Props = {
         (
           entrenamientoId: string,
           grupoId: string,
-          ejercicioId: number
+          ejercicioId: string
         ) => void;
 
       grupoMoverEjercicio:
         (
           entrenamientoId: string,
           grupoId: string,
-          indexActual: string,
+          indexActual: number,
           direccion:
             | "arriba"
             | "abajo"
@@ -147,7 +147,7 @@ type Props = {
   actualizarConfiguracion:
     (
       entrenamientoId: string,
-      ejercicioId: number,
+      ejercicioId: string,
       campo: keyof ConfiguracionAvanzada,
       valor: ValorConfiguracion
     ) => void;
@@ -164,7 +164,7 @@ type Props = {
     (
       entrenamientoId: string,
       grupoId: string,
-      ejercicioId: number,
+      ejercicioId: string,
       campo: keyof ConfiguracionAvanzada,
       valor: ValorConfiguracion
     ) => void;
@@ -172,7 +172,7 @@ type Props = {
   actualizarNotas:
     (
       entrenamientoId: string,
-      ejercicioId: number,
+      ejercicioId: string,
       notas: string
     ) => void;
 
@@ -187,7 +187,7 @@ type Props = {
     (
       entrenamientoId: string,
       grupoId: string,
-      ejercicioId: number,
+      ejercicioId: string,
       notas: string
     ) => void;
   /*

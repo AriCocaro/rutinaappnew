@@ -218,6 +218,6 @@ export function generarAlumnoId():
 string {
 
 return String(
-  Date.now()
+ crypto.randomUUID()
 );
 }

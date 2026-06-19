@@ -29,9 +29,9 @@ import {
 */
 
 type Props = {
-  ejercicioId: number;
+  ejercicioId: string;
 
-  materialId: number;
+  materialId: string;
 
   configuracion: ConfiguracionAvanzada;
 

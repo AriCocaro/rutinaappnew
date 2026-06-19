@@ -549,52 +549,7 @@ function agregarBloqueOverride() {
 
       </div>
 
-      {/* ---------------------------------------------------------- */}
-      {/* SUPERSERIES */}
-      {/* ---------------------------------------------------------- */}
-
-      <div className="flex flex-wrap gap-2">
-
-        <button
-          type="button"
-          onClick={() =>
-            onConfiguracionChange(
-              "superserieId",
-              1
-            )
-          }
-          className="border px-3 py-2 rounded-xl"
-        >
-          SS1
-        </button>
-
-        <button
-          type="button"
-          onClick={() =>
-            onConfiguracionChange(
-              "superserieId",
-              2
-            )
-          }
-          className="border px-3 py-2 rounded-xl"
-        >
-          SS2
-        </button>
-
-        <button
-          type="button"
-          onClick={() =>
-            onConfiguracionChange(
-              "superserieId",
-              null
-            )
-          }
-          className="border px-3 py-2 rounded-xl"
-        >
-          Quitar
-        </button>
-
-      </div>
+      
 
       {/* ---------------------------------------------------------- */}
       {/* NOTAS */}
