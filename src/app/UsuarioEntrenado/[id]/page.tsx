@@ -1,10 +1,10 @@
 "use client";
 
-/*
-|--------------------------------------------------------------------------
-| HOOKS
-|--------------------------------------------------------------------------
-*/
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| HOOKS                                                                      |
+| -------------------------------------------------------------------------- |
+| */
 
 import {
   useEffect,
@@ -17,57 +17,64 @@ import {
   useParams,
 } from "next/navigation";
 
-/*
-|--------------------------------------------------------------------------
-| TYPES
-|--------------------------------------------------------------------------
-*/
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| TYPES                                                                      |
+| -------------------------------------------------------------------------- |
+| */
 
 import {
   Alumno,
 } from "@/types/alumnos";
 
-import {
-  Rutina,
-} from "@/types/rutinas";
-
-/*
-|--------------------------------------------------------------------------
-| STORAGE
-|--------------------------------------------------------------------------
-*/
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| STORAGE                                                                    |
+| -------------------------------------------------------------------------- |
+| */
 
 import {
   obtenerAlumnoPorId,
 } from "@/lib/alumnosStorage";
 
 import {
-  obtenerRutinaActivaPorAlumno,
-} from "@/lib/rutinasStorage";
+  obtenerResumenDashboard,
+} from "@/lib/dashboardAlumno";
 
-/*
-|--------------------------------------------------------------------------
-| HELPERS
-|--------------------------------------------------------------------------
-*/
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| BRANDING                                                                   |
+| -------------------------------------------------------------------------- |
+| */
 
 import {
-  contarEjercicios,
-} from "@/lib/rutinaHelpers";
+  useBranding,
+} from "@/hooks/useBranding";
 
-/*
-|--------------------------------------------------------------------------
-| COMPONENTE
-|--------------------------------------------------------------------------
-*/
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| COMPONENTE                                                                 |
+| -------------------------------------------------------------------------- |
+|                                                                            |
+| Dashboard principal del usuario entrenado.                                |
+|                                                                            |
+| Muestra:                                                                   |
+|                                                                            |
+| - Resumen semanal                                                          |
+| - Rutina activa                                                            |
+| - Próximo entrenamiento                                                    |
+| - Último entrenamiento                                                     |
+| - Acciones rápidas                                                         |
+|                                                                            |
+| */                                                                         
 
-export default function AlumnoPage() {
+export default function UsuarioEntrenadoPage() {
 
-  /*
-  |--------------------------------------------------------------------------
-  | PARAMS
-  |--------------------------------------------------------------------------
-  */
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | PARAMS                                                                 |
+  | ---------------------------------------------------------------------- |
+  | */
 
   const params =
     useParams();
@@ -77,11 +84,20 @@ export default function AlumnoPage() {
       params.id
     );
 
-  /*
-  |--------------------------------------------------------------------------
-  | STATE
-  |--------------------------------------------------------------------------
-  */
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | BRANDING                                                               |
+  | ---------------------------------------------------------------------- |
+  | */
+
+  const branding =
+    useBranding();
+
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | STATE                                                                  |
+  | ---------------------------------------------------------------------- |
+  | */
 
   const [
     alumno,
@@ -91,17 +107,21 @@ export default function AlumnoPage() {
   >(null);
 
   const [
-    rutina,
-    setRutina,
-  ] = useState<
-    Rutina | null
-  >(null);
+    resumen,
+    setResumen,
+  ] = useState(
 
-  /*
-  |--------------------------------------------------------------------------
-  | INIT
-  |--------------------------------------------------------------------------
-  */
+    obtenerResumenDashboard(
+      alumnoId
+    )
+
+  );
+
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | CARGAR DATOS                                                           |
+  | ---------------------------------------------------------------------- |
+  | */
 
   useEffect(() => {
 
@@ -110,36 +130,29 @@ export default function AlumnoPage() {
         alumnoId
       );
 
-    if (
+    if (!alumnoData) {
+      return;
+    }
+
+    setAlumno(
       alumnoData
-    ) {
+    );
 
-      setAlumno(
-        alumnoData
-      );
-    }
+    setResumen(
 
-    const rutinaActiva =
-      obtenerRutinaActivaPorAlumno(
+      obtenerResumenDashboard(
         alumnoId
-      );
+      )
 
-    if (
-      rutinaActiva
-    ) {
-
-      setRutina(
-        rutinaActiva
-      );
-    }
+    );
 
   }, [alumnoId]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | NOT FOUND
-  |--------------------------------------------------------------------------
-  */
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | NOT FOUND                                                              |
+  | ---------------------------------------------------------------------- |
+  | */
 
   if (!alumno) {
 
@@ -147,18 +160,20 @@ export default function AlumnoPage() {
 
       <div className="p-6">
 
-        Alumno no encontrado
+        {branding.alumno}
+        {" "}
+        no encontrado
 
       </div>
 
     );
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | RENDER
-  |--------------------------------------------------------------------------
-  */
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | RENDER                                                                 |
+  | ---------------------------------------------------------------------- |
+  | */
 
   return (
 
@@ -171,9 +186,9 @@ export default function AlumnoPage() {
       "
     >
 
-      {/* ------------------------------------------------ */}
-      {/* HEADER                                           */}
-      {/* ------------------------------------------------ */}
+      {/* -------------------------------------------------------------- */}
+      {/* HEADER                                                         */}
+      {/* -------------------------------------------------------------- */}
 
       <div>
 
@@ -196,39 +211,55 @@ export default function AlumnoPage() {
           "
         >
 
-          Vista alumno
+          Dashboard del
+          {" "}
+          {branding.alumno.toLowerCase()}
 
         </p>
 
       </div>
 
-      {/* ------------------------------------------------ */}
-      {/* SIN RUTINA                                       */}
-      {/* ------------------------------------------------ */}
+      {/* -------------------------------------------------------------- */}
+      {/* RESUMEN SEMANAL                                                */}
+      {/* -------------------------------------------------------------- */}
 
-      {!rutina && (
+      <div
+        className="
+          border
+          rounded-2xl
+          p-5
+          bg-white
+        "
+      >
 
-        <div
+        <h2
           className="
-            border
-            rounded-2xl
-            p-8
-            bg-white
+            font-bold
+            mb-2
           "
         >
 
-          Este alumno no posee
-          una rutina activa.
+          Esta semana
+
+        </h2>
+
+        <div>
+
+          {
+            resumen.entrenamientosSemana
+          }
+          {" "}
+          entrenamientos realizados
 
         </div>
 
-      )}
+      </div>
 
-      {/* ------------------------------------------------ */}
-      {/* RUTINA ACTIVA                                    */}
-      {/* ------------------------------------------------ */}
+      {/* -------------------------------------------------------------- */}
+      {/* RUTINA ACTIVA                                                  */}
+      {/* -------------------------------------------------------------- */}
 
-      {rutina && (
+      {resumen.rutina && (
 
         <div
           className="
@@ -236,215 +267,212 @@ export default function AlumnoPage() {
             rounded-2xl
             p-5
             bg-white
-            flex
-            flex-col
-            gap-5
           "
         >
 
           <h2
             className="
-              text-xl
               font-bold
+              mb-3
             "
           >
 
-            Rutina activa
+            {branding.rutina}
+            {" "}
+            activa
 
           </h2>
 
-          <div
-            className="
-              grid
-              md:grid-cols-4
-              gap-4
-            "
-          >
+          <div className="flex flex-col gap-2">
 
             <div>
 
-              <div
-                className="
-                  text-sm
-                  text-gray-500
-                "
-              >
-
-                Inicio
-
-              </div>
-
-              <div>
-
-                {
-                  rutina.fechaInicio
-                }
-
-              </div>
+              Inicio:
+              {" "}
+              {
+                resumen.rutina
+                  .fechaInicio
+              }
 
             </div>
 
             <div>
 
-              <div
-                className="
-                  text-sm
-                  text-gray-500
-                "
-              >
-
-                Bloques
-
-              </div>
-
-              <div>
-
-                {
-                  rutina.cantidadBloques
-                }
-
-              </div>
+              {
+                branding.bloques
+              }
+              :
+              {" "}
+              {
+                resumen.rutina
+                  .cantidadBloques
+              }
 
             </div>
 
             <div>
 
-              <div
-                className="
-                  text-sm
-                  text-gray-500
-                "
-              >
-
-                Entrenamientos
-
-              </div>
-
-              <div>
-
-                {
-                  rutina.entrenamientos
-                    .length
-                }
-
-              </div>
+              {
+                branding.entrenamientos
+              }
+              :
+              {" "}
+              {
+                resumen.rutina
+                  .entrenamientos
+                  .length
+              }
 
             </div>
-
-            <div>
-
-              <div
-                className="
-                  text-sm
-                  text-gray-500
-                "
-              >
-
-                Estado
-
-              </div>
-
-              <div>
-
-                {
-                  rutina.estado
-                }
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* -------------------------------------------- */}
-          {/* ENTRENAMIENTOS                               */}
-          {/* -------------------------------------------- */}
-
-          <div
-            className="
-              flex
-              flex-col
-              gap-3
-            "
-          >
-
-            {rutina.entrenamientos.map(
-
-              (
-                entrenamiento,
-                index
-              ) => (
-
-                <Link
-
-                  key={
-                    entrenamiento.id
-                  }
-
-                  href={`/UsuarioEntrenado/${alumno.id}/entrenamiento`}
-
-                  className="
-                    border
-                    rounded-xl
-                    p-4
-                    hover:bg-gray-50
-                  "
-                >
-
-                  <div
-                    className="
-                      flex
-                      items-center
-                      justify-between
-                    "
-                  >
-
-                    <div>
-
-                      <div
-                        className="
-                          font-semibold
-                        "
-                      >
-
-                        Entrenamiento
-                        {" "}
-                        {index + 1}
-
-                      </div>
-
-                      <div
-                        className="
-                          text-sm
-                          text-gray-500
-                        "
-                      >
-
-                        {
-                          contarEjercicios(
-                            entrenamiento.items
-                          )
-                        }
-                        {" "}
-                        ejercicios
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </Link>
-
-              )
-
-            )}
 
           </div>
 
         </div>
 
       )}
+
+      {/* -------------------------------------------------------------- */}
+      {/* PRÓXIMO ENTRENAMIENTO                                          */}
+      {/* -------------------------------------------------------------- */}
+
+      {resumen.proximoEntrenamiento && (
+
+        <div
+          className="
+            border
+            rounded-2xl
+            p-5
+            bg-white
+          "
+        >
+
+          <h2
+            className="
+              font-bold
+              mb-3
+            "
+          >
+
+            Próximo
+            {" "}
+            {branding.entrenamiento}
+
+          </h2>
+
+          <div>
+
+            {branding.entrenamiento}
+            {" "}
+            {
+              resumen
+                .proximoEntrenamiento
+                .orden + 1
+            }
+
+          </div>
+
+        </div>
+
+      )}
+
+      {/* -------------------------------------------------------------- */}
+      {/* ÚLTIMO ENTRENAMIENTO                                           */}
+      {/* -------------------------------------------------------------- */}
+
+      <div
+        className="
+          border
+          rounded-2xl
+          p-5
+          bg-white
+        "
+      >
+
+        <h2
+          className="
+            font-bold
+            mb-3
+          "
+        >
+
+          Último
+          {" "}
+          {branding.entrenamiento}
+
+        </h2>
+
+        {resumen.ultimoEntrenamiento ? (
+
+          <div>
+
+            {
+              resumen
+                .ultimoEntrenamiento
+                .fecha
+            }
+
+          </div>
+
+        ) : (
+
+          <div>
+
+            Sin entrenamientos registrados
+
+          </div>
+
+        )}
+
+      </div>
+
+      {/* -------------------------------------------------------------- */}
+      {/* ACCIONES                                                       */}
+      {/* -------------------------------------------------------------- */}
+
+      <div
+        className="
+          flex
+          gap-3
+          flex-wrap
+        "
+      >
+
+        <Link
+
+          href={`/UsuarioEntrenado/${alumno.id}/entrenamiento`}
+
+          className="
+            bg-blue-600
+            text-white
+            px-5
+            py-3
+            rounded-xl
+          "
+        >
+
+          Iniciar
+          {" "}
+          {branding.entrenamiento}
+
+        </Link>
+
+        <Link
+
+          href={`/UsuarioEntrenado/${alumno.id}/libre`}
+
+          className="
+            border
+            px-5
+            py-3
+            rounded-xl
+          "
+        >
+
+          Entrenamiento libre
+
+        </Link>
+
+      </div>
 
     </div>
 

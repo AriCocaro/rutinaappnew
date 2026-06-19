@@ -20,6 +20,7 @@ import { branding } from "@/config/branding";
 |
 */
 
+
 export function useBranding() {
 
   return branding;

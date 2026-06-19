@@ -1,197 +1,134 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
-import ejercicios from "@/data/ejercicios.json";
-import materiales from "@/data/materiales.json";
+import { Alumno } from "@/types/alumnos";
+import { obtenerAlumnos } from "@/lib/alumnosStorage";
+import { obtenerResumenDashboard } from "@/lib/dashboard";
 
-import {
-  obtenerRutinas,
-} from "@/lib/rutinasStorage";
+export default function EntrenamientoPage() {
+  const [alumnos, setAlumnos] = useState<Alumno[]>([]);
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(null);
+  const [loading, setLoading] = useState(true);
 
-import {
-  Rutina,
-  EntrenamientoRutina,
-  EjercicioRutina,
-} from "@/types/rutinas";
+  const [resumen, setResumen] = useState<any>(null);
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export default function EntrenamientoAlumnoPage({
-  params,
-}: Props) {
-
-  const [
-    rutina,
-    setRutina,
-  ] = useState<Rutina | null>(null);
-
-  const [
-    entrenamientoActual,
-    setEntrenamientoActual,
-  ] = useState(0);
-
+  // 🔄 Cargar alumnos al montar
   useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const data = await obtenerAlumnos();
+        setAlumnos(data);
 
-    const rutinas =
-      obtenerRutinas();
+        if (data.length > 0) {
+          setAlumnoSeleccionado(data[0]);
+        }
+      } catch (error) {
+        console.error("Error cargando alumnos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const rutinaAlumno =
-      rutinas.find(
-        (item) =>
-          item.alumnoId ===
-          params.id
-      );
+    cargarDatos();
+  }, []);
 
-    if (rutinaAlumno) {
-      setRutina(rutinaAlumno);
-    }
+  // 🔄 Cargar resumen cuando cambia alumno
+  useEffect(() => {
+    const cargarResumen = async () => {
+      if (!alumnoSeleccionado) return;
 
-  }, [params.id]);
+      try {
+        const data = await obtenerResumenDashboard(alumnoSeleccionado.id);
+        setResumen(data);
+      } catch (error) {
+        console.error("Error cargando resumen:", error);
+      }
+    };
 
-  if (!rutina) {
+    cargarResumen();
+  }, [alumnoSeleccionado]);
 
+  if (loading) {
     return (
-
-      <div className="p-10">
-
-        <h1 className="text-2xl font-bold">
-          El alumno no tiene rutina
-        </h1>
-
+      <div className="p-6">
+        <p className="text-gray-500">Cargando entrenamiento...</p>
       </div>
     );
   }
-
-  const entrenamiento =
-    rutina.entrenamientos[
-      entrenamientoActual
-    ];
-
-  if (!entrenamiento) {
-
-    return (
-
-      <div className="p-10">
-
-        <h1 className="text-2xl font-bold">
-          Entrenamiento no encontrado
-        </h1>
-
-      </div>
-    );
-  }
-
-  const progresionBase =
-    rutina.progresionGlobal[0];
 
   return (
-
-    <div className="flex flex-col gap-6 p-6">
-
+    <div className="p-6 space-y-6">
+      {/* HEADER */}
       <div>
-
-        <h1 className="text-3xl font-bold">
-          Entrenamiento
-        </h1>
-
+        <h1 className="text-2xl font-bold">Entrenamiento</h1>
         <p className="text-gray-500">
-          Vista alumno
+          Gestioná y seguí el progreso de tus alumnos
         </p>
-
       </div>
 
-      <div className="flex gap-3 flex-wrap">
+      {/* SELECTOR DE ALUMNOS */}
+      <div className="flex gap-2 flex-wrap">
+        {alumnos.map((alumno) => (
+          <button
+            key={alumno.id}
+            onClick={() => setAlumnoSeleccionado(alumno)}
+            className={`px-3 py-1 rounded-md border text-sm transition ${
+              alumnoSeleccionado?.id === alumno.id
+                ? "bg-black text-white"
+                : "bg-white hover:bg-gray-100"
+            }`}
+          >
+            {alumno.nombre}
+          </button>
+        ))}
+      </div>
 
-        {rutina.entrenamientos.map(
+      {/* RESUMEN */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="p-4 border rounded-lg">
+          <p className="text-sm text-gray-500">Rutinas activas</p>
+          <p className="text-xl font-bold">
+            {resumen?.rutinasActivas ?? 0}
+          </p>
+        </div>
 
-          (
-            item:
-              EntrenamientoRutina,
-            index
-          ) => (
+        <div className="p-4 border rounded-lg">
+          <p className="text-sm text-gray-500">Entrenamientos semana</p>
+          <p className="text-xl font-bold">
+            {resumen?.entrenamientosSemana ?? 0}
+          </p>
+        </div>
 
-            <button
-              key={item.id}
-              onClick={() =>
-                setEntrenamientoActual(
-                  index
-                )
-              }
-              className={`px-5 py-3 rounded-xl border ${
-                entrenamientoActual === index
-                  ? "bg-black text-white"
-                  : "bg-white"
-              }`}
+        <div className="p-4 border rounded-lg">
+          <p className="text-sm text-gray-500">Progreso general</p>
+          <p className="text-xl font-bold">
+            {resumen?.progreso ?? 0}%
+          </p>
+        </div>
+      </div>
+
+      {/* ACCIONES */}
+      <div className="flex gap-3">
+        {alumnoSeleccionado && (
+          <>
+            <Link
+              href={`/usuarioEntrenado/${alumnoSeleccionado.id}`}
+              className="px-4 py-2 bg-black text-white rounded-md"
             >
+              Ver ficha del alumno
+            </Link>
 
-              Entrenamiento {index + 1}
-
-            </button>
-          )
+            <Link
+              href={`/rutinas/${alumnoSeleccionado.id}`}
+              className="px-4 py-2 border rounded-md"
+            >
+              Ver rutinas
+            </Link>
+          </>
         )}
-
       </div>
-
-      <div className="flex flex-col gap-4">
-
-        {entrenamiento.items.map(
-
-          (
-            ejercicio:
-              EjercicioRutina,
-            index
-          ) => {
-
-            const ejercicioData =
-              ejercicios.find(
-                (item) =>
-                  item.id ===
-                  ejercicio.ejercicioId
-              );
-
-            const materialData =
-              materiales.find(
-                (item) =>
-                  item.id ===
-                  ejercicio.materialId
-              );
-
-            return (
-
-              <div
-                key={ejercicio.id}
-                className="border rounded-2xl p-5 bg-white"
-              >
-
-                <h2 className="text-xl font-bold">
-                  {index + 1}.{" "}
-                  {ejercicioData?.nombre}
-                </h2>
-
-                <p className="text-gray-500">
-                  {materialData?.nombre}
-                </p>
-
-                <div className="mt-4">
-
-                  {progresionBase?.series}
-                  {" x "}
-                  {progresionBase?.reps}
-
-                </div>
-
-              </div>
-            );
-          }
-        )}
-
-      </div>
-
     </div>
   );
 }

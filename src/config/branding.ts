@@ -2,17 +2,6 @@
 |--------------------------------------------------------------------------
 | BRANDING
 |--------------------------------------------------------------------------
-|
-| Textos visibles para el usuario.
-|
-| Permite reutilizar la app para:
-|
-| - Gimnasios
-| - Preparadores físicos
-| - Crossfit
-| - Kinesiología
-| - Centros deportivos
-|
 */
 
 export const branding = {
@@ -24,8 +13,10 @@ export const branding = {
   */
 
   alumno: "Alumno",
+  alumnos: "Alumnos",
 
   entrenador: "Entrenador",
+  entrenadores: "Entrenadores",
 
   /*
   |--------------------------------------------------------------------------
@@ -34,12 +25,16 @@ export const branding = {
   */
 
   rutina: "Rutina",
+  rutinas: "Rutinas",
 
   bloque: "Bloque",
+  bloques: "Bloques",
 
   entrenamiento: "Entrenamiento",
+  entrenamientos: "Entrenamientos",
 
   ejercicio: "Ejercicio",
+  ejercicios: "Ejercicios",
 
   /*
   |--------------------------------------------------------------------------
