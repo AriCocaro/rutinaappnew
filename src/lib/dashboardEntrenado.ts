@@ -116,6 +116,23 @@ export function obtenerEntrenamientosSemana(
 |--------------------------------------------------------------------------
 | PRÓXIMO ENTRENAMIENTO
 |--------------------------------------------------------------------------
+|
+| Devuelve el próximo entrenamiento sugerido para el alumno.
+|
+| Por el momento la lógica es simple:
+|
+| - busca la rutina activa
+| - si no existe rutina devuelve null
+| - si la rutina no tiene entrenamientos devuelve null
+| - devuelve el primer entrenamiento de la rutina
+|
+| Más adelante esta función podrá evolucionar para:
+|
+| - detectar entrenamientos completados
+| - continuar desde el último realizado
+| - respetar bloques y progresiones
+| - manejar ciclos avanzados
+|
 */
 
 export function obtenerProximoEntrenamiento(
@@ -123,6 +140,12 @@ export function obtenerProximoEntrenamiento(
   alumnoId: string
 
 ) {
+
+  /*
+  |--------------------------------------------------------------------------
+  | RUTINA ACTIVA
+  |--------------------------------------------------------------------------
+  */
 
   const rutina =
     obtenerRutinaActivaPorAlumno(
@@ -133,10 +156,45 @@ export function obtenerProximoEntrenamiento(
     return null;
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | SIN ENTRENAMIENTOS
+  |--------------------------------------------------------------------------
+  */
 
+  if (
+    rutina.entrenamientos.length === 0
+  ) {
+    return null;
+  }
 
-  return rutina.entrenamientos[0];
+  /*
+  |--------------------------------------------------------------------------
+  | PRÓXIMO ENTRENAMIENTO
+  |--------------------------------------------------------------------------
+  |
+  | Actualmente se considera
+  | el primer entrenamiento
+  | de la rutina.
+  |
+  */
+
+  return (
+    rutina.entrenamientos[0]
+  );
 }
+
+/*
+|--------------------------------------------------------------------------
+| TODO
+|--------------------------------------------------------------------------
+|
+| Utilizar ProgresoAlumno para
+| identificar cuál fue el último
+| entrenamiento realizado y
+| devolver el siguiente.
+|
+*/
 
 /*
 |--------------------------------------------------------------------------

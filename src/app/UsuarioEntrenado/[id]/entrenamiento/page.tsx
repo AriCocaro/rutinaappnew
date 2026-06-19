@@ -1,134 +1,370 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+/*
+|--------------------------------------------------------------------------
+| HOOKS
+|--------------------------------------------------------------------------
+*/
 
-import { Alumno } from "@/types/alumnos";
-import { obtenerAlumnos } from "@/lib/alumnosStorage";
-import { obtenerResumenDashboard } from "@/lib/dashboard";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useParams,
+} from "next/navigation";
+
+/*
+|--------------------------------------------------------------------------
+| TYPES
+|--------------------------------------------------------------------------
+*/
+
+import {
+  Alumno,
+} from "@/types/alumnos";
+
+import {
+  EntrenamientoRutina,
+} from "@/types/rutinas";
+
+/*
+|--------------------------------------------------------------------------
+| STORAGE
+|--------------------------------------------------------------------------
+*/
+
+import {
+  obtenerAlumnoPorId,
+} from "@/lib/alumnosStorage";
+
+import {
+  obtenerProximoEntrenamiento,
+} from "@/lib/dashboardEntrenado";
+
+/*
+|--------------------------------------------------------------------------
+| COMPONENTES
+|--------------------------------------------------------------------------
+*/
+
+import RenderItem
+  from "@/components/UsuarioEntrenado/Entrenamiento/RenderItem";
+
+/*
+|--------------------------------------------------------------------------
+| BRANDING
+|--------------------------------------------------------------------------
+*/
+
+import {
+  useBranding,
+} from "@/hooks/useBranding";
+
+/*
+|--------------------------------------------------------------------------
+| COMPONENTE
+|--------------------------------------------------------------------------
+|
+| Muestra el próximo entrenamiento que debe realizar
+| el alumno respetando el orden secuencial de la rutina.
+|
+| Todavía NO registra progreso.
+| Todavía NO guarda pesos.
+| Todavía NO finaliza entrenamientos.
+|
+*/
 
 export default function EntrenamientoPage() {
-  const [alumnos, setAlumnos] = useState<Alumno[]>([]);
-  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  const [resumen, setResumen] = useState<any>(null);
+  /*
+  |--------------------------------------------------------------------------
+  | PARAMS
+  |--------------------------------------------------------------------------
+  */
 
-  // 🔄 Cargar alumnos al montar
+  const params =
+    useParams();
+
+  const alumnoId =
+    String(
+      params.id
+    );
+
+  /*
+  |--------------------------------------------------------------------------
+  | BRANDING
+  |--------------------------------------------------------------------------
+  */
+
+  const branding =
+    useBranding();
+
+  /*
+  |--------------------------------------------------------------------------
+  | STATE
+  |--------------------------------------------------------------------------
+  */
+
+  const [
+    cargando,
+    setCargando,
+  ] = useState(true);
+
+  const [
+    alumno,
+    setAlumno,
+  ] = useState<
+    Alumno | null
+  >(null);
+
+  const [
+    entrenamiento,
+    setEntrenamiento,
+  ] = useState<
+    EntrenamientoRutina | null
+  >(null);
+
+  /*
+  |--------------------------------------------------------------------------
+  | CARGA INICIAL
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        const data = await obtenerAlumnos();
-        setAlumnos(data);
 
-        if (data.length > 0) {
-          setAlumnoSeleccionado(data[0]);
-        }
-      } catch (error) {
-        console.error("Error cargando alumnos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const alumnoData =
+      obtenerAlumnoPorId(
+        alumnoId
+      );
 
-    cargarDatos();
-  }, []);
+    if (!alumnoData) {
 
-  // 🔄 Cargar resumen cuando cambia alumno
-  useEffect(() => {
-    const cargarResumen = async () => {
-      if (!alumnoSeleccionado) return;
+      setCargando(
+        false
+      );
 
-      try {
-        const data = await obtenerResumenDashboard(alumnoSeleccionado.id);
-        setResumen(data);
-      } catch (error) {
-        console.error("Error cargando resumen:", error);
-      }
-    };
+      return;
+    }
 
-    cargarResumen();
-  }, [alumnoSeleccionado]);
+    setAlumno(
+      alumnoData
+    );
 
-  if (loading) {
+    const proximoEntrenamiento =
+
+      obtenerProximoEntrenamiento(
+        alumnoId
+      );
+
+    setEntrenamiento(
+      proximoEntrenamiento
+    );
+
+    setCargando(
+      false
+    );
+
+  }, [alumnoId]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | LOADING
+  |--------------------------------------------------------------------------
+  */
+
+  if (cargando) {
+
     return (
+
       <div className="p-6">
-        <p className="text-gray-500">Cargando entrenamiento...</p>
+
+        Cargando...
+
       </div>
+
     );
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | ALUMNO NO ENCONTRADO
+  |--------------------------------------------------------------------------
+  */
+
+  if (!alumno) {
+
+    return (
+
+      <div className="p-6">
+
+        {branding.alumno}
+        {" "}
+        no encontrado
+
+      </div>
+
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | SIN ENTRENAMIENTO DISPONIBLE
+  |--------------------------------------------------------------------------
+  */
+
+  if (!entrenamiento) {
+
+    return (
+
+      <div className="p-6">
+
+        No hay
+        {" "}
+        {branding.entrenamiento.toLowerCase()}
+        {" "}
+        disponible.
+
+      </div>
+
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | RENDER
+  |--------------------------------------------------------------------------
+  */
+
   return (
-    <div className="p-6 space-y-6">
-      {/* HEADER */}
+
+    <div
+      className="
+        p-6
+        flex
+        flex-col
+        gap-6
+      "
+    >
+
+      {/* ------------------------------------------------------------ */}
+      {/* HEADER                                                       */}
+      {/* ------------------------------------------------------------ */}
+
       <div>
-        <h1 className="text-2xl font-bold">Entrenamiento</h1>
-        <p className="text-gray-500">
-          Gestioná y seguí el progreso de tus alumnos
+
+        <h1
+          className="
+            text-3xl
+            font-bold
+          "
+        >
+
+          {branding.entrenamiento}
+          {" "}
+          {
+            entrenamiento.orden + 1
+          }
+
+        </h1>
+
+        <p
+          className="
+            text-gray-500
+          "
+        >
+
+          {
+            alumno.nombre
+          }
+          {" "}
+          {
+            alumno.apellido
+          }
+
         </p>
+
       </div>
 
-      {/* SELECTOR DE ALUMNOS */}
-      <div className="flex gap-2 flex-wrap">
-        {alumnos.map((alumno) => (
-          <button
-            key={alumno.id}
-            onClick={() => setAlumnoSeleccionado(alumno)}
-            className={`px-3 py-1 rounded-md border text-sm transition ${
-              alumnoSeleccionado?.id === alumno.id
-                ? "bg-black text-white"
-                : "bg-white hover:bg-gray-100"
-            }`}
-          >
-            {alumno.nombre}
-          </button>
-        ))}
+      {/* ------------------------------------------------------------ */}
+      {/* LISTA DE ITEMS                                               */}
+      {/* ------------------------------------------------------------ */}
+
+      <div
+        className="
+          flex
+          flex-col
+          gap-4
+        "
+      >
+
+        {
+
+          entrenamiento.items.map(
+
+            (
+              item,
+              index
+            ) => (
+
+              <RenderItem
+
+                key={
+                  `${item.tipo}-${index}`
+                }
+
+                item={
+                  item
+                }
+
+              />
+
+            )
+
+          )
+
+        }
+
       </div>
 
-      {/* RESUMEN */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-gray-500">Rutinas activas</p>
-          <p className="text-xl font-bold">
-            {resumen?.rutinasActivas ?? 0}
-          </p>
-        </div>
+      {/* ------------------------------------------------------------ */}
+      {/* ACCIONES                                                     */}
+      {/* ------------------------------------------------------------ */}
 
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-gray-500">Entrenamientos semana</p>
-          <p className="text-xl font-bold">
-            {resumen?.entrenamientosSemana ?? 0}
-          </p>
-        </div>
+      <div
+        className="
+          border-t
+          pt-4
+          flex
+          justify-end
+        "
+      >
 
-        <div className="p-4 border rounded-lg">
-          <p className="text-sm text-gray-500">Progreso general</p>
-          <p className="text-xl font-bold">
-            {resumen?.progreso ?? 0}%
-          </p>
-        </div>
+        <button
+          disabled
+          className="
+            px-6
+            py-3
+            rounded-xl
+            bg-green-600
+            text-white
+            opacity-50
+            cursor-not-allowed
+          "
+        >
+
+          Finalizar
+          {" "}
+          {branding.entrenamiento}
+          {" "}
+          (Próximamente)
+
+        </button>
+
       </div>
 
-      {/* ACCIONES */}
-      <div className="flex gap-3">
-        {alumnoSeleccionado && (
-          <>
-            <Link
-              href={`/usuarioEntrenado/${alumnoSeleccionado.id}`}
-              className="px-4 py-2 bg-black text-white rounded-md"
-            >
-              Ver ficha del alumno
-            </Link>
-
-            <Link
-              href={`/rutinas/${alumnoSeleccionado.id}`}
-              className="px-4 py-2 border rounded-md"
-            >
-              Ver rutinas
-            </Link>
-          </>
-        )}
-      </div>
     </div>
+
   );
 }

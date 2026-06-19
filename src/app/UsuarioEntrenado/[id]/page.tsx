@@ -39,7 +39,17 @@ import {
 
 import {
   obtenerResumenDashboard,
-} from "@/lib/dashboardAlumno";
+} from "@/lib/dashboardEntrenado";
+
+/*                                                                         |
+| -------------------------------------------------------------------------- |
+| HELPERS                                                                    |
+| -------------------------------------------------------------------------- |
+| */
+
+import {
+  formatearFecha,
+} from "@/lib/fechas";
 
 /*                                                                         |
 | -------------------------------------------------------------------------- |
@@ -66,7 +76,7 @@ import {
 | - Último entrenamiento                                                     |
 | - Acciones rápidas                                                         |
 |                                                                            |
-| */                                                                         
+| */
 
 export default function UsuarioEntrenadoPage() {
 
@@ -107,14 +117,19 @@ export default function UsuarioEntrenadoPage() {
   >(null);
 
   const [
+    cargando,
+    setCargando,
+  ] = useState(
+    true
+  );
+
+  const [
     resumen,
     setResumen,
-  ] = useState(
-
+  ] = useState(() =>
     obtenerResumenDashboard(
       alumnoId
     )
-
   );
 
   /*                                                                       |
@@ -131,6 +146,15 @@ export default function UsuarioEntrenadoPage() {
       );
 
     if (!alumnoData) {
+
+      setAlumno(
+        null
+      );
+
+      setCargando(
+        false
+      );
+
       return;
     }
 
@@ -146,7 +170,30 @@ export default function UsuarioEntrenadoPage() {
 
     );
 
+    setCargando(
+      false
+    );
+
   }, [alumnoId]);
+
+  /*                                                                       |
+  | ---------------------------------------------------------------------- |
+  | LOADING                                                                |
+  | ---------------------------------------------------------------------- |
+  | */
+
+  if (cargando) {
+
+    return (
+
+      <div className="p-6">
+
+        Cargando...
+
+      </div>
+
+    );
+  }
 
   /*                                                                       |
   | ---------------------------------------------------------------------- |
@@ -290,8 +337,10 @@ export default function UsuarioEntrenadoPage() {
               Inicio:
               {" "}
               {
-                resumen.rutina
-                  .fechaInicio
+                formatearFecha(
+                  resumen.rutina
+                    .fechaInicio
+                )
               }
 
             </div>
@@ -406,9 +455,11 @@ export default function UsuarioEntrenadoPage() {
           <div>
 
             {
-              resumen
-                .ultimoEntrenamiento
-                .fecha
+              formatearFecha(
+                resumen
+                  .ultimoEntrenamiento
+                  .fecha
+              )
             }
 
           </div>
@@ -438,9 +489,7 @@ export default function UsuarioEntrenadoPage() {
       >
 
         <Link
-
           href={`/UsuarioEntrenado/${alumno.id}/entrenamiento`}
-
           className="
             bg-blue-600
             text-white
@@ -457,9 +506,7 @@ export default function UsuarioEntrenadoPage() {
         </Link>
 
         <Link
-
           href={`/UsuarioEntrenado/${alumno.id}/libre`}
-
           className="
             border
             px-5
