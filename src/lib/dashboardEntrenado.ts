@@ -4,7 +4,7 @@ import {
 
 import {
   obtenerProgresoAlumno,
-} from "@/lib/progresoStorage";
+} from "@/lib/progreso/progresoStorage";
 
 import {
   Rutina,
